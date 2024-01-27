@@ -1,0 +1,13 @@
+{
+  "name": "growiary",
+  "description": "Growth Diary",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "client": "pnpm -F @growiary/client",
+    "serve": "pnpm -F @growiary/server"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.4"
+  }
+}

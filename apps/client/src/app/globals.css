@@ -64,7 +64,8 @@
       transition: background-color 0.3s;
   }
 
-  .btn-secondary.disabled {
+  .btn-secondary.disabled,
+  .btn-secondary.disabled:hover {
     @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
     background-color: theme(colors.primary.100);
     color: theme(colors.primary.300);

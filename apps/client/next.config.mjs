@@ -11,4 +11,4 @@ const nextConfig = {
   transpilePackages: ['@growiary/types'],
 };
 
-export default withPwa(nextConfig);
+export default process.env.NODE_ENV === 'development' ? nextConfig : withPwa(nextConfig);

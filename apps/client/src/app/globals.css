@@ -32,20 +32,54 @@
 }
 
 @layer components {
-    .font-primary {
-        @apply font-medium;
-        font-family: theme(fontFamily.pretendard);
-    }
+  .font-primary {
+    @apply font-medium;
+    font-family: theme(fontFamily.pretendard);
+  }
 
-    .btn-primary {
-        @apply w-full p-[14px] rounded-[6px] text-center text-[20px] font-semibold shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
-        background-color: theme(colors.primary.100);
-        color: theme(colors.primary.900);
-        font-family: theme(fontFamily.pretendard);
-        border: 1px solid theme(colors.primary.900);
-    }
+  .text-title {
+    @apply font-medium text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
 
-    .btn-primary:hover {
-        background-color: theme(colors.branding.300);
-    }
+  .btn-full {
+    @apply block w-full
+  }
+
+  .btn-primary {
+    @apply p-[14px] rounded-[6px] text-center text-[20px] font-semibold shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
+    background-color: theme(colors.primary.100);
+    color: theme(colors.primary.900);
+    font-family: theme(fontFamily.pretendard);
+    border: 1px solid theme(colors.primary.900);
+    transition: background-color 0.3s;
+  }
+
+  .btn-secondary {
+      @apply p-[14px] rounded-[6px] text-center text-[20px] font-semibold cursor-pointer;
+      background-color: theme(colors.primary.100);
+      color: theme(colors.primary.900);
+      font-family: theme(fontFamily.pretendard);
+      border: 1px solid theme(colors.primary.300);
+      transition: background-color 0.3s;
+  }
+
+  .btn-secondary.disabled {
+    @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
+    background-color: theme(colors.primary.100);
+    color: theme(colors.primary.300);
+    font-family: theme(fontFamily.pretendard);
+    border: 1px solid theme(colors.primary.300);
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    background-color: theme(colors.branding.300);
+  }
+
+  .text-content {
+      @apply text-lg font-normal;
+      font-family: theme(fontFamily.pretendard);
+  }
 }
+

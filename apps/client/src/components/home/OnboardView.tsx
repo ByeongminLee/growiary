@@ -1,7 +1,7 @@
 'use client';
 
-import Carousel from '@/components/common/carousel/Carousel';
-import Button from '@/components/common/Button';
+import Carousel from '@/components/ui/carousel/Carousel';
+import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -26,8 +26,8 @@ const OnboardView = () => {
       </Carousel>
       {isLastSlide && (
         <div className="fixed	bottom-[32px] px-[24px] w-full">
-          <Link href="/login">
-            <Button>시작하기</Button>
+          <Link className="btn-primary btn-full" href="/login">
+            시작하기
           </Link>
         </div>
       )}

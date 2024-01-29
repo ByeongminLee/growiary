@@ -3,19 +3,25 @@
 import React, { ReactNode } from 'react';
 interface ButtonProps {
   children: ReactNode;
-  size?: string;
+  className?: string;
+  type?: 'submit' | 'reset' | 'button';
   onClick?: () => void;
 }
 
-const Button = ({ children, size, onClick = () => {} }: ButtonProps) => {
+const Button = ({
+  children,
+  className = 'btn-primary',
+  type = 'button',
+  onClick = () => {},
+}: ButtonProps) => {
   const handleClick = () => {
     onClick();
   };
 
   return (
-    <div className="btn-primary" onClick={handleClick}>
+    <button type={type} className={className} onClick={handleClick}>
       {children}
-    </div>
+    </button>
   );
 };
 

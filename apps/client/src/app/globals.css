@@ -32,16 +32,74 @@
 }
 
 @layer components {
-  .font-primary {
-    @apply font-medium;
+  /* 폰트 관련 */
+  .font-n-headline {
+    @apply font-normal text-5xl;
+    font-family: theme(fontFamily.nanum);
+    line-height: 56px;
+  }
+  .font-n-body {
+    @apply font-normal text-lg leading-8;
+    font-family: theme(fontFamily.nanum);
+  }
+
+  /* 기존 - font-primary */
+  .font-p-headline {
+    @apply font-light text-5xl;
+    font-family: theme(fontFamily.pretendard);
+    line-height: 56px;
+  }
+
+  .font-p-title {
+    @apply font-medium text-2xl;
+    font-family: theme(fontFamily.pretendard);
+    line-height: 56px;
+  }
+
+  .font-p-title2 {
+    @apply font-semibold text-xl;
     font-family: theme(fontFamily.pretendard);
   }
 
+  .font-p-body {
+    @apply font-normal text-xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-body2 {
+    @apply font-mediumn text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-body3 {
+    @apply font-normal text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-caption {
+    @apply font-medium text-sm leading-6;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  /* 기존 */
+  .font-primary {
+    @apply font-medium text-lg;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  /* 기존 */
   .text-title {
     @apply font-medium text-2xl;
     font-family: theme(fontFamily.pretendard);
   }
 
+  /* 기존 */
+  .text-content {
+    @apply text-lg font-normal;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  /* 버튼 */
   .btn-full {
     @apply block w-full
   }
@@ -52,7 +110,15 @@
     color: theme(colors.primary.900);
     font-family: theme(fontFamily.pretendard);
     border: 1px solid theme(colors.primary.900);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .btn-primary.disabled,
+  .btn-primary.disabled:hover {
+    @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
+    background-color: theme(colors.primary.200);
+    color: theme(colors.primary.200);
+    border-color: theme(colors.primary.300);
   }
 
   .btn-secondary {
@@ -69,18 +135,13 @@
     @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
     background-color: theme(colors.primary.100);
     color: theme(colors.primary.300);
-    font-family: theme(fontFamily.pretendard);
-    border: 1px solid theme(colors.primary.300);
+    border-color: theme(colors.primary.300);
   }
 
   .btn-primary:hover,
   .btn-secondary:hover {
+    box-shadow: none;
     background-color: theme(colors.branding.300);
-  }
-
-  .text-content {
-      @apply text-lg font-normal;
-      font-family: theme(fontFamily.pretendard);
   }
 }
 

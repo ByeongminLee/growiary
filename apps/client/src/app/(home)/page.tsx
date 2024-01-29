@@ -12,6 +12,6 @@ export default async function HomePage() {
     // return <LogoutView />;
   }
 
-  return <ServiceTermView />;
-  // return <OnboardView />;
+  // return <ServiceTermView />;
+  return <OnboardView />;
 }

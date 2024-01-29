@@ -18,6 +18,9 @@ const config: Config = {
         pretendard: ['Pretendard', 'serif'],
       },
       colors: {
+        temp: {
+          img: '#D9D9D9',
+        },
         branding: {
           900: '#025034',
           800: '#118E70',

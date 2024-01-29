@@ -24,3 +24,28 @@
     font-family: "Pretendard";
     src: url("/fonts/PretendardVariable.woff2") format("woff2");
 }
+
+@layer base {
+    body {
+        @apply bg-sub-yellow px-[24px];
+    }
+}
+
+@layer components {
+    .font-primary {
+        @apply font-medium;
+        font-family: theme(fontFamily.pretendard);
+    }
+
+    .btn-primary {
+        @apply w-full p-[14px] rounded-[6px] text-center text-[20px] font-semibold shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
+        background-color: theme(colors.primary.100);
+        color: theme(colors.primary.900);
+        font-family: theme(fontFamily.pretendard);
+        border: 1px solid theme(colors.primary.900);
+    }
+
+    .btn-primary:hover {
+        background-color: theme(colors.branding.300);
+    }
+}

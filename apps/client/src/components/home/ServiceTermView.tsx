@@ -1,9 +1,18 @@
 'use client';
 
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
 import { FormEvent, useRef, useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+} from '@/components/ui/shadcn/alert-dialog';
+import Union from '@/components/ui/icon/Union';
 
 type FormType = {
   all: boolean;
@@ -103,9 +112,31 @@ const ServiceTermView = () => {
               id="termOfService"
               required
             />
-            <Label htmlFor="termOfService" className="text-content">
-              (필수) 서비스 이용약관
-            </Label>
+            <div className="grow flex items-center">
+              <Label htmlFor="termOfService" className="text-content">
+                (필수) 서비스 이용약관
+              </Label>
+              <AlertDialog>
+                <AlertDialogTrigger className="ml-auto md:mr-12">
+                  <Union />
+                </AlertDialogTrigger>
+                <AlertDialogOverlay>
+                  <AlertDialogContent className="h-[70%]">
+                    <div className="flex flex-col gap-3">
+                      <h2 className="text-title text-center">서비스 이용약관</h2>
+                      <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
+                        ContentHere is ContentHere is Content Here is ContentHere is
+                        ContentHere is ContentHere is ContentHere is ContentHere is
+                        Content
+                      </AlertDialogDescription>
+                      <AlertDialogAction className="btn-secondary btn-full">
+                        확인했어요
+                      </AlertDialogAction>
+                    </div>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </div>
           </div>
           <div className="flex items-center h-12 space-x-2">
             <Checkbox
@@ -116,9 +147,31 @@ const ServiceTermView = () => {
               id="privacyPolicy"
               required
             />
-            <Label htmlFor="privacyPolicy" className="text-content">
-              (필수) 개인정보 처리방침
-            </Label>
+            <div className="grow flex items-center">
+              <Label htmlFor="privacyPolicy" className="text-content">
+                (필수) 개인정보 처리방침
+              </Label>
+              <AlertDialog>
+                <AlertDialogTrigger className="ml-auto md:mr-12">
+                  <Union />
+                </AlertDialogTrigger>
+                <AlertDialogOverlay>
+                  <AlertDialogContent className="h-[70%]">
+                    <div className="flex flex-col gap-3">
+                      <h2 className="text-title text-center">서비스 이용약관</h2>
+                      <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
+                        ContentHere is ContentHere is Content Here is ContentHere is
+                        ContentHere is ContentHere is ContentHere is ContentHere is
+                        Content
+                      </AlertDialogDescription>
+                      <AlertDialogAction className="btn-secondary btn-full">
+                        확인했어요
+                      </AlertDialogAction>
+                    </div>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </div>
           </div>
         </div>
         <Button

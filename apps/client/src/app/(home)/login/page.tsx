@@ -1,5 +1,5 @@
 import { LoginView } from '@/components/home/LoginView';
-import { LogoutView } from '@/components/home/LogoutView';
+import { LogoutView } from '@/components/profile/LogoutView';
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 

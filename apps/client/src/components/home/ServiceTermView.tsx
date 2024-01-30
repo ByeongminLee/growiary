@@ -13,24 +13,51 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import Union from '@/components/ui/icon/Union';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { userProfileState } from '@/store';
+import { useRouter } from 'next/navigation';
 
 type FormType = {
   all: boolean;
   age: boolean;
-  termOfService: boolean;
-  privacyPolicy: boolean;
+  service: boolean;
+  privacy: boolean;
 };
 const ServiceTermView = () => {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const requiredListRef = useRef<(keyof FormType)[]>(['termOfService', 'privacyPolicy']);
+  const requiredListRef = useRef<(keyof FormType)[]>(['service', 'privacy']);
   const [checkboxState, setCheckboxState] = useState<FormType>({
     all: false,
     age: false,
-    termOfService: false,
-    privacyPolicy: false,
+    service: false,
+    privacy: false,
   });
+  const setUserProfile = useSetRecoilState(userProfileState);
+
+  const getCheckedRequiredCount = () => {
+    for (let key of requiredListRef.current) {
+      if (!checkboxState[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!getCheckedRequiredCount()) {
+      return;
+    }
+    let newUserProfile: Omit<FormType, 'all'> & { all?: boolean } = { ...checkboxState };
+    delete newUserProfile.all;
+
+    setUserProfile(prev => ({
+      ...prev,
+      agreeTerms: { ...newUserProfile },
+    }));
+
+    router.push('/login/nickname');
   };
 
   const handleClickTerm = (e: React.MouseEvent, type: keyof FormType) => {
@@ -58,15 +85,6 @@ const ServiceTermView = () => {
         all: isAllChecked,
       }));
     }
-  };
-
-  const getCheckedRequiredCount = () => {
-    for (let key of requiredListRef.current) {
-      if (!checkboxState[key]) {
-        return false;
-      }
-    }
-    return true;
   };
 
   return (
@@ -105,15 +123,15 @@ const ServiceTermView = () => {
           </div>
           <div className="flex items-center h-12 space-x-2">
             <Checkbox
-              onClick={e => handleClickTerm(e, 'termOfService')}
-              checked={checkboxState.termOfService}
-              value="termOfService"
-              name="termOfService"
-              id="termOfService"
+              onClick={e => handleClickTerm(e, 'service')}
+              checked={checkboxState.service}
+              value="service"
+              name="service"
+              id="service"
               required
             />
             <div className="grow flex items-center">
-              <Label htmlFor="termOfService" className="font-p-R18 text-primary-800">
+              <Label htmlFor="service" className="font-p-R18 text-primary-800">
                 (필수) 서비스 이용약관
               </Label>
               <AlertDialog>
@@ -140,15 +158,15 @@ const ServiceTermView = () => {
           </div>
           <div className="flex items-center h-12 space-x-2">
             <Checkbox
-              onClick={e => handleClickTerm(e, 'privacyPolicy')}
-              checked={checkboxState.privacyPolicy}
-              value="privacyPolicy"
-              name="privacyPolicy"
-              id="privacyPolicy"
+              onClick={e => handleClickTerm(e, 'privacy')}
+              checked={checkboxState.privacy}
+              value="privacy"
+              name="privacy"
+              id="privacy"
               required
             />
             <div className="grow flex items-center">
-              <Label htmlFor="privacyPolicy" className="font-p-R18 text-primary-800">
+              <Label htmlFor="privacy" className="font-p-R18 text-primary-800">
                 (필수) 개인정보 처리방침
               </Label>
               <AlertDialog>
@@ -175,7 +193,7 @@ const ServiceTermView = () => {
           </div>
         </div>
         <Button
-          type="button"
+          type="submit"
           className={`btn-secondary ${!getCheckedRequiredCount() ? 'disabled' : ''}`}
         >
           시작하기

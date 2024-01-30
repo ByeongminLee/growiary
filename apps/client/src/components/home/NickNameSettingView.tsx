@@ -3,19 +3,29 @@
 import Button from '@/components/ui/Button';
 import React, { FormEvent, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
+import { useRecoilState } from 'recoil';
+import { userProfileState } from '@/store';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const NickNameSettingView = () => {
-  const [input, setInput] = useState('');
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [caution, setCaution] = useState('');
+  const [userProfile, setUserProfile] = useRecoilState(userProfileState);
+
   const handleChange = (e: React.ChangeEvent) => {
     const value = (e.currentTarget as HTMLInputElement).value;
-    setInput(value);
+    setUserProfile(prev => ({
+      ...prev,
+      userName: value,
+    }));
     const isValidLength = value.length >= 2 && value.length <= 8;
-    let isValidChar = /[A-z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|1-9]/g.test(value);
+    let isNotValidChar = /[^A-z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|1-9]|\\/g.test(value);
 
     if (!isValidLength) {
       setCaution('닉네임은 2자~8자로 입력해 주세요');
-    } else if (!isValidChar) {
+    } else if (isNotValidChar) {
       setCaution('닉네임은 한글, 영문, 숫자로만 입력해 주세요');
     } else {
       setCaution('');
@@ -25,6 +35,30 @@ const NickNameSettingView = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (caution) return;
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+      method: 'POST',
+      headers: {
+        Authorization: session ? session.id : '',
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({
+        userName: 'testing',
+        agreeTerms: {
+          age: true,
+          service: true,
+          privacy: true,
+        },
+      }),
+    })
+      .then(res => res.json())
+      .then(({ status }) => {
+        if (status === 200) {
+          router.push('/');
+        } else {
+          alert('닉네임 설정에 실패했습니다. 오류 문의를 넣어주세요.');
+        }
+      });
   };
 
   return (
@@ -41,7 +75,7 @@ const NickNameSettingView = () => {
           <Input
             type="text"
             placeholder="반가운 오월"
-            value={input}
+            value={userProfile.userName}
             onChange={handleChange}
             maxLength={8}
           />
@@ -52,7 +86,7 @@ const NickNameSettingView = () => {
                 src="/assets/icon.png"
                 alt="invalid nickname value"
               />
-              닉네임은 2자~8자로 입력해 주세요
+              {caution}
             </p>
           )}
         </div>

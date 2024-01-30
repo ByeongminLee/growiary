@@ -20,10 +20,10 @@ const ConfirmModal = ({ title, children }: ConfirmModalProps) => {
         <Union />
       </AlertDialogTrigger>
       <AlertDialogOverlay>
-        <AlertDialogContent className="h-[70%]">
+        <AlertDialogContent className="h-[70%] w-[90%] rounded-md	">
           <div className="flex flex-col gap-3">
             <h2 className="font-p-M24 text-center">{title}</h2>
-            <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
+            <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
               {children}
             </AlertDialogDescription>
             <AlertDialogAction className="btn-secondary btn-full">

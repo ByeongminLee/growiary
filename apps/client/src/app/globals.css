@@ -43,59 +43,52 @@
     font-family: theme(fontFamily.nanum);
   }
 
-  /* 기존 - font-primary */
-  .font-p-headline {
-    @apply font-light text-5xl;
+  .font-p-R48 {
+    @apply font-light;
+    font-size: 2.5rem;
+    line-height: 49px;
     font-family: theme(fontFamily.pretendard);
-    line-height: 56px;
   }
 
-  .font-p-title {
+  .font-p-M24 {
     @apply font-medium text-2xl;
     font-family: theme(fontFamily.pretendard);
-    line-height: 56px;
   }
 
-  .font-p-title2 {
+  .font-p-R24 {
+    @apply font-normal text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M20 {
     @apply font-semibold text-xl;
     font-family: theme(fontFamily.pretendard);
   }
 
-  .font-p-body {
+  .font-p-R18 {
     @apply font-normal text-xl;
     font-family: theme(fontFamily.pretendard);
   }
 
-  .font-p-body2 {
-    @apply font-mediumn text-base;
+  .font-p-R17 {
+    @apply font-normal;
+    font-family: theme(fontFamily.pretendard);
+    font-size: 1.0625rem;
+    line-height: 26px;
+  }
+
+  .font-p-M16 {
+    @apply font-medium text-base;
     font-family: theme(fontFamily.pretendard);
   }
 
-  .font-p-body3 {
+  .font-p-R16 {
     @apply font-normal text-base;
     font-family: theme(fontFamily.pretendard);
   }
 
-  .font-p-caption {
+  .font-p-M14 {
     @apply font-medium text-sm leading-6;
-    font-family: theme(fontFamily.pretendard);
-  }
-
-  /* 기존 */
-  .font-primary {
-    @apply font-medium text-lg;
-    font-family: theme(fontFamily.pretendard);
-  }
-
-  /* 기존 */
-  .text-title {
-    @apply font-medium text-2xl;
-    font-family: theme(fontFamily.pretendard);
-  }
-
-  /* 기존 */
-  .text-content {
-    @apply text-lg font-normal;
     font-family: theme(fontFamily.pretendard);
   }
 
@@ -105,7 +98,8 @@
   }
 
   .btn-primary {
-    @apply p-[14px] rounded-[6px] text-center text-[20px] font-semibold shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
+    @apply p-[14px] rounded-[6px] text-center shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
+    @apply font-semibold text-xl;
     background-color: theme(colors.primary.100);
     color: theme(colors.primary.900);
     font-family: theme(fontFamily.pretendard);
@@ -115,14 +109,15 @@
 
   .btn-primary.disabled,
   .btn-primary.disabled:hover {
-    @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
+    @apply cursor-default;
     background-color: theme(colors.primary.200);
     color: theme(colors.primary.200);
     border-color: theme(colors.primary.300);
   }
 
   .btn-secondary {
-      @apply p-[14px] rounded-[6px] text-center text-[20px] font-semibold cursor-pointer;
+      @apply p-[14px] rounded-[6px] text-center cursor-pointer;
+      @apply font-normal text-xl;;
       background-color: theme(colors.primary.100);
       color: theme(colors.primary.900);
       font-family: theme(fontFamily.pretendard);
@@ -132,7 +127,7 @@
 
   .btn-secondary.disabled,
   .btn-secondary.disabled:hover {
-    @apply p-[14px] text-center text-[20px] font-semibold cursor-default;
+    @apply cursor-default;
     background-color: theme(colors.primary.100);
     color: theme(colors.primary.300);
     border-color: theme(colors.primary.300);

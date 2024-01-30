@@ -71,7 +71,7 @@ const ServiceTermView = () => {
 
   return (
     <section className="w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between">
-      <h1 className="text-title mb-[29px]">서비스 이용 동의</h1>
+      <h1 className="font-p-M24 text-primary-900 mb-[29px]">서비스 이용 동의</h1>
       <form
         onSubmit={handleSubmit}
         ref={formRef}
@@ -86,7 +86,7 @@ const ServiceTermView = () => {
               id="all"
               checkState="minus"
             />
-            <Label htmlFor="all" className="text-content">
+            <Label htmlFor="all" className="font-p-R18 text-primary-800">
               약관 전체 동의
             </Label>
           </div>
@@ -99,7 +99,7 @@ const ServiceTermView = () => {
               name="age"
               id="age"
             />
-            <Label htmlFor="age" className="text-content">
+            <Label htmlFor="age" className="font-p-R18 text-primary-800">
               만 14세 이상 입니다
             </Label>
           </div>
@@ -113,7 +113,7 @@ const ServiceTermView = () => {
               required
             />
             <div className="grow flex items-center">
-              <Label htmlFor="termOfService" className="text-content">
+              <Label htmlFor="termOfService" className="font-p-R18 text-primary-800">
                 (필수) 서비스 이용약관
               </Label>
               <AlertDialog>
@@ -123,7 +123,7 @@ const ServiceTermView = () => {
                 <AlertDialogOverlay>
                   <AlertDialogContent className="h-[70%]">
                     <div className="flex flex-col gap-3">
-                      <h2 className="text-title text-center">서비스 이용약관</h2>
+                      <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
                       <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
                         ContentHere is ContentHere is Content Here is ContentHere is
                         ContentHere is ContentHere is ContentHere is ContentHere is
@@ -148,7 +148,7 @@ const ServiceTermView = () => {
               required
             />
             <div className="grow flex items-center">
-              <Label htmlFor="privacyPolicy" className="text-content">
+              <Label htmlFor="privacyPolicy" className="font-p-R18 text-primary-800">
                 (필수) 개인정보 처리방침
               </Label>
               <AlertDialog>
@@ -158,7 +158,7 @@ const ServiceTermView = () => {
                 <AlertDialogOverlay>
                   <AlertDialogContent className="h-[70%]">
                     <div className="flex flex-col gap-3">
-                      <h2 className="text-title text-center">서비스 이용약관</h2>
+                      <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
                       <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
                         ContentHere is ContentHere is Content Here is ContentHere is
                         ContentHere is ContentHere is ContentHere is ContentHere is

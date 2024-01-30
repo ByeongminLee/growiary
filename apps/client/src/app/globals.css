@@ -27,18 +27,19 @@
 
 @layer base {
     body {
-        @apply bg-sub-yellow px-[24px];
+        @apply bg-grayscale-100 px-[24px];
     }
 }
 
 @layer components {
   /* 폰트 관련 */
-  .font-n-headline {
-    @apply font-normal text-5xl;
+  .font-n-R48 {
+    @apply font-normal;
+    font-size: 2.375rem;
+    line-height: 50px;
     font-family: theme(fontFamily.nanum);
-    line-height: 56px;
   }
-  .font-n-body {
+  .font-n-R18 {
     @apply font-normal text-lg leading-8;
     font-family: theme(fontFamily.nanum);
   }

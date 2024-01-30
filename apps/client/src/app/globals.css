@@ -119,6 +119,7 @@
     background-color: theme(colors.primary.200);
     color: theme(colors.primary.200);
     border-color: theme(colors.primary.300);
+    box-shadow: none;
   }
 
   .btn-secondary {

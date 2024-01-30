@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 interface ButtonProps {
   children: ReactNode;
   className?: string;
@@ -10,7 +11,7 @@ interface ButtonProps {
 
 const Button = ({
   children,
-  className = 'btn-primary',
+  className = '',
   type = 'button',
   onClick = () => {},
 }: ButtonProps) => {
@@ -19,7 +20,7 @@ const Button = ({
   };
 
   return (
-    <button type={type} className={className} onClick={handleClick}>
+    <button type={type} className={cn('btn-primary', className)} onClick={handleClick}>
       {children}
     </button>
   );

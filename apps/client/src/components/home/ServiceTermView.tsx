@@ -4,18 +4,10 @@ import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
 import { FormEvent, useRef, useState } from 'react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-} from '@/components/ui/shadcn/alert-dialog';
-import Union from '@/components/ui/icon/Union';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 type FormType = {
   all: boolean;
@@ -134,26 +126,10 @@ const ServiceTermView = () => {
               <Label htmlFor="service" className="font-p-R18 text-primary-800">
                 (필수) 서비스 이용약관
               </Label>
-              <AlertDialog>
-                <AlertDialogTrigger className="ml-auto md:mr-12">
-                  <Union />
-                </AlertDialogTrigger>
-                <AlertDialogOverlay>
-                  <AlertDialogContent className="h-[70%]">
-                    <div className="flex flex-col gap-3">
-                      <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
-                      <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
-                        ContentHere is ContentHere is Content Here is ContentHere is
-                        ContentHere is ContentHere is ContentHere is ContentHere is
-                        Content
-                      </AlertDialogDescription>
-                      <AlertDialogAction className="btn-secondary btn-full">
-                        확인했어요
-                      </AlertDialogAction>
-                    </div>
-                  </AlertDialogContent>
-                </AlertDialogOverlay>
-              </AlertDialog>
+              <ConfirmModal title="서비스 이용약관">
+                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
+                is ContentHere is ContentHere is ContentHere is Content
+              </ConfirmModal>
             </div>
           </div>
           <div className="flex items-center h-12 space-x-2">
@@ -169,26 +145,10 @@ const ServiceTermView = () => {
               <Label htmlFor="privacy" className="font-p-R18 text-primary-800">
                 (필수) 개인정보 처리방침
               </Label>
-              <AlertDialog>
-                <AlertDialogTrigger className="ml-auto md:mr-12">
-                  <Union />
-                </AlertDialogTrigger>
-                <AlertDialogOverlay>
-                  <AlertDialogContent className="h-[70%]">
-                    <div className="flex flex-col gap-3">
-                      <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
-                      <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto">
-                        ContentHere is ContentHere is Content Here is ContentHere is
-                        ContentHere is ContentHere is ContentHere is ContentHere is
-                        Content
-                      </AlertDialogDescription>
-                      <AlertDialogAction className="btn-secondary btn-full">
-                        확인했어요
-                      </AlertDialogAction>
-                    </div>
-                  </AlertDialogContent>
-                </AlertDialogOverlay>
-              </AlertDialog>
+              <ConfirmModal title="개인정보 처리방침">
+                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
+                is ContentHere is ContentHere is ContentHere is Content
+              </ConfirmModal>
             </div>
           </div>
         </div>

@@ -19,7 +19,11 @@ export default async function HomePage() {
   if (session) {
     // TODO: UserProfileDTO || { status: number, message: string}
     const status = await getUserNickName(session.id);
-    return status?.status === 404 ? <ServiceTermView /> : <MainView />;
+    return status?.status === 404 ? (
+      <ServiceTermView />
+    ) : (
+      <MainView userProfile={status.data.profile} />
+    );
   }
 
   return <OnboardView />;

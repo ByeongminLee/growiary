@@ -1,9 +1,13 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
-import { LogoutView } from '@/components/profile/LogoutView';
+import { ProfileView } from '@/components/profile/ProfileView';
+import { redirect } from 'next/navigation';
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
-  return <LogoutView />;
+  if (session) {
+    return <ProfileView />;
+  }
+  redirect('/');
 }

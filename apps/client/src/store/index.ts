@@ -1,6 +1,4 @@
 import { atom } from 'recoil';
-
-type TempState = {};
 export const userProfileState = atom({
   key: 'userProfileState',
   default: {

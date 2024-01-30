@@ -32,6 +32,11 @@
 }
 
 @layer components {
+  /* 레이아웃 */
+  .layout-full {
+    @apply w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between;
+  }
+
   /* 폰트 관련 */
   .font-n-R48 {
     @apply font-normal;

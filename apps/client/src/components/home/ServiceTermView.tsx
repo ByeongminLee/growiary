@@ -70,7 +70,7 @@ const ServiceTermView = () => {
   };
 
   return (
-    <section className="w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between">
+    <section className="layout-full">
       <h1 className="font-p-M24 text-primary-900 mb-[29px]">서비스 이용 동의</h1>
       <form
         onSubmit={handleSubmit}

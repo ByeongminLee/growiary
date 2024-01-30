@@ -28,7 +28,7 @@ const NickNameSettingView = () => {
   };
 
   return (
-    <section className="w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between">
+    <section className="layout-full">
       <h1 className="font-p-M24 text-primary-900">어떻게 불러드릴까요?</h1>
       <p className="font-p-R16 text-primary-500 mt-[6px]">
         이름을 한글/영문/숫자 2자~8자내로 지어주세요

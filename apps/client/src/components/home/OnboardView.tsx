@@ -18,19 +18,21 @@ const OnboardView = () => {
   };
 
   return (
-    <section className="w-full h-[calc(80vh-60px)] flex justify-center items-center">
-      <Carousel onReachEnd={onReachEnd} width="312px">
-        {slideContents.map((content, idx) => (
-          <TempSlide key={idx} text={content} />
-        ))}
-      </Carousel>
-      {isLastSlide && (
-        <div className="fixed	bottom-[32px] px-[24px] w-full">
+    <section className="layout-full h-[calc(85vh-72px)]">
+      <div className="grow flex items-center">
+        <Carousel onReachEnd={onReachEnd} width="312px">
+          {slideContents.map((content, idx) => (
+            <TempSlide key={idx} text={content} />
+          ))}
+        </Carousel>
+      </div>
+      <div className="grow-0 shrink-0 min-h-[60px]">
+        {isLastSlide && (
           <Link className="btn-primary btn-full" href="/login">
             시작하기
           </Link>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 };

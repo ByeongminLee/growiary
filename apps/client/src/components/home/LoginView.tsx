@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export const LoginView = () => {
   return (
-    <main className="w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col items-center justify-between">
+    <main className="layout-full">
       <section className="self-start">
         <div className="bg-temp-img w-[312px] h-[113px] mb-[23px]">Logo</div>
         <h1 className="font-p-M24 text-primary-600">AI와 함께하는 회고 다이어리</h1>

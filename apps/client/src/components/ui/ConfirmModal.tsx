@@ -11,22 +11,22 @@ import Union from '@/components/ui/icon/Union';
 
 interface ConfirmModalProps {
   title: string;
+  button: ReactNode;
   children: ReactNode;
+  onClick?: () => void;
 }
-const ConfirmModal = ({ title, children }: ConfirmModalProps) => {
+const ConfirmModal = ({ title, button, onClick, children }: ConfirmModalProps) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="ml-auto md:mr-12">
-        <Union />
-      </AlertDialogTrigger>
+      <AlertDialogTrigger className="ml-auto md:mr-12">{button}</AlertDialogTrigger>
       <AlertDialogOverlay>
-        <AlertDialogContent className="h-[70%] w-[90%] rounded-md	">
+        <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md	">
           <div className="flex flex-col gap-3">
             <h2 className="font-p-M24 text-center">{title}</h2>
             <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
               {children}
             </AlertDialogDescription>
-            <AlertDialogAction className="btn-secondary btn-full">
+            <AlertDialogAction className="btn-secondary btn-full" onClick={onClick}>
               확인했어요
             </AlertDialogAction>
           </div>

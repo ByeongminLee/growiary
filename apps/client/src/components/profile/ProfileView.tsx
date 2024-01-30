@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/shadcn/input';
 import withUserProfile from '@/components/hoc/withUserProfile';
 import { Label } from '@/components/ui/shadcn/label';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import Union from '@/components/ui/icon/Union';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -74,7 +75,7 @@ const ProfileView = () => {
               <Label htmlFor="service" className="font-p-R18 text-primary-800">
                 (필수) 서비스 이용약관
               </Label>
-              <ConfirmModal title="서비스 이용약관">
+              <ConfirmModal title="서비스 이용약관" button={<Union />}>
                 ContentHere is ContentHere is Content Here is ContentHere is ContentHere
                 is ContentHere is ContentHere is ContentHere is Content
               </ConfirmModal>
@@ -85,7 +86,7 @@ const ProfileView = () => {
               <Label htmlFor="privacy" className="font-p-R18 text-primary-800">
                 (필수) 개인정보 처리방침
               </Label>
-              <ConfirmModal title="개인정보 처리방침">
+              <ConfirmModal title="개인정보 처리방침" button={<Union />}>
                 ContentHere is ContentHere is Content Here is ContentHere is ContentHere
                 is ContentHere is ContentHere is ContentHere is Content
               </ConfirmModal>

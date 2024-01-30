@@ -1,15 +1,18 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 const NickNameSettingView = () => {
   const router = useRouter();
+  const modalButtonRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
   const [caution, setCaution] = useState('');
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
@@ -54,11 +57,15 @@ const NickNameSettingView = () => {
       .then(res => res.json())
       .then(({ status }) => {
         if (status === 200) {
-          router.push('/');
+          modalButtonRef.current?.click();
         } else {
           alert('닉네임 설정에 실패했습니다. 오류 문의를 넣어주세요.');
         }
       });
+  };
+
+  const handleLeavePage = () => {
+    router.push('/');
   };
 
   return (
@@ -81,8 +88,10 @@ const NickNameSettingView = () => {
           />
           {caution && (
             <p className="flex text-danger-600 text-sm leading-[17px] mt-[10px]">
-              <img
+              <Image
                 className="w-4 h-4 mr-[6px]"
+                width={16}
+                height={16}
                 src="/assets/icon.png"
                 alt="invalid nickname value"
               />
@@ -92,6 +101,17 @@ const NickNameSettingView = () => {
         </div>
         <Button type="submit">시작하기</Button>
       </form>
+      <ConfirmModal
+        title={`${userProfile.userName}님 반가워요`}
+        button={
+          <div className="hidden" ref={modalButtonRef}>
+            confirm modal btn
+          </div>
+        }
+        onClick={handleLeavePage}
+      >
+        그루어리와 함께 매일 성장해요!
+      </ConfirmModal>
     </section>
   );
 };

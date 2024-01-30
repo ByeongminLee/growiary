@@ -54,11 +54,19 @@ const ProfileView = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Input
-          name="username"
-          disabled={!isChangeNickname}
-          defaultValue={userProfile?.userName}
-        />
+        <div className="flex justify-start items-center">
+          {isChangeNickname ? (
+            <Input
+              name="username"
+              disabled={!isChangeNickname}
+              defaultValue={userProfile?.userName}
+            />
+          ) : (
+            <div className="font-p-M24">
+              <span className="text-sub-yellow mr-[5px]">{userProfile?.userName}</span>님
+            </div>
+          )}
+        </div>
         <div>{session?.user?.email}</div>
         <div>
           <div className="flex items-center h-12 space-x-2">

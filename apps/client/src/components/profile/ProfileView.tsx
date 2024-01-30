@@ -1,42 +1,41 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
 import Button from '@/components/ui/Button';
-import { redirect, useRouter } from 'next/navigation';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { Input } from '@/components/ui/shadcn/input';
+import withUserProfile from '@/components/hoc/withUserProfile';
 
-export const ProfileView = () => {
+const updateUserName = async (id: string, userName: string) => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: id,
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    body: JSON.stringify({ userName: userName }),
+  });
+  return await response.json();
+};
+
+const ProfileView = () => {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const [userProfile, setUserProfile] = useRecoilState(userProfileState);
-  const [input, setInput] = useState(userProfile?.userName);
   const [isChangeNickname, setIsChangeNickname] = useState(false);
-  const handleClickChangeName = async () => {
-    if (!isChangeNickname) {
-      setIsChangeNickname(true);
-      return;
-    }
-  };
 
-  const handleChange = (e: ChangeEvent) => {
-    setInput((e.currentTarget as HTMLInputElement).value);
+  const handleClickChangeName = async () => {
+    setIsChangeNickname(true);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    const input = (e.target as HTMLFormElement).username.value;
     if (!session || !input) return;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: session.id,
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify({ userName: input }),
-    });
-    const json = await response.json();
+    const json = await updateUserName(session.id, input);
+
     json.status === 200 &&
       setUserProfile(prev => ({
         ...prev,
@@ -53,19 +52,28 @@ export const ProfileView = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Input disabled={!isChangeNickname} value={input} onChange={handleChange} />
+        <Input
+          name="username"
+          disabled={!isChangeNickname}
+          defaultValue={userProfile?.userName}
+        />
         <div>{session?.user?.email}</div>
-        <Button
-          type={isChangeNickname ? 'submit' : 'button'}
-          className="btn-full"
-          onClick={handleClickChangeName}
-        >
+        {isChangeNickname && (
+          <Button type="submit" className="btn-full">
+            완료
+          </Button>
+        )}
+      </form>
+      {!isChangeNickname && (
+        <Button className="btn-full" onClick={handleClickChangeName}>
           수정
         </Button>
-      </form>
+      )}
       <Button className="btn-full" onClick={handleClickLogOut}>
         로그아웃
       </Button>
     </>
   );
 };
+
+export default withUserProfile(ProfileView);

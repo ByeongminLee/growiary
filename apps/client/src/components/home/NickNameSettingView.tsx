@@ -9,6 +9,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { ApiResponse } from '@/types';
+import { UserProfileDTO } from '@growiary/types';
 
 const NickNameSettingView = () => {
   const router = useRouter();
@@ -55,7 +57,7 @@ const NickNameSettingView = () => {
       }),
     })
       .then(res => res.json())
-      .then(({ status }) => {
+      .then(({ status }: Pick<ApiResponse<{ profile: UserProfileDTO }>, 'status'>) => {
         if (status === 200) {
           modalButtonRef.current?.click();
         } else {

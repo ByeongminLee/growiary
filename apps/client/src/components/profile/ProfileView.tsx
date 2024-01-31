@@ -9,6 +9,8 @@ import withUserProfile from '@/components/hoc/withUserProfile';
 import { Label } from '@/components/ui/shadcn/label';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
+import { ApiResponse } from '@/types';
+import { UserProfileDTO } from '@growiary/types';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -37,7 +39,10 @@ const ProfileView = () => {
     const input = (e.target as HTMLFormElement).username.value;
     if (!session || !input) return;
 
-    const json = await updateUserName(session.id, input);
+    const json: ApiResponse<{ profile: UserProfileDTO }> = await updateUserName(
+      session.id,
+      input,
+    );
 
     json.status === 200 &&
       setUserProfile(prev => ({

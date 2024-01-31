@@ -1,5 +1,11 @@
 import { atom } from 'recoil';
-export const userProfileState = atom({
+import { UserProfileDTO } from '@growiary/types';
+
+export type UserProfileStateType = {
+  key: string;
+  default: UserProfileDTO;
+};
+export const userProfileState = atom(<UserProfileStateType>{
   key: 'userProfileState',
   default: {
     userName: '',

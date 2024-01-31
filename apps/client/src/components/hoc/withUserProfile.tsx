@@ -2,12 +2,16 @@ import React, { ComponentType, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useSession } from 'next-auth/react';
+import { ApiResponse } from '@/types';
+import { UserProfileDTO } from '@growiary/types';
 
 interface WithUserProfileProps {
   userProfile?: any;
 }
 
-const getUserInfo = async (id: string) => {
+const getUserInfo = async (
+  id: string,
+): Promise<ApiResponse<{ profile: UserProfileDTO }>> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
     headers: {
       Authorization: id,
@@ -29,7 +33,7 @@ const withUserProfile = <T extends WithUserProfileProps>(Component: ComponentTyp
       if (!userProfile?.userName && !profile?.userName) {
         (async () => {
           const res = session && (await getUserInfo(session.id));
-          setProfile(await res.data.profile);
+          'data' in res && setProfile(await res.data.profile);
         })();
       } else if (userProfile?.userName && !profile?.userName) {
         setProfile(userProfile);

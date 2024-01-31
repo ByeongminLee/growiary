@@ -103,3 +103,49 @@
     }
   }
   ```
+
+<br />
+
+<br />
+
+# post
+
+<img src="https://img.shields.io/badge/%7F%20%20GET%20%20%20%7F-/post-e1e1e1?labelColor=46C487&style=flat-square" height="25"/>
+
+> 사용자 포스팅 가져오기
+
+<br/>
+
+<img src="https://img.shields.io/badge/%7F%20%20POST%20%7F-/post-e1e1e1?labelColor=219BFD&style=flat-square" height="25"/>
+
+> 사용자 포스팅 작성
+
+- request
+
+  `@body`
+
+  ```json
+  {
+    title: string;
+    content: string;
+    template: string;
+  }
+  ```
+
+<br/>
+
+<img src="https://img.shields.io/badge/%7F%20%20GET%20%20%20%7F-/post/filter-e1e1e1?labelColor=46C487&style=flat-square" height="25"/>
+
+> 필터를 사용하여 사용자 요청
+
+- request
+
+  `@body`
+
+  ```json
+  {
+    // yyyy-mm-dd
+    startDate: string;
+    endDate: string;
+  }
+  ```

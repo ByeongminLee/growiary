@@ -4,6 +4,7 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "ts-node src/index.ts"
   },

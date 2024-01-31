@@ -5,6 +5,7 @@ import ServiceTermView from '@/components/home/ServiceTermView';
 import MainView from '@/components/home/MainView';
 import { UserProfileDTO } from '@growiary/types';
 import { ApiError, ApiSuccess } from '@/types';
+import { Suspense } from 'react';
 
 const getUserNickName = async (id: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
@@ -23,7 +24,11 @@ export default async function HomePage() {
       await getUserNickName(session.id);
 
     if ('data' in status) {
-      return <MainView userProfile={status.data.profile} />;
+      return (
+        <Suspense fallback={<div>Loading...</div>}>
+          <MainView userProfile={status.data.profile} />
+        </Suspense>
+      );
     } else {
       return <ServiceTermView />;
     }

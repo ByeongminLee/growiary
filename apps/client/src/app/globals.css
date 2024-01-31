@@ -25,19 +25,33 @@
     src: url("/fonts/PretendardVariable.woff2") format("woff2");
 }
 
+:root {
+  --vh: 100%;
+}
+
 @layer base {
-    body {
-      @apply bg-grayscale-100 px-[24px];
-      margin-top: env(safe-area-inset-top);
-      margin-bottom: env(safe-area-inset-bottom);
-    }
+  body {
+    @apply bg-grayscale-100;
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: env(safe-area-inset-bottom);
+    height: 100vh;
+    height: var(--vh);
+  }
 }
 
 @layer components {
   /* 레이아웃 */
   .layout-full {
-    @apply w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between;
+    @apply w-full h-[calc(80vh-72px)] mt-[72px] px-[24px] flex flex-col justify-between;
     margin-top: calc(env(safe-area-inset-top) + 72px);
+  }
+
+
+  .layout-tab {
+    height: calc(var(--vh) - 80px - env(safe-area-inset-top));
+  }
+  .tab {
+    @apply fixed inset-x-0 bottom-0 h-20;
   }
 
   /* 폰트 관련 */

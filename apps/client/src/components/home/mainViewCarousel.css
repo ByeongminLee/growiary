@@ -1,0 +1,31 @@
+.swiper {
+  width: 100%;
+  background-color: #a0b4f5;
+  height: calc(100vh - 80px - env(safe-area-inset-top));
+  height: calc(100svh - 80px) !important;
+}
+
+.swiper-slide {
+  font-size: 18px;
+  background: #f5a0a0;
+  height: 100%;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swiper-slide {
+  width: calc(100% - 20px);
+}
+
+.swiper-slide:nth-child(2n) {
+  background: #a0f5be;
+}
+
+.swiper-slide:nth-child(3n) {
+  background: #a0b4f5;
+}

@@ -1,3 +1,152 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 400;
+    src: url("/fonts/NanumMyeongjo.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 700;
+    src: url("/fonts/NanumMyeongjoBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 900;
+    src: url("/fonts/NanumMyeongjoExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Pretendard";
+    src: url("/fonts/PretendardVariable.woff2") format("woff2");
+}
+
+@layer base {
+    body {
+      @apply bg-grayscale-100 px-[24px];
+      margin-top: env(safe-area-inset-top);
+      margin-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+@layer components {
+  /* 레이아웃 */
+  .layout-full {
+    @apply w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between;
+    margin-top: calc(env(safe-area-inset-top) + 72px);
+  }
+
+  /* 폰트 관련 */
+  .font-n-R48 {
+    @apply font-normal;
+    font-size: 2.375rem;
+    line-height: 50px;
+    font-family: theme(fontFamily.nanum);
+  }
+  .font-n-R18 {
+    @apply font-normal text-lg leading-8;
+    font-family: theme(fontFamily.nanum);
+  }
+
+  .font-p-R48 {
+    @apply font-light;
+    font-size: 2.5rem;
+    line-height: 49px;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M24 {
+    @apply font-medium text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R24 {
+    @apply font-normal text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M20 {
+    @apply font-semibold text-xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R18 {
+    @apply font-normal text-xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R17 {
+    @apply font-normal;
+    font-family: theme(fontFamily.pretendard);
+    font-size: 1.0625rem;
+    line-height: 26px;
+  }
+
+  .font-p-M16 {
+    @apply font-medium text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R16 {
+    @apply font-normal text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M14 {
+    @apply font-medium text-sm leading-6;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  /* 버튼 */
+  .btn-full {
+    @apply block w-full
+  }
+
+  .btn-primary {
+    @apply p-[14px] rounded-[6px] text-center shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
+    @apply font-semibold text-xl;
+    background-color: theme(colors.primary.100);
+    color: theme(colors.primary.900);
+    font-family: theme(fontFamily.pretendard);
+    border: 1px solid theme(colors.primary.900);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .btn-primary.disabled,
+  .btn-primary.disabled:hover {
+    @apply cursor-default;
+    background-color: theme(colors.primary.200);
+    color: theme(colors.primary.200);
+    border-color: theme(colors.primary.300);
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+      @apply p-[14px] rounded-[6px] text-center cursor-pointer;
+      @apply font-normal text-xl;;
+      background-color: theme(colors.primary.100);
+      color: theme(colors.primary.900);
+      font-family: theme(fontFamily.pretendard);
+      border: 1px solid theme(colors.primary.300);
+      transition: background-color 0.3s;
+  }
+
+  .btn-secondary.disabled,
+  .btn-secondary.disabled:hover {
+    @apply cursor-default;
+    background-color: theme(colors.primary.100);
+    color: theme(colors.primary.300);
+    border-color: theme(colors.primary.300);
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    box-shadow: none;
+    background-color: theme(colors.branding.300);
+  }
+}
+

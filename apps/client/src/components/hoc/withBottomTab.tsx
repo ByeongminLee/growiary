@@ -10,7 +10,9 @@ const withBottomTab = <T extends {}>(Component: ComponentType<T>) => {
   return function HocComponent(props: T) {
     const [viewHeight, setViewHeight] = useState('100%');
     const setVh = () => {
-      setViewHeight(`calc(${getVh()} - 80px - env(safe-area-inset-top))`);
+      setViewHeight(
+        `calc(${getVh()} - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom))`,
+      );
     };
 
     useLayoutEffect(() => {
@@ -27,7 +29,6 @@ const withBottomTab = <T extends {}>(Component: ComponentType<T>) => {
         <main
           style={{
             position: 'relative',
-            marginTop: 'env(safe-area-inset-top)',
             height: `${viewHeight}`,
           }}
         >

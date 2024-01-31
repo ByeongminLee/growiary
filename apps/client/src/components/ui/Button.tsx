@@ -20,7 +20,11 @@ const Button = ({
   };
 
   return (
-    <button type={type} className={cn('btn-primary', className)} onClick={handleClick}>
+    <button
+      type={type}
+      className={cn('btn-primary bg-primary-100', className)}
+      onClick={handleClick}
+    >
       {children}
     </button>
   );

@@ -14,3 +14,22 @@
 .swiper-horizontal > .swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal {
     bottom: -5px;
 }
+
+.mainCarousel.swiper {
+    width: 100%;
+    margin-top: env(safe-area-inset-top);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0);
+    height: calc(var(--vh) - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+@supports (height: 100svh) {
+    .mainCarousel.swiper {
+        margin-top: 0;
+        height: calc(100svh - 80px - env(safe-area-inset-top)) !important;
+        position: fixed;
+    }
+}
+
+.mainCarousel .swiper-slide {
+    width: calc(100% - 14px);
+}

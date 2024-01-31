@@ -21,6 +21,9 @@ const config: Config = {
         temp: {
           img: '#D9D9D9',
         },
+        opacity: {
+          70: '#FFFFFFB2',
+        },
         branding: {
           900: '#025034',
           800: '#247864',

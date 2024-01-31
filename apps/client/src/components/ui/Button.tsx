@@ -22,7 +22,7 @@ const Button = ({
   return (
     <button
       type={type}
-      className={cn('btn-primary bg-primary-100', className)}
+      className={`${/(btn-secondary)/.test(className) ? className : className + ' btn-primary bg-primary-100 btn-full'}`}
       onClick={handleClick}
     >
       {children}

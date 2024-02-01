@@ -1,11 +1,10 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
-import OnboardView from '@/components/home/OnboardView';
-import ServiceTermView from '@/components/home/ServiceTermView';
 import MainView from '@/components/home/MainView';
 import { UserProfileDTO } from '@growiary/types';
 import { ApiError, ApiSuccess } from '@/types';
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 
 const getUserNickName = async (id: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
@@ -30,9 +29,9 @@ export default async function HomePage() {
         </Suspense>
       );
     } else {
-      return <ServiceTermView />;
+      redirect('/signup/agreement');
     }
   }
-
-  return <OnboardView />;
+  // redirect('/all');
+  redirect('/welcome');
 }

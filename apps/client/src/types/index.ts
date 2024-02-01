@@ -21,3 +21,5 @@ export type DiaryTemplate = {
   answerColor: string;
   charSrc: string;
 };
+
+export const RequiredAgreements = ['privacy', 'service'] as const;

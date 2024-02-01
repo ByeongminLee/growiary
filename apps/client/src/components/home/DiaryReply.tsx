@@ -7,6 +7,7 @@ type DiaryReplyProps = {
 };
 
 const DiaryReply = ({ template, response }: DiaryReplyProps) => {
+  // ToDo: 닉네임 변환
   return (
     <>
       <div className="flex justify-between items-end mb-5">

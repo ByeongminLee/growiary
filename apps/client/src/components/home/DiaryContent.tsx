@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/shadcn/button';
+import { DiaryTemplate } from '@/types';
 
 type DiaryContentProps = {
-  template: any;
+  template: DiaryTemplate;
   response: any;
 };
 const DiaryContent = ({ template, response }: DiaryContentProps) => {

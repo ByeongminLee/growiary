@@ -12,9 +12,10 @@ import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
+import { UserProfileDTO } from '@growiary/types';
 
 interface MainViewProps {
-  userProfile: any;
+  userProfile: UserProfileDTO;
   maxHeight: string;
 }
 

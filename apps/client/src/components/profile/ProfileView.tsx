@@ -35,7 +35,6 @@ const ProfileView = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     const input = (e.target as HTMLFormElement).username.value;
     if (!session || !input) return;
 
@@ -54,56 +53,60 @@ const ProfileView = () => {
   };
 
   const handleClickLogOut = () => {
+    console.log('hi');
+    sessionStorage.clear();
     signOut({ callbackUrl: '/' });
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-start items-center">
-          {isChangeNickname ? (
-            <Input
-              name="username"
-              disabled={!isChangeNickname}
-              defaultValue={userProfile?.userName}
-            />
-          ) : (
-            <div className="font-p-M24">
-              <span className="text-sub-yellow mr-[5px]">{userProfile?.userName}</span>님
-            </div>
-          )}
-        </div>
-        <div>{session?.user?.email}</div>
-        <div>
-          <div className="flex items-center h-12 space-x-2">
-            <div className="grow flex items-center">
-              <Label htmlFor="service" className="font-p-R18 text-primary-800">
-                (필수) 서비스 이용약관
-              </Label>
-              <ConfirmModal title="서비스 이용약관" button={<Union />}>
-                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
-                is ContentHere is ContentHere is ContentHere is Content
-              </ConfirmModal>
-            </div>
-          </div>
-          <div className="flex items-center h-12 space-x-2">
-            <div className="grow flex items-center">
-              <Label htmlFor="privacy" className="font-p-R18 text-primary-800">
-                (필수) 개인정보 처리방침
-              </Label>
-              <ConfirmModal title="개인정보 처리방침" button={<Union />}>
-                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
-                is ContentHere is ContentHere is ContentHere is Content
-              </ConfirmModal>
-            </div>
-          </div>
-        </div>
-        {isChangeNickname && <Button type="submit">완료</Button>}
-      </form>
-      {!isChangeNickname && <Button onClick={handleClickChangeName}>수정</Button>}
-      <Button onClick={handleClickLogOut}>로그아웃</Button>
+      {/*<form onSubmit={handleSubmit}>*/}
+      {/*  <div className="flex justify-start items-center">*/}
+      {/*    {isChangeNickname ? (*/}
+      {/*      <Input*/}
+      {/*        name="username"*/}
+      {/*        disabled={!isChangeNickname}*/}
+      {/*        defaultValue={userProfile?.userName}*/}
+      {/*      />*/}
+      {/*    ) : (*/}
+      {/*      <div className="font-p-M24">*/}
+      {/*        <span className="text-sub-yellow mr-[5px]">{userProfile?.userName}</span>님*/}
+      {/*      </div>*/}
+      {/*    )}*/}
+      {/*  </div>*/}
+      {/*  <div>{session?.user?.email}</div>*/}
+      {/*  <div>*/}
+      {/*    <div className="flex items-center h-12 space-x-2">*/}
+      {/*      <div className="grow flex items-center">*/}
+      {/*        <Label htmlFor="service" className="font-p-R18 text-primary-800">*/}
+      {/*          (필수) 서비스 이용약관*/}
+      {/*        </Label>*/}
+      {/*        <ConfirmModal title="서비스 이용약관" button={<Union />}>*/}
+      {/*          ContentHere is ContentHere is Content Here is ContentHere is ContentHere*/}
+      {/*          is ContentHere is ContentHere is ContentHere is Content*/}
+      {/*        </ConfirmModal>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*    <div className="flex items-center h-12 space-x-2">*/}
+      {/*      <div className="grow flex items-center">*/}
+      {/*        <Label htmlFor="privacy" className="font-p-R18 text-primary-800">*/}
+      {/*          (필수) 개인정보 처리방침*/}
+      {/*        </Label>*/}
+      {/*        <ConfirmModal title="개인정보 처리방침" button={<Union />}>*/}
+      {/*          ContentHere is ContentHere is Content Here is ContentHere is ContentHere*/}
+      {/*          is ContentHere is ContentHere is ContentHere is Content*/}
+      {/*        </ConfirmModal>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*  {isChangeNickname && <Button type="submit">완료</Button>}*/}
+      {/*</form>*/}
+      {/*{!isChangeNickname && <Button onClick={handleClickChangeName}>수정</Button>}*/}
+      <Button type="button" onClick={handleClickLogOut}>
+        로그아웃
+      </Button>
     </>
   );
 };
 
-export default withUserProfile(ProfileView);
+export default ProfileView;

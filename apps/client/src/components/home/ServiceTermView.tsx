@@ -2,8 +2,8 @@
 
 import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
-import { FormEvent, useRef, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -18,6 +18,7 @@ type FormType = {
 };
 const ServiceTermView = () => {
   const router = useRouter();
+  const profile = useRecoilValue(userProfileState);
   const formRef = useRef<HTMLFormElement>(null);
   const requiredListRef = useRef<(keyof FormType)[]>(['service', 'privacy']);
   const [checkboxState, setCheckboxState] = useState<FormType>({
@@ -50,7 +51,7 @@ const ServiceTermView = () => {
       agreeTerms: { ...newUserProfile },
     }));
 
-    router.push('/login/nickname');
+    router.push('/signup/profile');
   };
 
   const handleClickTerm = (e: React.MouseEvent, type: keyof FormType) => {
@@ -79,6 +80,12 @@ const ServiceTermView = () => {
       }));
     }
   };
+
+  useEffect(() => {
+    if (profile.userName) {
+      router.push('/');
+    }
+  }, []);
 
   return (
     <section className="layout-full">

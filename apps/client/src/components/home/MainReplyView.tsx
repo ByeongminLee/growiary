@@ -7,6 +7,8 @@ import Image from 'next/image';
 import withUserProfile from '@/components/hoc/withUserProfile';
 import withBottomTab from '@/components/hoc/withBottomTab';
 import { Button } from '@/components/ui/shadcn/button';
+import DiaryContent from '@/components/home/DiaryContent';
+import DiaryReply from '@/components/home/DiaryReply';
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
 }
@@ -46,29 +48,13 @@ const MainReplyView = ({ userProfile }: MainReplyViewProps) => {
         {date?.[0]}년 {date && getTwoDigitNum(date?.[1])}월{' '}
         {date && getTwoDigitNum(date?.[2])}일 {date?.[3]}
       </p>
-      <section>
-        <h2 style={{ color: `${template.questionColor}` }} className="font-p-M20 mb-4">
-          {template.question}
-        </h2>
-        <div style={{ color: `${template.answerColor}` }} className="font-p-R17">
-          {response.content}
-        </div>
-        <Button>그루미에게 답장받기</Button>
-      </section>
+      <div>
+        <DiaryContent template={template} response={response} />
+      </div>
       <section className="mt-14 p-3">
-        <div className="flex justify-between items-end mb-5">
-          <h2 className="text-sub-indigo font-p-M20">To. 그루어리에게</h2>
-          <Image
-            className="mr-4"
-            src="/assets/growmi/green.svg"
-            width={57}
-            height={58}
-            alt="growmi"
-          />
-        </div>
-        <div className="text-grayscale-800 font-p-R17 bg-opacity-70 p-6 mb-10 rounded-2xl relative after:content-[''] after:absolute after:top-[-16px] after:right-14 after:w-[18px] after:h-[12px] after:bg-transparent after:border-8 after:border-transparent after:border-r-opacity-70 after:border-r-[11px] after:rounded-tr-[25px] after:border-b-opacity-70">
-          {response.reply}
-        </div>
+        <DiaryReply template={template} response={response} />
+      </section>
+      <section>
         <form className="flex flex-col align-center justify-center">
           <div className="flex justify-center items-center">
             <Image src="/assets/growmi/pink.svg" width={48} height={48} alt="growmi" />

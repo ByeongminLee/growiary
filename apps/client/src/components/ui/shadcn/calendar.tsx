@@ -44,7 +44,7 @@ function Calendar({
         head_cell:
           'grow flex justify-center text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
         row: 'flex w-full mt-2',
-        cell: 'grow flex justify-center h-10 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 first:[&:has([aria-selected])]:rounded-full last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+        cell: 'grow flex justify-center h-10 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 first:[&:has([aria-selected])]:rounded-full last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-0',
         day: cn(
           buttonVariants({ variant: 'ghost' }),
           'relative leading-[40px] rounded-full border-0 w-10 p-0 h-10 font-normal aria-selected:opacity-100',

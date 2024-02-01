@@ -1,37 +1,60 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 import MainView from '@/components/home/MainView';
-import { UserProfileDTO } from '@growiary/types';
-import { ApiError, ApiSuccess } from '@/types';
-import { Suspense } from 'react';
+import { ApiResponse, ProfileResType, RecordType } from '@/types';
 import { redirect } from 'next/navigation';
-
-const getUserNickName = async (id: string) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-    headers: {
-      Authorization: id,
-    },
-  });
-  return await response.json();
-};
+import { requestApi } from '@/utils/requestApi';
+import { getDateToYMD } from '@/utils/getDateFormat';
+import MainReplyView from '@/components/home/MainReplyView';
+import { Suspense } from 'react';
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
+  const getProfile = async () =>
+    await requestApi('/user', {
+      id: session?.id,
+    });
+  const getRecord = async () =>
+    await requestApi('/post/filter', {
+      method: 'POST',
+      id: session?.id,
+      body: {
+        startDate: getDateToYMD(new Date()),
+        endDate: getDateToYMD(new Date(new Date().getTime() + 60 * 60 * 24)),
+      },
+    });
   if (session) {
-    const status: ApiSuccess<{ profile: UserProfileDTO }> | ApiError =
-      await getUserNickName(session.id);
+    const [profileRes, recordRes] = (await Promise.all([getProfile(), getRecord()])) as [
+      ApiResponse<ProfileResType>,
+      ApiResponse<RecordType[]>,
+    ];
 
-    if ('data' in status) {
-      return (
-        <Suspense fallback={<div>Loading...</div>}>
-          <MainView userProfile={status.data.profile} />
-        </Suspense>
-      );
+    if ('data' in profileRes && profileRes.data.profile.userName) {
+      if ('data' in recordRes && recordRes.data[0]?.postId) {
+        // 일기 기록이 있으면 답장 화면
+        return (
+          <Suspense fallback={<div>Loading Main Answer...</div>}>
+            <MainReplyView
+              userProfile={profileRes.data.profile}
+              replyData={recordRes.data}
+            />
+          </Suspense>
+        );
+      } else {
+        // 일기 기록이 없으면 작성 화면
+        return (
+          <Suspense fallback={<div>Loading Main Record...</div>}>
+            <MainView />;
+          </Suspense>
+        );
+      }
     } else {
+      // userName 없으면 서비스 동의 화면
       redirect('/signup/agreement');
     }
   }
-  // redirect('/all');
+
+  // session.id 없으면 온보딩 화면
   redirect('/welcome');
 }

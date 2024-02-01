@@ -16,18 +16,8 @@ export const isValidDate = (givenDate: string, sep: string = '-') => {
   return date >= 1 && date <= new Date(year, month - 1, 0, 0, 0, 0).getDate();
 };
 
-export const getDateArrToStr = (
-  givenDate: string | null,
-  sep?: string,
-): [number, number, number, string] => {
-  if (givenDate && isValidDate(givenDate)) {
-    const [year, month, date] = givenDate.split(sep || '-').map(v => +v);
-    const day = Weekdays[new Date(year, month, date, 0, 0, 0).getDay()];
-    return [year, month, date, day];
-  }
-  const fullDate = new Date();
-  const day = Weekdays[fullDate.getDay()];
-  return [fullDate.getFullYear(), fullDate.getMonth() + 1, fullDate.getDate(), day];
+export const getDateToYMD = (givenDate: Date) => {
+  return `${givenDate.getFullYear()}-${givenDate.getMonth() + 1}-${givenDate.getDate()}`;
 };
 
 export const getTwoDigitNum = (num: number) => {

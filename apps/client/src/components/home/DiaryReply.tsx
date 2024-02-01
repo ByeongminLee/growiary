@@ -1,8 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
+import { DiaryTemplate } from '@/types';
 
 type DiaryReplyProps = {
-  template: any;
+  template: DiaryTemplate;
   response: any;
 };
 

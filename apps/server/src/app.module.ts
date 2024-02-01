@@ -3,11 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { OpenAiModule } from './open-ai/open-ai.module';
 import * as admin from 'firebase-admin';
 import config from './config';
 
 @Module({
-  imports: [UserModule, PostModule],
+  imports: [UserModule, PostModule, OpenAiModule],
   controllers: [AppController],
   providers: [AppService],
 })

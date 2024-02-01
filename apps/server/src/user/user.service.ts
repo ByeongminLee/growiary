@@ -8,6 +8,10 @@ import { dateConverter } from '../utils';
 export class UserService {
   constructor(@Inject(REQUEST) private readonly request: { user: any }) {}
 
+  /**
+   * 특정 유저의 정보를 가져온다.
+   * @returns user및 profile 정보
+   */
   async findUser() {
     try {
       const { userId } = this.request.user;
@@ -44,6 +48,11 @@ export class UserService {
     }
   }
 
+  /**
+   * 유저의 프로필을 생성합니다
+   * @param userProfileDTO 유저 프로필 생성 DTO
+   * @returns 유저 프로필 작성 결과
+   */
   async createUserProfile(userProfileDTO: UserProfileDTO) {
     try {
       const { userId } = this.request.user;
@@ -69,6 +78,11 @@ export class UserService {
     }
   }
 
+  /**
+   * 유저 프로필을 업데이트합니다
+   * @param userProfileUpdateDTO 유저 프로필 업데이트 DTO
+   * @returns 유저 프로필 업데이트 정보
+   */
   async updateUserProfile(userProfileUpdateDTO: UserProfileUpdateDTO) {
     try {
       const { userId } = this.request.user;

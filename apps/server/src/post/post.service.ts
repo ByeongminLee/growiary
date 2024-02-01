@@ -2,12 +2,16 @@ import { CreatePostDTO, FilterFindPostDTO } from '@growiary/types';
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { firestore } from 'firebase-admin';
-import { dateConverter } from '../utils';
+import { dateConverter, dataFromOpenAIResult } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
+import { OpenAiService } from '../open-ai/open-ai.service';
 
 @Injectable()
 export class PostService {
-  constructor(@Inject(REQUEST) private readonly request: { user: any }) {}
+  constructor(
+    @Inject(REQUEST) private readonly request: { user: any },
+    private readonly openAiService: OpenAiService,
+  ) {}
 
   async findPost() {
     const { userId } = this.request.user;
@@ -76,6 +80,38 @@ export class PostService {
         title: createPostDTO.title,
         content: createPostDTO.content,
         template: createPostDTO.template,
+        createAt: new Date(),
+        updateAt: new Date(),
+      },
+    };
+
+    await userPostRef.set(data, { merge: true });
+
+    return { status: 200, data };
+  }
+
+  async createPostWithOpenAI(createPostDTO: CreatePostDTO) {
+    const { userId } = this.request.user;
+
+    const userPostRef = firestore().collection('posts').doc(userId);
+
+    const postKey = uuidv4();
+
+    const aiAnswer = await this.openAiService.requestGrowiaryAI(createPostDTO.content);
+
+    const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
+
+    const data = {
+      [postKey]: {
+        title: createPostDTO.title,
+        content: createPostDTO.content,
+        template: createPostDTO.template,
+        answer: content,
+        ai: {
+          id,
+          created,
+          usage,
+        },
         createAt: new Date(),
         updateAt: new Date(),
       },

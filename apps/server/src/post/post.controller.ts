@@ -22,4 +22,9 @@ export class PostController {
   createPost(@Body() createPostDTO: CreatePostDTO) {
     return this.postService.createPost(createPostDTO);
   }
+
+  @Post('ai')
+  createPostWithOpenAI(@Body() createPostDTO: CreatePostDTO) {
+    return this.postService.createPostWithOpenAI(createPostDTO);
+  }
 }

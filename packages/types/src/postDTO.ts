@@ -1,7 +1,7 @@
-export type createPostDTO = {
-  title: string;
+export type CreatePostDTO = {
+  title?: string;
   content: string;
-  template: string;
+  template?: string;
 };
 
 export type FindPostDTO = {
@@ -16,3 +16,10 @@ export type Post = {
   createAt: string;
   updateAt: string;
 };
+
+export type FilterFindPostDTO = {
+  startDate: string;
+  endDate: string;
+};
+
+export type FeedbackType = 'GOOD' | 'BAD';

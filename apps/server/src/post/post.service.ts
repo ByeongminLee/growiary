@@ -1,4 +1,4 @@
-import { CreatePostDTO, FilterFindPostDTO } from '@growiary/types';
+import { CreatePostDTO, FeedbackType, FilterFindPostDTO } from '@growiary/types';
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { firestore } from 'firebase-admin';
@@ -27,11 +27,11 @@ export class PostService {
       if (userPostsSnapshot.exists) {
         const userPostsData = userPostsSnapshot.data();
 
-        const postsArray = Object.keys(userPostsData).map(date => ({
-          date,
-          ...userPostsData[date],
-          createAt: dateConverter(userPostsData[date].createAt),
-          updateAt: dateConverter(userPostsData[date].updateAt),
+        const postsArray = Object.keys(userPostsData).map(postId => ({
+          postId,
+          ...userPostsData[postId],
+          createAt: dateConverter(userPostsData[postId].createAt),
+          updateAt: dateConverter(userPostsData[postId].updateAt),
         }));
 
         return { status: 200, data: postsArray };
@@ -50,6 +50,7 @@ export class PostService {
    * @returns 필터링된 user posts
    */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
+    console.log('test');
     const { startDate, endDate } = filterFindPostDTO;
     const { userId } = this.request.user;
     const userPostRef = firestore().collection('posts').doc(userId);
@@ -57,24 +58,25 @@ export class PostService {
     const userPostsDoc = await userPostRef.get();
     const userPostsData = userPostsDoc.data();
 
-    const filteredPosts = {};
+    const filteredPosts = [];
 
-    Object.keys(userPostsData).forEach(timestamp => {
-      const post = userPostsData[timestamp];
+    Object.keys(userPostsData).forEach(postId => {
+      const post = userPostsData[postId];
 
       const createAtDate = dateConverter(post.createAt);
       const updateAtDate = dateConverter(post.updateAt);
 
       if (createAtDate >= new Date(startDate) && createAtDate < new Date(endDate)) {
-        filteredPosts[timestamp] = {
+        filteredPosts.push({
+          postId: postId,
           ...post,
           createAt: createAtDate,
           updateAt: updateAtDate,
-        };
+        });
       }
     });
 
-    return filteredPosts;
+    return { status: 200, data: filteredPosts };
   }
 
   /**
@@ -87,13 +89,11 @@ export class PostService {
 
     const userPostRef = firestore().collection('posts').doc(userId);
 
-    const postKey = uuidv4();
+    const postId = uuidv4();
 
     const data = {
-      [postKey]: {
-        title: createPostDTO.title,
-        content: createPostDTO.content,
-        template: createPostDTO.template,
+      [postId]: {
+        ...createPostDTO,
         createAt: new Date(),
         updateAt: new Date(),
       },
@@ -101,7 +101,12 @@ export class PostService {
 
     await userPostRef.set(data, { merge: true });
 
-    return { status: 200, data };
+    const returnData = {
+      postId,
+      ...data[postId],
+    };
+
+    return { status: 200, data: returnData };
   }
 
   /**
@@ -114,17 +119,15 @@ export class PostService {
 
     const userPostRef = firestore().collection('posts').doc(userId);
 
-    const postKey = uuidv4();
+    const postId = uuidv4();
 
     const aiAnswer = await this.openAiService.requestGrowiaryAI(createPostDTO.content);
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 
     const data = {
-      [postKey]: {
-        title: createPostDTO.title,
-        content: createPostDTO.content,
-        template: createPostDTO.template,
+      [postId]: {
+        ...createPostDTO,
         answer: content,
         ai: {
           id,
@@ -138,6 +141,36 @@ export class PostService {
 
     await userPostRef.set(data, { merge: true });
 
-    return { status: 200, data };
+    const returnData = {
+      postId,
+      ...data[postId],
+    };
+
+    return { status: 200, data: returnData };
+  }
+
+  async postFeedback(postId: string, feedback: FeedbackType) {
+    const { userId } = this.request.user;
+    try {
+      const userPostRef = firestore().collection('posts').doc(userId);
+      const userPostsSnapshot = await userPostRef.get();
+      if (userPostsSnapshot.exists) {
+        const userPostsData = userPostsSnapshot.data();
+
+        if (userPostsData[postId]) {
+          userPostsData[postId].feedback = feedback;
+
+          await userPostRef.set(userPostsData, { merge: true });
+
+          return { status: 200, message: 'Feedback added successfully' };
+        } else {
+          return { status: 404, message: 'Post not found for the user' };
+        }
+      } else {
+        return { status: 404, message: 'User has no posts' };
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
   }
 }

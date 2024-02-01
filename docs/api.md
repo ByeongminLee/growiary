@@ -124,17 +124,17 @@
 
   `@body`
 
-  ```json
+  ```typescript
   {
-    title: string;
+    title?: string;
     content: string;
-    template: string;
+    template?: string;
   }
   ```
 
 <br/>
 
-<img src="https://img.shields.io/badge/%7F%20%20GET%20%20%20%7F-/post/filter-e1e1e1?labelColor=46C487&style=flat-square" height="25"/>
+<img src="https://img.shields.io/badge/%7F%20%20POST%20%7F-/post/filter-e1e1e1?labelColor=219BFD&style=flat-square" height="25"/>
 
 > 필터를 사용하여 사용자 요청
 
@@ -142,7 +142,7 @@
 
   `@body`
 
-  ```json
+  ```typescript
   {
     // yyyy-mm-dd
     startDate: string;
@@ -160,11 +160,11 @@
 
   `@body`
 
-  ```json
+  ```typescript
   {
-    title: string;
+    title?: string;
     content: string;
-    template: string;
+    template?: string;
   }
   ```
 
@@ -174,7 +174,8 @@
   {
     "status": 200,
     "data": {
-      "9073f424-9108-4862-9fd1-370c90657ff2": {
+       {
+        "postId":"9073f424-9108-4862-9fd1-370c90657ff2",
         "title": "제목",
         "content": "다이어리 작성 내용",
         "template": "템플릿",
@@ -194,3 +195,29 @@
     }
   }
   ```
+
+<br/>
+
+<img src="https://img.shields.io/badge/%7F%20%20POST%20%7F-/post/feedback-e1e1e1?labelColor=219BFD&style=flat-square" height="25"/>
+
+> post에 피드백 추가
+
+- request
+
+  `@body`
+
+  ```typescript
+  {
+    postId: string;
+    feedback: 'GOOD' | 'BAD';
+  }
+  ```
+
+- response
+
+```json
+{
+  "status": 200,
+  "message": "Feedback added successfully"
+}
+```

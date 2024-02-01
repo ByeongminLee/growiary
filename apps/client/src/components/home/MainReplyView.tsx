@@ -57,9 +57,14 @@ const MainReplyView = ({ userProfile }: MainReplyViewProps) => {
       <section>
         <form className="flex flex-col align-center justify-center">
           <div className="flex justify-center items-center">
-            <Image src="/assets/growmi/pink.svg" width={48} height={48} alt="growmi" />
+            <Image
+              src="/assets/growmi/lightpink.svg"
+              width={48}
+              height={48}
+              alt="growmi"
+            />
             <p className="ml-2 font-p-M20" style={{ color: template.answerColor }}>
-              이 답변이 마음에 들었나요?
+              이 답장이 마음에 들었나요?
             </p>
           </div>
           <div className="flex gap-2 justify-center h-12">

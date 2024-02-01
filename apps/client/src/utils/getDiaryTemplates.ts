@@ -1,11 +1,12 @@
 import config from '../../tailwind.config';
+import { DiaryTemplate } from '@/types';
 
 const colors = config?.theme?.extend?.colors as {
   [key: string]: {
     [key: string]: string;
   };
 };
-export const diaryTemplates = [
+export const diaryTemplates: DiaryTemplate[] = [
   {
     id: 1,
     bgColor: colors?.sub?.lightYellow,
@@ -13,7 +14,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.indigo,
     placeholder: 'A. 그루미와 함께 대화하다보면  어느샌가 성장해 있을 거에요',
     answerColor: colors?.primary?.['500'],
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/pink.svg',
   },
   {
     id: 2,
@@ -22,7 +23,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.indigo,
     placeholder: 'A. 나를 위해 해준 일은...',
     answerColor: colors?.sub?.indigo,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/pink_ribbon.svg',
   },
   {
     id: 3,
@@ -31,7 +32,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.blue,
     placeholder: 'A. 오늘 이슈는...',
     answerColor: colors?.sub?.blue,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/green_issue.svg',
   },
   {
     id: 4,
@@ -40,7 +41,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.deepRed,
     placeholder: 'A. 오늘 가장 잘한 일은...',
     answerColor: colors?.sub?.deepRed,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/clap.svg',
   },
   {
     id: 5,
@@ -49,7 +50,7 @@ export const diaryTemplates = [
     questionColor: colors?.priary?.['900'],
     placeholder: 'A. 오늘 가장 영향을 준 사람은...',
     answerColor: colors?.grayscale?.['900'],
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/sun.svg',
   },
   {
     id: 6,
@@ -58,7 +59,7 @@ export const diaryTemplates = [
     questionColor: colors?.branding?.['800'],
     placeholder: 'text',
     answerColor: colors?.branding?.['800'],
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/wings.svg',
   },
   {
     id: 7,
@@ -76,7 +77,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.lightGreen,
     placeholder: 'text',
     answerColor: colors?.sub?.lightGreen,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/sprout.svg',
   },
   {
     id: 9,
@@ -85,7 +86,7 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.indigo,
     placeholder: 'text',
     answerColor: colors?.sub?.indigo,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/worry.svg',
   },
   {
     id: 10,
@@ -94,6 +95,6 @@ export const diaryTemplates = [
     questionColor: colors?.sub?.turquoise,
     placeholder: 'text',
     answerColor: colors?.sub?.turquoise,
-    charSrc: '/assets/growmi/green_letter.svg',
+    charSrc: '/assets/growmi/curious.svg',
   },
 ];

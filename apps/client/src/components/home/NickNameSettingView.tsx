@@ -1,6 +1,5 @@
 'use client';
 
-import Button from '@/components/ui/Button';
 import React, { FormEvent, useRef, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
 import { useRecoilState } from 'recoil';
@@ -11,6 +10,7 @@ import Image from 'next/image';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { ApiResponse } from '@/types';
 import { UserProfileDTO } from '@growiary/types';
+import { Button } from '@/components/ui/shadcn/button';
 
 const NickNameSettingView = () => {
   const router = useRouter();

@@ -2,13 +2,13 @@
 
 import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
-import Button from '@/components/ui/Button';
 import { FormEvent, useRef, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
+import { Button } from '@/components/ui/shadcn/button';
 
 type FormType = {
   all: boolean;
@@ -153,10 +153,7 @@ const ServiceTermView = () => {
             </div>
           </div>
         </div>
-        <Button
-          type="submit"
-          className={`btn-secondary ${!getCheckedRequiredCount() ? 'disabled' : ''}`}
-        >
+        <Button type="submit" variant="secondary" disabled={!getCheckedRequiredCount()}>
           시작하기
         </Button>
       </form>

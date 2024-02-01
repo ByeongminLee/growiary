@@ -1,6 +1,5 @@
 'use client';
 import withUserProfile from '@/components/hoc/withUserProfile';
-import Button from '@/components/ui/Button';
 import { useSearchParams } from 'next/navigation';
 import { getDateArrToStr, getTwoDigitNum } from '@/utils/getDateFormat';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,6 +11,7 @@ import withBottomTab from '@/components/hoc/withBottomTab';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
+import { Button } from '@/components/ui/shadcn/button';
 
 interface MainViewProps {
   userProfile: any;

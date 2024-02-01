@@ -3,10 +3,10 @@ import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import { useEffect, useState } from 'react';
 import { UserProfileDTO } from '@growiary/types';
 import { getDateArrToStr, getTwoDigitNum } from '@/utils/getDateFormat';
-import Button from '@/components/ui/Button';
 import Image from 'next/image';
 import withUserProfile from '@/components/hoc/withUserProfile';
 import withBottomTab from '@/components/hoc/withBottomTab';
+import { Button } from '@/components/ui/shadcn/button';
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
 }
@@ -77,16 +77,10 @@ const MainReplyView = ({ userProfile }: MainReplyViewProps) => {
             </p>
           </div>
           <div className="flex gap-2 justify-center h-12">
-            <Button
-              className="btn-secondary flex items-center justify-center"
-              type="submit"
-            >
+            <Button variant="secondary" size="sm" type="submit">
               O
             </Button>
-            <Button
-              className="btn-secondary flex items-center justify-center"
-              type="submit"
-            >
+            <Button variant="secondary" size="sm" type="submit">
               X
             </Button>
           </div>

@@ -1,6 +1,5 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
-import Button from '@/components/ui/Button';
 import { FormEvent, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
@@ -11,6 +10,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
 import { ApiResponse } from '@/types';
 import { UserProfileDTO } from '@growiary/types';
+import { Button } from '@/components/ui/shadcn/button';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -98,20 +98,10 @@ const ProfileView = () => {
             </div>
           </div>
         </div>
-        {isChangeNickname && (
-          <Button type="submit" className="btn-full">
-            완료
-          </Button>
-        )}
+        {isChangeNickname && <Button type="submit">완료</Button>}
       </form>
-      {!isChangeNickname && (
-        <Button className="btn-full" onClick={handleClickChangeName}>
-          수정
-        </Button>
-      )}
-      <Button className="btn-full" onClick={handleClickLogOut}>
-        로그아웃
-      </Button>
+      {!isChangeNickname && <Button onClick={handleClickChangeName}>수정</Button>}
+      <Button onClick={handleClickLogOut}>로그아웃</Button>
     </>
   );
 };

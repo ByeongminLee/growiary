@@ -91,9 +91,7 @@ export class PostService {
 
     const data = {
       [postKey]: {
-        title: createPostDTO.title,
-        content: createPostDTO.content,
-        template: createPostDTO.template,
+        ...createPostDTO,
         createAt: new Date(),
         updateAt: new Date(),
       },
@@ -122,9 +120,7 @@ export class PostService {
 
     const data = {
       [postKey]: {
-        title: createPostDTO.title,
-        content: createPostDTO.content,
-        template: createPostDTO.template,
+        ...createPostDTO,
         answer: content,
         ai: {
           id,

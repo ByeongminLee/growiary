@@ -13,6 +13,10 @@ export class PostService {
     private readonly openAiService: OpenAiService,
   ) {}
 
+  /**
+   * user의 모든 post를 가져온다.
+   * @returns user posts
+   */
   async findPost() {
     const { userId } = this.request.user;
     const userPostRef = firestore().collection('posts').doc(userId);
@@ -40,6 +44,11 @@ export class PostService {
     }
   }
 
+  /**
+   * 유저의 post를 필터링하여 가져온다.
+   * @param filterFindPostDTO (startDate <= 값 < endDate)
+   * @returns 필터링된 user posts
+   */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
     const { startDate, endDate } = filterFindPostDTO;
     const { userId } = this.request.user;
@@ -68,6 +77,11 @@ export class PostService {
     return filteredPosts;
   }
 
+  /**
+   * 유저 post작성
+   * @param createPostDTO 유저가 작성한 post
+   * @returns post 작성 결과
+   */
   async createPost(createPostDTO: CreatePostDTO) {
     const { userId } = this.request.user;
 
@@ -90,6 +104,11 @@ export class PostService {
     return { status: 200, data };
   }
 
+  /**
+   * AI답변이 포함된 유저 post작성
+   * @param createPostDTO 유저가 작성한 post
+   * @returns post 작성 결과
+   */
   async createPostWithOpenAI(createPostDTO: CreatePostDTO) {
     const { userId } = this.request.user;
 

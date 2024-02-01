@@ -9,13 +9,13 @@ import Image from 'next/image';
 import { ChangeEvent, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
-import { requestApi } from '@/utils/requestApi';
 import { useSession } from 'next-auth/react';
 import { useFullStrDate } from '@/lib/useFullStrDate';
 import { UserProfileDTO } from '@growiary/types';
 import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState } from 'recoil';
 import { recordState } from '@/store';
+import { useFetch } from '@/lib/useFetch';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -30,6 +30,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
   const templateRef = useRef(1);
   const toastRef = useRef<HTMLDivElement>(null);
   const [toastContent, setToastContent] = useState('');
+  const requestApi = useFetch();
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -71,17 +72,16 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
 
     showToast('그루미가 답장을 보내고 있어요');
 
-    const response: ApiResponse<RecordType> = await requestApi('/post/ai', {
+    const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
       id: session?.id,
       body: {
-        title: 'tempTitle',
         content,
         template: templateRef.current.toString(),
       },
     });
 
-    if ('data' in response) {
+    if (response && 'data' in response) {
       location.href = `/`;
     } else {
       alert('문제 발생');

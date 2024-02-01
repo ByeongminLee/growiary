@@ -12,9 +12,13 @@ const DiaryContent = ({ template, response }: DiaryContentProps) => {
         {template.question}
       </h2>
       <div style={{ color: `${template.answerColor}` }} className="font-p-R17">
-        {response.content}
+        {response.content.split('\n').map((el: string, idx: number) => (
+          <p key={idx}>
+            {el}
+            <br />
+          </p>
+        ))}
       </div>
-      <Button>그루미에게 답장받기</Button>
     </>
   );
 };

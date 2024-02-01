@@ -3,13 +3,15 @@ export * from './RecordType';
 
 export type loginType = 'google' | 'naver' | 'kakao';
 
+export type ResponseStatus = 200 | 500 | 400 | 404;
+
 export type ApiError = {
-  status: 500 | 400 | 404;
+  status: ResponseStatus;
   message: string;
 };
 
 export type ApiSuccess<T> = {
-  status: 200;
+  status: ResponseStatus;
   data: T;
 };
 

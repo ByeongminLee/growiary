@@ -1,7 +1,9 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, UseGuards } from '@nestjs/common';
 import { OpenAiService } from './open-ai.service';
 import { PromptType } from './types';
+import { AdminGuard } from '../auth/admin.guard';
 
+@UseGuards(AdminGuard)
 @Controller('open-ai')
 export class OpenAiController {
   constructor(private readonly openAiService: OpenAiService) {}

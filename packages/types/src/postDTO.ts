@@ -21,3 +21,5 @@ export type FilterFindPostDTO = {
   startDate: string;
   endDate: string;
 };
+
+export type FeedbackType = 'GOOD' | 'BAD';

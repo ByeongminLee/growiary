@@ -26,3 +26,7 @@ export type RecordType = {
   answer: string;
   ai: UsageAiType;
 };
+
+export type CollectedRecordType = {
+  [key: string]: RecordType[];
+};

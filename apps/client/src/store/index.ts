@@ -1,9 +1,15 @@
 import { atom, AtomEffect } from 'recoil';
 import { UserProfileDTO } from '@growiary/types';
+import { CollectedRecordType } from '@/types';
 
 export type UserProfileStateType = {
   key: string;
   default: UserProfileDTO;
+};
+
+export type RecordStateType = {
+  key: string;
+  default: CollectedRecordType;
 };
 
 const sessionStorageEffect =
@@ -34,4 +40,10 @@ export const userProfileState = atom(<UserProfileStateType>{
     },
   },
   effects: [sessionStorageEffect('user_profile')],
+});
+
+export const recordState = atom(<RecordStateType>{
+  key: 'recordState',
+  default: {},
+  effects: [sessionStorageEffect('record')],
 });

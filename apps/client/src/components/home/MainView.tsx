@@ -1,5 +1,4 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -14,7 +13,9 @@ import { requestApi } from '@/utils/requestApi';
 import { useSession } from 'next-auth/react';
 import { useFullStrDate } from '@/lib/useFullStrDate';
 import { UserProfileDTO } from '@growiary/types';
-import { ApiResponse } from '@/types';
+import { ApiResponse, RecordType } from '@/types';
+import { useRecoilState } from 'recoil';
+import { recordState } from '@/store';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -22,20 +23,34 @@ interface MainViewProps {
 }
 
 const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
-  const searchParams = useSearchParams();
-  const searchDate = searchParams.get('date');
   const { data: session, status } = useSession();
+  const [record, setRecord] = useRecoilState(recordState);
+  const [year, month, date, day] = useFullStrDate();
   const [content, setContent] = useState('');
-  const [year, month, date, day] = useFullStrDate(searchDate);
-  // const userProfile = useUserProfile(profile);
-  const [isSubmitWithUnderTen, setIsSubmitWithUnderTen] = useState(false);
   const templateRef = useRef(1);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const toastRef = useRef<HTMLDivElement>(null);
+  const [toastContent, setToastContent] = useState('');
+
+  const showToast = (content: string) => {
+    if (!toastRef.current) return;
+    const target = toastRef.current;
+    target.style.display = 'block';
+    setToastContent(content);
+    const timeoutId = setTimeout(() => {
+      target.style.display = 'none';
+      clearTimeout(timeoutId);
+    }, 3000);
+  };
 
   const handleChangeContent = (e: ChangeEvent) => {
     const value = (e.currentTarget as HTMLTextAreaElement).value;
 
-    if (value.length > 1000) return;
+    if (value.length === 1000) {
+      showToast('아쉽지만, 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
+      setContent(value);
+      return;
+    }
+
     setContent(value);
   };
 
@@ -45,12 +60,18 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
 
   const handleSubmit = async () => {
     if (content.length <= 10) {
-      setIsSubmitWithUnderTen(true);
+      showToast('그루미에게 답장을 받기 위해서는, 10자 이상의 메시지가 필요해요');
       return;
     }
-    setIsSubmitted(true);
 
-    const response: ApiResponse<{ postId: string }> = await requestApi('/post/ai', {
+    if (record[`${year}-${month}-${date}`]?.length) {
+      showToast('그루미의 답장은 하루에 한 번만 가능해요');
+      return;
+    }
+
+    showToast('그루미가 답장을 보내고 있어요');
+
+    const response: ApiResponse<RecordType> = await requestApi('/post/ai', {
       method: 'POST',
       id: session?.id,
       body: {
@@ -60,8 +81,8 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
       },
     });
 
-    if (response.status === 200) {
-      location.href = `/record/${response.data.postId}`;
+    if ('data' in response) {
+      location.href = `/`;
     } else {
       alert('문제 발생');
     }
@@ -138,13 +159,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
       >
         그루미에게 답장받기
       </Button>
-      {content.length >= 1000 && (
-        <Toast>아쉽지만, 1000자 이하의 메시지만 그루미에게 전달할 수 있어요</Toast>
-      )}
-      {isSubmitWithUnderTen && (
-        <Toast>그루미에게 답장을 받기 위해서는, 10자 이상의 메시지가 필요해요</Toast>
-      )}
-      {isSubmitted && <Toast>그루미가 답장을 보내고 있어요</Toast>}
+      <Toast ref={toastRef}>{toastContent}</Toast>
     </>
   );
 };

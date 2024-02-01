@@ -46,7 +46,6 @@ const MainView = ({ userProfile, maxHeight }: MainViewProps) => {
         style={{ height: maxHeight, pointerEvents: content ? 'none' : 'initial' }}
         grabCursor
         loop
-        onSlideChange={swiper => (swiper.allowSlidePrev = swiper.realIndex !== 0)}
       >
         {diaryTemplates.map((template, i) => (
           <SwiperSlide

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,7 +7,6 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
-import Union from '@/components/ui/icon/Union';
 
 interface ConfirmModalProps {
   title: string;

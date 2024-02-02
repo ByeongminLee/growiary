@@ -4,24 +4,27 @@ import MainView from '@/components/home/MainView';
 import { ApiResponse, ProfileResType, RecordType } from '@/types';
 import { redirect } from 'next/navigation';
 import { requestApi } from '@/utils/requestApi';
-import { getYMDFromDate } from '@/utils/getDateFormat';
+import { getTwoDigitNum, getYMDFromDate } from '@/utils/getDateFormat';
 import MainReplyView from '@/components/home/MainReplyView';
 import { Suspense } from 'react';
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
-
+  const today = new Date();
+  const tomorrow = new Date(today.getTime() + 60 * 60 * 24 * 1000);
   const getProfile = async () =>
     await requestApi('/user', {
       id: session?.id,
     });
+  const startDate = `${today.getFullYear()}-${getTwoDigitNum(today.getMonth() + 1)}-${getTwoDigitNum(today.getDate())}`;
+  const endDate = `${tomorrow.getFullYear()}-${getTwoDigitNum(tomorrow.getMonth() + 1)}-${getTwoDigitNum(tomorrow.getDate())}`;
   const getRecord = async () =>
     await requestApi('/post/filter', {
       method: 'POST',
       id: session?.id,
       body: {
-        startDate: getYMDFromDate(new Date()),
-        endDate: getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24)),
+        startDate,
+        endDate,
       },
     });
   if (session) {

@@ -96,7 +96,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
       method: 'POST',
       id: session?.id,
       body: {
-        content,
+        content: content.content,
         template: templateRef.current.toString(),
       },
     });

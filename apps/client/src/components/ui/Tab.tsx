@@ -1,20 +1,22 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 type TabType = 'home' | 'calendar' | 'profile';
 const Tab = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
+  const pathname = usePathname();
   const tabs = [
     { name: 'home', href: '/' },
     { name: 'calendar', href: '/calendar' },
     { name: 'profile', href: '/profile' },
   ] as { name: TabType; href: string }[];
-  const handleClick = (path: TabType) => {
-    setActiveTab(path);
-  };
+
+  useEffect(() => {
+    console.log(pathname);
+  }, [pathname]);
 
   return (
     <nav
@@ -30,12 +32,10 @@ const Tab = () => {
             <Link
               className="w-full h-full flex justify-center items-center"
               href={tab.href}
-              onClick={() => handleClick(tab.name)}
             >
               <Image
-                className={activeTab === tab.name ? 'active' : 'none'}
                 src={
-                  activeTab === tab.name
+                  pathname === tab.href
                     ? `/assets/icons/${tab.name}_black.svg`
                     : `/assets/icons/${tab.name}.svg`
                 }

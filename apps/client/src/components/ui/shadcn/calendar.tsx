@@ -2,35 +2,39 @@
 
 import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, MonthChangeEventHandler } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/shadcn/button';
 import { getDate, getMonth, getYear } from 'date-fns';
-import { Weekdays } from '@/utils/getDateFormat';
+import { getTwoDigitNum, getYMDFromDate, Weekdays } from '@/utils/getDateFormat';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { recordState } from '@/store';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
-  repliedDays?: Date[];
+  repliedDays?: string[];
+  onMonthChange: MonthChangeEventHandler;
 };
 
 function Calendar({
   className,
   classNames,
+  repliedDays = [],
   showOutsideDays = false,
+  onMonthChange,
   ...props
 }: CalendarProps) {
-  const repliedDays = (props.repliedDays || [new Date(2024, 1, 12, 0, 0, 0)]).map(v =>
-    v.toString(),
-  );
   return (
     <DayPicker
+      onMonthChange={onMonthChange}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'grow space-y-4',
-        caption: 'flex justify-center pt-1 relative items-center',
+        caption: 'flex justify-center pt-1 relative items-baseline',
         caption_label: 'text-sm font-medium',
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
@@ -64,31 +68,29 @@ function Calendar({
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
         CaptionLabel: ({ ...props }) => {
+          const month = getTwoDigitNum(props.displayMonth.getMonth() + 1);
+
           return (
             <div className="font-p-R18 text-grayscale-800">
               {getYear(props.displayMonth)}년 {getMonth(props.displayMonth) + 1}월의 답장
+              <div className="relative flex justify-center">
+                <Image
+                  className="relative"
+                  src="/assets/icons/green_growmi.svg"
+                  alt="횟수"
+                  width={74}
+                  height={76}
+                />
+                <span className="absolute top-[27px] left-0 right-0 transform- text-center font-p-M20 text-primary-900">
+                  {repliedDays.filter(date => date.slice(5, 7) === month).length}회
+                </span>
+              </div>
             </div>
           );
         },
         Head: () => {
           return (
             <thead className="rdp-head">
-              <tr className="flex justify-center">
-                <td>
-                  <div className="relative">
-                    <Image
-                      className="relative"
-                      src="/assets/icons/green_growmi.svg"
-                      alt="횟수"
-                      width={74}
-                      height={76}
-                    />
-                    <span className="absolute top-[27px] left-0 right-0 transform- text-center font-p-M20 text-primary-900">
-                      14회
-                    </span>
-                  </div>
-                </td>
-              </tr>
               <tr className="flex w-full mt-2">
                 {Weekdays.map(v => (
                   <th
@@ -104,13 +106,14 @@ function Calendar({
           );
         },
         DayContent: ({ ...props }) => {
-          const isReplied = repliedDays.includes(props.date.toString().trim());
           return (
             <>
-              {getDate(props.date).toString()}
-              {isReplied && (
-                <span className="block absolute top-0 left-[50%] translate-x-[-50%]	w-1.5 h-1.5 rounded-full bg-[#16E25B]"></span>
-              )}
+              <div>
+                {getDate(props.date).toString()}
+                {repliedDays?.includes(getYMDFromDate(props.date)) && (
+                  <div className="block absolute top-0 left-[50%] translate-x-[-50%]	w-1.5 h-1.5 rounded-full bg-[#16E25B]"></div>
+                )}
+              </div>
               {props.activeModifiers.today && (
                 <Image
                   width={21}

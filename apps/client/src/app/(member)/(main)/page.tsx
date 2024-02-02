@@ -4,7 +4,7 @@ import MainView from '@/components/home/MainView';
 import { ApiResponse, ProfileResType, RecordType } from '@/types';
 import { redirect } from 'next/navigation';
 import { requestApi } from '@/utils/requestApi';
-import { getDateToYMD } from '@/utils/getDateFormat';
+import { getYMDFromDate } from '@/utils/getDateFormat';
 import MainReplyView from '@/components/home/MainReplyView';
 import { Suspense } from 'react';
 
@@ -20,8 +20,8 @@ export default async function HomePage() {
       method: 'POST',
       id: session?.id,
       body: {
-        startDate: getDateToYMD(new Date()),
-        endDate: getDateToYMD(new Date(new Date().getTime() + 60 * 60 * 24)),
+        startDate: getYMDFromDate(new Date()),
+        endDate: getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24)),
       },
     });
   if (session) {
@@ -57,4 +57,5 @@ export default async function HomePage() {
 
   // session.id 없으면 온보딩 화면
   redirect('/welcome');
+  // redirect('/all');
 }

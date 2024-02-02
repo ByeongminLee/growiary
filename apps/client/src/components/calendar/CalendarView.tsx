@@ -1,37 +1,38 @@
 'use client';
 import { Calendar } from '@/components/ui/shadcn/calendar';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
-import { getTwoDigitNum } from '@/utils/getDateFormat';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
+import { ApiResponse, CollectedRecordType, RecordType } from '@/types';
+import { useSession } from 'next-auth/react';
+import { useFullStrDate } from '@/lib/useFullStrDate';
+import { useFetch } from '@/lib/useFetch';
+import {
+  getDateFromServer,
+  getFirstAndLastDateFromSpecificDate,
+  getTwoDigitNum,
+  getYMDFromDate,
+} from '@/utils/getDateFormat';
+import { useRecoilState } from 'recoil';
+import { recordState } from '@/store';
 
 const CalendarView = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [date, setDate] = useState<[number, number, number, string] | null>(null);
-  const [response, setResponse] = useState({
-    date: '2024-01-24',
-    temId: 4,
-    content:
-      '오늘은 머티리얼 디자인 시스템을 공부했다. \n' +
-      '\n' +
-      '가장 기본이 되는 디자인 시스템인 만큼 많은 인사이트를 얻을 수 있었고 더 많은 디자인 케이스에 대해 공부할 수 있었다\n' +
-      '\n' +
-      '가장 기본이 되는 디자인 시스템인 만큼 많은 인사이트를 얻을 수 있었고 더 많은 디자인 케이스에 대해 공부할 수 있었다',
-    reply:
-      '멋진 일기네! 머티리얼 디자인 시스템을 \n' +
-      '공부하면서 많은 인사이트를 얻었다니 \n' +
-      '대단해. 계속해서 디자인 케이스에 대해 \n' +
-      '공부하는 것은 좋은 방법이야. 이렇게 기본적으로 중요한 개념들을 잘 익혀두면 다른 프로젝트에서도 유용하게 활용할 수 있을 거야. 공부하는 것은 좋은 방법이야.\n' +
-      '이렇게 기본적으로 중요한 개념들을 잘 익혀두면 다른 프로젝트에서도 유용하게 활용할 수 있을 거야.\n' +
-      '지금처럼 열심히 학습하고 발전하는 자세를 유지해줘.',
-  });
-  const template = diaryTemplates[response.temId];
+  const { data: session, status } = useSession();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const requestApi = useFetch();
+  const [year, month, date, day] = useFullStrDate(selectedDate);
+  const [records, setRecords] = useRecoilState(recordState);
+  const [response, setResponse] = useState<RecordType[] | undefined>([]);
+
+  const template = diaryTemplates[response?.[0]?.template || '1'];
+
   const [isMouseDown, setIsMouseDown] = useState(false);
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
+
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     setIsMouseDown(true);
@@ -69,18 +70,66 @@ const CalendarView = () => {
     e,
   ) => {
     setSelectedDate(selectedDay);
+    setResponse(records[getYMDFromDate(selectedDay)]);
+  };
+  const handleMonthChange = async (month: Date) => {
+    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
+    const response = (await requestApi('/post/filter', {
+      method: 'POST',
+      id: session?.id,
+      body: {
+        startDate: firstDate,
+        endDate: lastDate,
+      },
+    })) as ApiResponse<RecordType[]>;
+    if ('data' in response) {
+      const collectedData = response.data.reduce((f: CollectedRecordType, v) => {
+        const key = getDateFromServer(v.createAt);
+        return {
+          ...f,
+          [key]: [...(f[key] || []), v],
+        };
+      }, {} as CollectedRecordType);
+      setRecords(collectedData);
+      setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
+    }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (articleElRef.current) {
-      initArticleYPosRef.current = articleElRef.current.getBoundingClientRect().top;
+      initArticleYPosRef.current =
+        articleElRef.current?.previousElementSibling?.getBoundingClientRect().bottom || 0;
       articleElRef.current.style.top = initArticleYPosRef.current + 'px';
       document.documentElement.style.touchAction = 'none';
     }
-    // return () => {
-    // articleElRef.current = null;
-    // };
-  }, [articleElRef.current]);
+  }, [session?.id]);
+
+  useEffect(() => {
+    (async () => {
+      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
+      const response = (await requestApi('/post/filter', {
+        method: 'POST',
+        id: session?.id,
+        body: {
+          startDate: firstDate,
+          endDate: lastDate,
+        },
+      })) as ApiResponse<RecordType[]>;
+      if ('data' in response) {
+        const collectedData = response.data.reduce((f: CollectedRecordType, v) => {
+          const key = getDateFromServer(v.createAt);
+          return {
+            ...f,
+            [key]: [...(f[key] || []), v],
+          };
+        }, {} as CollectedRecordType);
+
+        setRecords(collectedData);
+
+        setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
+      }
+    })();
+  }, [session?.id]);
 
   return (
     <div
@@ -94,11 +143,23 @@ const CalendarView = () => {
       }}
     >
       <section>
-        <Calendar mode="single" selected={selectedDate} onSelect={handleSelectDate} />
+        {session?.id && (
+          <Calendar
+            mode="single"
+            repliedDays={Object.keys(records).filter(
+              date =>
+                date.slice(5, 7) ===
+                getTwoDigitNum(new Date(selectedDate).getMonth() + 1),
+            )}
+            selected={selectedDate}
+            onSelect={handleSelectDate}
+            onMonthChange={handleMonthChange}
+          />
+        )}
       </section>
       <article
         ref={articleElRef}
-        className="absolute transition-[top] ease-in-out duration-1000"
+        className="absolute inset-x-0 transition-[top] ease-in-out duration-1000"
         style={{
           marginTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
@@ -113,32 +174,35 @@ const CalendarView = () => {
         onTouchCancel={handleMouseUp}
         onTouchEnd={handleMouseUp}
       >
-        <section className="p-4 h-[70vh]">
-          <p className="pt-6 font-p-R16 text-primary-500 mb-1">
-            {date?.[0]}년 {date && getTwoDigitNum(date?.[1])}월{' '}
-            {date && getTwoDigitNum(date?.[2])}일 {date?.[3]}
-          </p>
-          <div>
-            <DiaryContent template={template} response={response} />
-          </div>
-        </section>
-        <section
-          className="absolute top-[70vh] transition-[top] ease-in-out duration-1000 p-8 h-screen border-t border-t-primary-500 p-3"
-          style={{
-            marginBottom: 'env(safe-area-inset-bottom)',
-            backgroundColor: `${template.bgColor}`,
-          }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseOut={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchMove={handleMouseMove}
-          onTouchCancel={handleMouseUp}
-          onTouchEnd={handleMouseUp}
-        >
-          <DiaryReply template={template} response={response} />
-        </section>
+        {response?.[0]?.content && (
+          <section className="p-4 h-[70vh]">
+            <p className="pt-6 font-p-R16 text-primary-500 mb-1">
+              {year}년 {month}월 {date}일 {day}
+            </p>
+            <div>
+              <DiaryContent template={template} response={response[0]} />
+            </div>
+          </section>
+        )}
+        {response?.[0]?.answer && (
+          <section
+            className="absolute top-[70vh] transition-[top] ease-in-out duration-1000 p-8 h-screen border-t border-t-primary-500 p-3"
+            style={{
+              marginBottom: 'env(safe-area-inset-bottom)',
+              backgroundColor: `${template.bgColor}`,
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseOut={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchMove={handleMouseMove}
+            onTouchCancel={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+          >
+            <DiaryReply template={template} response={response[0]} />
+          </section>
+        )}
       </article>
     </div>
   );

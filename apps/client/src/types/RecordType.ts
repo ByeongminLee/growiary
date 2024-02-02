@@ -22,9 +22,11 @@ export type RecordType = {
   postId: string;
   title?: string;
   content: string;
-  template: keyof DiaryTemplate;
-  answer: string;
-  ai: UsageAiType;
+  template: string;
+  updateAt: string;
+  createAt: string;
+  answer?: string;
+  ai?: UsageAiType;
 };
 
 export type CollectedRecordType = {

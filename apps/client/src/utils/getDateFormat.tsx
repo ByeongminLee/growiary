@@ -16,10 +16,24 @@ export const isValidDate = (givenDate: string, sep: string = '-') => {
   return date >= 1 && date <= new Date(year, month - 1, 0, 0, 0, 0).getDate();
 };
 
-export const getDateToYMD = (givenDate: Date) => {
-  return `${givenDate.getFullYear()}-${givenDate.getMonth() + 1}-${givenDate.getDate()}`;
+export const getYMDFromDate = (givenDate: Date) => {
+  return `${givenDate.getFullYear()}-${getTwoDigitNum(givenDate.getMonth() + 1)}-${getTwoDigitNum(givenDate.getDate())}`;
 };
 
 export const getTwoDigitNum = (num: number) => {
   return num.toString().padStart(2, '0');
+};
+
+export const getFirstAndLastDateFromSpecificDate = (selected: Date) => {
+  const year = selected.getFullYear();
+  const month = selected.getMonth() + 1;
+  const lastDate = new Date(year, month, 0, 0, 0, 0).getDate();
+  return {
+    firstDate: `${year}-${getTwoDigitNum(month)}-01`,
+    lastDate: `${year}-${getTwoDigitNum(month)}-${lastDate}`,
+  };
+};
+
+export const getDateFromServer = (date: string) => {
+  return date.slice(0, 10);
 };

@@ -56,5 +56,4 @@ export const recordState = atom(<RecordStateType>{
 export const recordWriteState = atom(<RecordWriteStateType>{
   key: 'recordWriteState',
   default: '',
-  effects: [sessionStorageEffect('record_writing')],
 });

@@ -14,12 +14,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }}
       >
         {children}
-
-        <Suspense fallback={null}>
-          <NavigationEvents />
-        </Suspense>
       </main>
       <Tab />
+      <Suspense fallback={null}>
+        <NavigationEvents />
+      </Suspense>
     </div>
   );
 }

@@ -16,7 +16,6 @@ import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
-import { useRouter } from 'next/navigation';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -25,7 +24,6 @@ interface MainViewProps {
 
 const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = useFullStrDate();
   const [content, setContent] = useRecoilState(recordWriteState);
@@ -72,8 +70,6 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
       return;
     }
 
-    showToast('그루미가 답장을 보내고 있어요');
-
     const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
       id: session?.id,
@@ -84,7 +80,9 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
     });
 
     if (response && 'data' in response) {
-      router.refresh();
+      const url = new URLSearchParams();
+      url.set('state', 'true');
+      history.pushState(null, '', `?${url}`);
     } else {
       alert('문제 발생');
     }

@@ -6,7 +6,7 @@ import 'swiper/css/pagination';
 import '../ui/carousel/carousel.css';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
-import { ChangeEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
@@ -16,6 +16,15 @@ import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+} from '@/components/ui/shadcn/alert-dialog';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -30,7 +39,9 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
   const templateRef = useRef(1);
   const toastRef = useRef<HTMLDivElement>(null);
   const [toastContent, setToastContent] = useState('');
+  const replyPopupRef = useRef<HTMLButtonElement | null>(null);
   const requestApi = useFetch();
+  const params = new URLSearchParams();
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -48,11 +59,17 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
 
     if (value.length === 1000) {
       showToast('아쉽지만, 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
-      setContent(value);
+      setContent(prev => ({
+        ...prev,
+        content: value,
+      }));
       return;
     }
 
-    setContent(value);
+    setContent(prev => ({
+      ...prev,
+      content: value,
+    }));
   };
 
   const handleFocusInput = (id: number) => {
@@ -60,7 +77,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
   };
 
   const handleSubmit = async () => {
-    if (content.length <= 10) {
+    if (content.content.length <= 10) {
       showToast('그루미에게 답장을 받기 위해서는, 10자 이상의 메시지가 필요해요');
       return;
     }
@@ -69,6 +86,11 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
       showToast('그루미의 답장은 하루에 한 번만 가능해요');
       return;
     }
+
+    replyPopupRef.current?.click();
+    setContent({ content: '', isWaiting: true });
+    params.set('replied', 'waiting');
+    history.pushState(null, '', `?${params}`);
 
     const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
@@ -80,13 +102,22 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
     });
 
     if (response && 'data' in response) {
-      const url = new URLSearchParams();
-      url.set('state', 'true');
-      history.pushState(null, '', `?${url}`);
+      params.set('replied', 'true');
+      setContent({ content: '', isWaiting: false });
+      history.pushState(null, '', `?${params}`);
     } else {
       alert('문제 발생');
     }
   };
+
+  useEffect(() => {
+    if (content.isWaiting && replyPopupRef.current) {
+      replyPopupRef.current?.click();
+    }
+    return () => {
+      replyPopupRef.current && (replyPopupRef.current = null);
+    };
+  }, [replyPopupRef.current]);
 
   return (
     <>
@@ -137,14 +168,14 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
                   onFocus={() => handleFocusInput(template.id)}
                   maxLength={1000}
                   minLength={11}
-                  value={content}
+                  value={content.content}
                 ></textarea>
-                <div className={`text-right ${content.length ? 'block' : ''}`}>
+                <div className={`text-right ${content.content.length ? 'block' : ''}`}>
                   <span className="inline-block bg-opacity-70 font-p-R16 p-1 text-primary-500">
                     <span
-                      className={`${content.length >= 1000 ? 'text-danger-500' : ''}`}
+                      className={`${content.content.length >= 1000 ? 'text-danger-500' : ''}`}
                     >
-                      {content.length}
+                      {content.content.length}
                     </span>{' '}
                     / 1000
                   </span>
@@ -161,6 +192,34 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
         그루미에게 답장받기
       </Button>
       <Toast ref={toastRef}>{toastContent}</Toast>
+      <AlertDialog>
+        <AlertDialogTrigger ref={replyPopupRef} className="hidden">
+          구르미 답장중 팝업
+        </AlertDialogTrigger>
+        <AlertDialogOverlay>
+          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
+            <div className="flex flex-col items-center gap-3">
+              <AlertDialogHeader className="font-p-R18 overflow-y-auto rounded">
+                <div className="flex flex-col justify-content items-center">
+                  <Image
+                    src="/assets/growmi/green_letter.svg"
+                    alt="growmi"
+                    width={64}
+                    height={64}
+                    className="mb-2"
+                  />
+                  <p>그루미가 답장을 쓰고 있어요</p>
+                </div>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="grow w-full">
+                <Button type="button" variant="secondary" asChild>
+                  <AlertDialogAction>확인했어요</AlertDialogAction>
+                </Button>
+              </AlertDialogFooter>
+            </div>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };

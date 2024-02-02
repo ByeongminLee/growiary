@@ -14,7 +14,10 @@ export type RecordStateType = {
 
 export type RecordWriteStateType = {
   key: string;
-  default: string;
+  default: {
+    content: string;
+    isWaiting: boolean;
+  };
 };
 
 const sessionStorageEffect =
@@ -55,5 +58,8 @@ export const recordState = atom(<RecordStateType>{
 
 export const recordWriteState = atom(<RecordWriteStateType>{
   key: 'recordWriteState',
-  default: '',
+  default: {
+    content: '',
+    isWaiting: false,
+  },
 });

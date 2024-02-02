@@ -120,7 +120,7 @@ function Calendar({
                   height={9}
                   alt="today"
                   src="/assets/icons/today.svg"
-                  className="block absolute bottom-0 left-[50%] translate-x-[-50%]"
+                  className="w-auto h-auto block absolute bottom-0 left-[50%] translate-x-[-50%]"
                 />
               )}
             </>

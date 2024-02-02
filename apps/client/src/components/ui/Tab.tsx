@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -13,10 +12,6 @@ const Tab = () => {
     { name: 'calendar', href: '/calendar' },
     { name: 'profile', href: '/profile' },
   ] as { name: TabType; href: string }[];
-
-  useEffect(() => {
-    console.log(pathname);
-  }, [pathname]);
 
   return (
     <nav

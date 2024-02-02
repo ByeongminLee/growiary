@@ -22,4 +22,4 @@ export type FilterFindPostDTO = {
   endDate: string;
 };
 
-export type FeedbackType = 'GOOD' | 'BAD';
+export type FeedbackType = 'GOOD' | 'BAD' | 'NONE';

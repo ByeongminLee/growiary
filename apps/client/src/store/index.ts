@@ -12,6 +12,11 @@ export type RecordStateType = {
   default: CollectedRecordType;
 };
 
+export type RecordWriteStateType = {
+  key: string;
+  default: string;
+};
+
 const sessionStorageEffect =
   <T>(key: string): AtomEffect<T> =>
   ({ setSelf, onSet }) => {
@@ -46,4 +51,10 @@ export const recordState = atom(<RecordStateType>{
   key: 'recordState',
   default: {},
   effects: [sessionStorageEffect('record')],
+});
+
+export const recordWriteState = atom(<RecordWriteStateType>{
+  key: 'recordWriteState',
+  default: '',
+  effects: [sessionStorageEffect('record_writing')],
 });

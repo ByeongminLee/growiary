@@ -13,9 +13,10 @@ import { useSession } from 'next-auth/react';
 import { useFullStrDate } from '@/lib/useFullStrDate';
 import { UserProfileDTO } from '@growiary/types';
 import { ApiResponse, RecordType } from '@/types';
-import { useRecoilState } from 'recoil';
-import { recordState } from '@/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { recordState, recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
+import { useRouter } from 'next/navigation';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -24,9 +25,10 @@ interface MainViewProps {
 
 const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
   const { data: session, status } = useSession();
-  const [record, setRecord] = useRecoilState(recordState);
+  const router = useRouter();
+  const record = useRecoilValue(recordState);
   const [year, month, date, day] = useFullStrDate();
-  const [content, setContent] = useState('');
+  const [content, setContent] = useRecoilState(recordWriteState);
   const templateRef = useRef(1);
   const toastRef = useRef<HTMLDivElement>(null);
   const [toastContent, setToastContent] = useState('');
@@ -82,7 +84,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
     });
 
     if (response && 'data' in response) {
-      location.href = `/`;
+      router.refresh();
     } else {
       alert('문제 발생');
     }
@@ -137,6 +139,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
                   onFocus={() => handleFocusInput(template.id)}
                   maxLength={1000}
                   minLength={11}
+                  value={content}
                 ></textarea>
                 <div className={`text-right ${content.length ? 'block' : ''}`}>
                   <span className="inline-block bg-opacity-70 font-p-R16 p-1 text-primary-500">

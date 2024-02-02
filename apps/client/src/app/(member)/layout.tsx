@@ -1,5 +1,7 @@
 'use client';
 import Tab from '@/components/ui/Tab';
+import { NavigationEvents } from '@/components/home/NavigationEvents';
+import { Suspense } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +14,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }}
       >
         {children}
+
+        <Suspense fallback={null}>
+          <NavigationEvents />
+        </Suspense>
       </main>
       <Tab />
     </div>

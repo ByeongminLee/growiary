@@ -34,8 +34,6 @@
     @apply bg-grayscale-100;
     margin-top: env(safe-area-inset-top);
     margin-bottom: env(safe-area-inset-bottom);
-    height: 100vh;
-    height: var(--vh);
   }
 }
 
@@ -44,6 +42,8 @@
   .layout-full {
     @apply w-full h-[calc(80vh-72px)] mt-[72px] px-[24px] flex flex-col justify-between;
     margin-top: calc(env(safe-area-inset-top) + 72px);
+    color: #F8F6F0;
+    background-color: #35f654,
   }
 
   /* 폰트 관련 */

@@ -11,13 +11,10 @@ const Tab = () => {
     { name: 'home', href: '/' },
     { name: 'calendar', href: '/calendar' },
     { name: 'profile', href: '/profile' },
-  ];
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname.split('/')[1] as TabType;
-      setActiveTab(path ? path : 'home');
-    }
-  }, [activeTab]);
+  ] as { name: TabType; href: string }[];
+  const handleClick = (path: TabType) => {
+    setActiveTab(path);
+  };
 
   return (
     <nav
@@ -33,6 +30,7 @@ const Tab = () => {
             <Link
               className="w-full h-full flex justify-center items-center"
               href={tab.href}
+              onClick={() => handleClick(tab.name)}
             >
               <Image
                 className={activeTab === tab.name ? 'active' : 'none'}

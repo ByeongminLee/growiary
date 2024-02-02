@@ -26,6 +26,7 @@ export type RecordType = {
   updateAt: string;
   createAt: string;
   answer?: string;
+  feedback?: 'GOOD' | 'BAD' | 'NONE';
   ai?: UsageAiType;
 };
 

@@ -29,6 +29,7 @@ export class PostService {
 
         const postsArray = Object.keys(userPostsData).map(postId => ({
           postId,
+          feedback: 'NONE',
           ...userPostsData[postId],
           createAt: dateConverter(userPostsData[postId].createAt),
           updateAt: dateConverter(userPostsData[postId].updateAt),
@@ -69,6 +70,7 @@ export class PostService {
       if (createAtDate >= new Date(startDate) && createAtDate < new Date(endDate)) {
         filteredPosts.push({
           postId: postId,
+          feedback: 'NONE',
           ...post,
           createAt: createAtDate,
           updateAt: updateAtDate,
@@ -94,6 +96,7 @@ export class PostService {
     const data = {
       [postId]: {
         ...createPostDTO,
+        feedback: 'NONE',
         createAt: new Date(),
         updateAt: new Date(),
       },
@@ -134,6 +137,7 @@ export class PostService {
           created,
           usage,
         },
+        feedback: 'NONE',
         createAt: new Date(),
         updateAt: new Date(),
       },

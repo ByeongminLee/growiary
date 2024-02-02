@@ -46,24 +46,6 @@
     margin-top: calc(env(safe-area-inset-top) + 72px);
   }
 
-  .layout-tab {
-    margin-top: env(safe-area-inset-top);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 0);
-    height: calc(var(--vh) - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  }
-
-  @supports (height: 100svh) {
-    .layout-tab {
-      height: calc(100svh - 80px - env(safe-area-inset-top)) !important;
-      position: fixed;
-    }
-  }
-
-  .tab {
-    @apply fixed inset-x-0 bottom-0 h-20;
-    margin-bottom: env(safe-area-inset-top)
-  }
-
   /* 폰트 관련 */
   .font-n-R48 {
     @apply font-normal;

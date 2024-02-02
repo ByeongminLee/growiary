@@ -16,17 +16,25 @@
 }
 
 .mainCarousel.swiper {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     margin-top: env(safe-area-inset-top);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 0);
-    height: calc(var(--vh) - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    margin-bottom: calc(env(safe-area-inset-bottom) + 48px);
+    padding-bottom: 0px;
 }
 
 @supports (height: 100svh) {
     .mainCarousel.swiper {
-        margin-top: 0;
-        height: calc(100svh - 80px - env(safe-area-inset-top)) !important;
         position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin-top: env(safe-area-inset-top);
+        margin-bottom: calc(env(safe-area-inset-bottom) + 48px);
     }
 }
 

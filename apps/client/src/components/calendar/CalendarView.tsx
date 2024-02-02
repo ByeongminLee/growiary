@@ -1,6 +1,6 @@
 'use client';
 import { Calendar } from '@/components/ui/shadcn/calendar';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import DiaryContent from '@/components/home/DiaryContent';
@@ -132,17 +132,13 @@ const CalendarView = () => {
   }, [session?.id]);
 
   return (
-    <div
-      className="h-screen relative"
-      style={{
-        marginTop: 'env(safe-area-inset-top)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
-        height:
-          'calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
-        overflow: 'hidden',
-      }}
-    >
+    <div>
       <section>
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onMonthChange={handleMonthChange}
+        />
         {session?.id && (
           <Calendar
             mode="single"
@@ -186,7 +182,7 @@ const CalendarView = () => {
         )}
         {response?.[0]?.answer && (
           <section
-            className="absolute top-[70vh] transition-[top] ease-in-out duration-1000 p-8 h-screen border-t border-t-primary-500 p-3"
+            className="absolute w-full top-[70vh] transition-[top] ease-in-out duration-1000 p-8 h-screen border-t border-t-primary-500 p-3"
             style={{
               marginBottom: 'env(safe-area-inset-bottom)',
               backgroundColor: `${template.bgColor}`,

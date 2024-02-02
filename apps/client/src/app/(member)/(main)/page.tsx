@@ -60,5 +60,4 @@ export default async function HomePage() {
 
   // session.id 없으면 온보딩 화면
   redirect('/welcome');
-  // redirect('/all');
 }

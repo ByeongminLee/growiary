@@ -134,11 +134,6 @@ const CalendarView = () => {
   return (
     <div>
       <section>
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onMonthChange={handleMonthChange}
-        />
         {session?.id && (
           <Calendar
             mode="single"

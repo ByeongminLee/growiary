@@ -50,22 +50,16 @@ const MainReplyView = ({
 
   return (
     <article
-      className="h-full p-6 overflow-auto"
+      className="h-full overflow-auto pb-[22px]"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
-      <p className="pt-6 font-p-R16 text-primary-500 mb-1">
+      <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      {todayData.content && (
-        <section>
-          <DiaryContent template={template} response={todayData} />
-        </section>
-      )}
+      {todayData.content && <DiaryContent template={template} response={todayData} />}
       {todayData.answer && (
         <>
-          <section className="mt-14 p-3">
-            <DiaryReply template={template} response={todayData} />
-          </section>
+          <DiaryReply template={template} response={todayData} />
 
           {showFeedbackQues &&
             todayData.feedback === 'NONE' &&

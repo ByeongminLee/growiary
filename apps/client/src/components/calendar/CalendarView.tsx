@@ -190,8 +190,8 @@ const CalendarView = () => {
         }}
       >
         {response?.[0]?.content && (
-          <section
-            className="absolute top-[70vh] h-[70vh] inset-x-0 p-4 transition-[top] ease-in-out duration-1000"
+          <div
+            className="absolute top-[70vh] h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -205,17 +205,15 @@ const CalendarView = () => {
               backgroundColor: `${template.bgColor}`,
             }}
           >
-            <p className="pt-6 font-p-R16 text-primary-500 mb-1">
+            <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
               {year}년 {month}월 {date}일 {day}
             </p>
-            <div>
-              <DiaryContent template={template} response={response[0]} />
-            </div>
-          </section>
+            <DiaryContent template={template} response={response[0]} />
+          </div>
         )}
         {response?.[0]?.answer && (
-          <section
-            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000 p-8 border-t border-t-primary-500 p-3"
+          <div
+            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000 border-t border-t-primary-500"
             style={{
               backgroundColor: `${template.bgColor}`,
             }}
@@ -229,7 +227,7 @@ const CalendarView = () => {
             onTouchEnd={handleMouseUp}
           >
             <DiaryReply template={template} response={response[0]} />
-          </section>
+          </div>
         )}
       </article>
     </div>

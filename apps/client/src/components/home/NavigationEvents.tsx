@@ -68,15 +68,27 @@ export function NavigationEvents() {
             <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
               <div className="flex flex-col items-center gap-3">
                 <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
-                  일기를 그만쓸까요? 지금까지 입력한 내용이 사라져요
+                  일기를 그만쓸까요? <br /> 지금까지 입력한 내용이 사라져요
                 </AlertDialogHeader>
-                <AlertDialogFooter className="grow flex flex-row gap-4 w-full">
-                  <Button type="button" variant="secondary" className="mt-0 grow" asChild>
+                <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="mt-0"
+                    style={{ flex: 1 }}
+                    asChild
+                  >
                     <AlertDialogCancel onClick={handleStayWriting}>
                       아니오
                     </AlertDialogCancel>
                   </Button>
-                  <Button type="button" variant="secondary" className="grow" asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="grow-2"
+                    style={{ flex: 2 }}
+                    asChild
+                  >
                     <AlertDialogAction
                       className="bg-danger-600 text-primary-300"
                       onClick={handleStopWriting}

@@ -175,8 +175,8 @@ const ProfileView = () => {
                 <AlertDialogHeader className="font-p-R18 overflow-y-auto rounded">
                   로그아웃 하시겠어요?
                 </AlertDialogHeader>
-                <AlertDialogFooter className="grow w-full">
-                  <Button type="button" variant="secondary" className=" grow" asChild>
+                <AlertDialogFooter className="grow flex flex-row gap-2 w-full">
+                  <Button type="button" variant="secondary" className="grow my-0" asChild>
                     <AlertDialogCancel>아니오</AlertDialogCancel>
                   </Button>
                   <Button type="button" variant="secondary" className="grow" asChild>

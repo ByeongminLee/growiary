@@ -10,6 +10,8 @@ import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types'
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useFetch } from '@/lib/useFetch';
+import { useSetRecoilState } from 'recoil';
+import { recordState } from '@/store';
 
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
@@ -27,7 +29,9 @@ const MainReplyView = ({
   const requestApi = useFetch();
   const todayData = replyData[0];
   const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
-  const [isSubmittedFeedBack, setIsSubmittedFeedBack] = useState(false);
+  const [isSubmittedFeedBack, setIsSubmittedFeedBack] = useState(
+    todayData.feedback === 'NONE',
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     const response = (await requestApi('/post/feedback', {
@@ -46,7 +50,7 @@ const MainReplyView = ({
 
   return (
     <article
-      className="h-full p-6 overflow-auto pb-24"
+      className="h-full p-6 overflow-auto"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
       <p className="pt-6 font-p-R16 text-primary-500 mb-1">

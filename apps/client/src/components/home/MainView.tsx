@@ -18,13 +18,11 @@ import { recordState, recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
+// import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -124,11 +122,11 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
-        allowTouchMove={!content}
+        allowTouchMove={!content.content}
         slidesPerView={'auto'}
         spaceBetween={0}
         modules={[Pagination]}
-        style={{ height: maxHeight, pointerEvents: content ? 'none' : 'initial' }}
+        style={{ height: maxHeight, pointerEvents: content.content ? 'none' : 'initial' }}
         grabCursor
         loop
       >
@@ -200,6 +198,9 @@ const MainView = ({ maxHeight }: MainViewProps) => {
               height={134}
               className="mb-2"
             />
+            {/*<div className="absolute z-50">*/}
+            {/*  <MyLottieAnimation />*/}
+            {/*</div>*/}
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>

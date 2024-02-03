@@ -27,7 +27,7 @@ export const DesktopLandingView = () => {
           </p>
         </div>
         <Button className="w-[232px]" asChild>
-          <Link href="/">다이어리 작성하러 가기</Link>
+          <Link href="/login">다이어리 작성하러 가기</Link>
         </Button>
       </div>
       <div className="mt-[56px] w-full max-w-[1250px] flex-wrap flex justify-center mx-auto">

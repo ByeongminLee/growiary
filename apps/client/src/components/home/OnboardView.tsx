@@ -1,9 +1,9 @@
 'use client';
 
 import Carousel from '@/components/ui/carousel/Carousel';
-import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/shadcn/button';
 
 const TempSlide = ({ text }: { text: string }) => {
   return <div className="w-full h-[440px] bg-temp-img">{text}</div>;
@@ -28,9 +28,9 @@ const OnboardView = () => {
       </div>
       <div className="grow-0 shrink-0 min-h-[60px]">
         {isLastSlide && (
-          <Link className="btn-primary btn-full" href="/login">
-            시작하기
-          </Link>
+          <Button asChild>
+            <Link href="/login">시작하기</Link>
+          </Button>
         )}
       </div>
     </section>

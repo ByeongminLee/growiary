@@ -1,7 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
@@ -9,8 +8,9 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ConfirmModal from '@/components/ui/ConfirmModal';
-import { ApiResponse } from '@/types';
+import { ApiResponse, RequiredAgreements } from '@/types';
 import { UserProfileDTO } from '@growiary/types';
+import { Button } from '@/components/ui/shadcn/button';
 
 const NickNameSettingView = () => {
   const router = useRouter();
@@ -70,6 +70,17 @@ const NickNameSettingView = () => {
     router.push('/');
   };
 
+  useEffect(() => {
+    for (let agreement of RequiredAgreements) {
+      if (!userProfile.agreeTerms?.[agreement]) {
+        router.push('/signup/agreement');
+        return;
+      } else if (userProfile.userName) {
+        router.push('/');
+      }
+    }
+  }, [router, userProfile.agreeTerms, userProfile.userName]);
+
   return (
     <section className="layout-full">
       <h1 className="font-p-M24 text-primary-900">어떻게 불러드릴까요?</h1>
@@ -94,7 +105,7 @@ const NickNameSettingView = () => {
                 className="w-4 h-4 mr-[6px]"
                 width={16}
                 height={16}
-                src="/assets/icon.png"
+                src="/assets/caution.png"
                 alt="invalid nickname value"
               />
               {caution}

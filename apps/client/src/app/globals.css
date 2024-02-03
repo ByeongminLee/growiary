@@ -25,19 +25,25 @@
     src: url("/fonts/PretendardVariable.woff2") format("woff2");
 }
 
+:root {
+  --vh: 100%;
+}
+
 @layer base {
-    body {
-      @apply bg-grayscale-100 px-[24px];
-      margin-top: env(safe-area-inset-top);
-      margin-bottom: env(safe-area-inset-bottom);
-    }
+  body {
+    @apply bg-grayscale-100;
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 @layer components {
   /* 레이아웃 */
   .layout-full {
-    @apply w-full h-[calc(80vh-72px)] mt-[72px] flex flex-col justify-between;
+    @apply w-full h-[calc(80vh-72px)] mt-[72px] px-[24px] flex flex-col justify-between;
     margin-top: calc(env(safe-area-inset-top) + 72px);
+    color: #F8F6F0;
+    background-color: #35f654,
   }
 
   /* 폰트 관련 */
@@ -101,52 +107,16 @@
     font-family: theme(fontFamily.pretendard);
   }
 
-  /* 버튼 */
-  .btn-full {
-    @apply block w-full
+  .diary-text:placeholder {
+    color: currentColor;
   }
 
-  .btn-primary {
-    @apply p-[14px] rounded-[6px] text-center shadow-[2px_2px_0px_0px_#101010] cursor-pointer;
-    @apply font-semibold text-xl;
-    background-color: theme(colors.primary.100);
-    color: theme(colors.primary.900);
-    font-family: theme(fontFamily.pretendard);
-    border: 1px solid theme(colors.primary.900);
-    transition: background-color 0.3s, box-shadow 0.3s;
+  .diary-text + * {
+    display: none;
   }
 
-  .btn-primary.disabled,
-  .btn-primary.disabled:hover {
-    @apply cursor-default;
-    background-color: theme(colors.primary.200);
-    color: theme(colors.primary.200);
-    border-color: theme(colors.primary.300);
-    box-shadow: none;
-  }
-
-  .btn-secondary {
-      @apply p-[14px] rounded-[6px] text-center cursor-pointer;
-      @apply font-normal text-xl;;
-      background-color: theme(colors.primary.100);
-      color: theme(colors.primary.900);
-      font-family: theme(fontFamily.pretendard);
-      border: 1px solid theme(colors.primary.300);
-      transition: background-color 0.3s;
-  }
-
-  .btn-secondary.disabled,
-  .btn-secondary.disabled:hover {
-    @apply cursor-default;
-    background-color: theme(colors.primary.100);
-    color: theme(colors.primary.300);
-    border-color: theme(colors.primary.300);
-  }
-
-  .btn-primary:hover,
-  .btn-secondary:hover {
-    box-shadow: none;
-    background-color: theme(colors.branding.300);
+  .diary-text:focus + * {
+    display: block;
   }
 }
 

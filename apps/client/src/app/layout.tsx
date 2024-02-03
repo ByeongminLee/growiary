@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     template: APP_INFO.TITLE_TEMPLATE,
   },
   description: APP_INFO.DESCRIPTION,
+  icons: {
+    icon: '/favicon.png',
+  },
   manifest: './manifest.json',
   appleWebApp: {
     capable: true,

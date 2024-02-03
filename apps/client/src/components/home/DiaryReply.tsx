@@ -20,7 +20,11 @@ const DiaryReply = ({ template, response }: DiaryReplyProps) => {
   }, [setProfile]);
 
   return (
-    <>
+    <div
+      style={{
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 48px)',
+      }}
+    >
       <div className="flex justify-between items-end mb-5">
         <h2 className="text-sub-indigo font-p-M20">
           To. <span>{profile?.userName || '그루리'}</span>님
@@ -41,7 +45,7 @@ const DiaryReply = ({ template, response }: DiaryReplyProps) => {
           </p>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -47,16 +47,19 @@ const CalendarView = () => {
     const movedY = initPosYRef.current - clientY;
     const target = e.currentTarget as HTMLElement;
     const { top, bottom, height } = target.getBoundingClientRect();
+    const next = target.nextElementSibling as HTMLElement;
     // up
     if (movedY > 0) {
       if (top > 0 && top < window.innerHeight) {
         target.style.top = '0px';
         target.style.overflow = 'scroll';
+        if (next) {
+          (next as HTMLElement).style.top = height + 'px';
+        }
         return;
       }
 
       const end = target.scrollHeight - target.clientHeight === target.scrollTop;
-      const next = target.nextElementSibling;
       if (target.getBoundingClientRect().bottom <= window.innerHeight && next && end) {
         (next as HTMLElement).style.top = '0px';
         (next as HTMLElement).style.overflow = 'scroll';
@@ -69,13 +72,21 @@ const CalendarView = () => {
         (prev as HTMLElement).style.top = '0px';
         (prev as HTMLElement).style.overflow = 'scroll';
         target.style.overflow = 'hidden';
-        target.style.top = '100vh';
+        if (prev.clientHeight < window.innerHeight) {
+          target.style.top = prev.clientHeight + 'px';
+        } else {
+          target.style.top = '100vh';
+        }
         target.scrollTo(0, 0);
         return;
       }
       if (target.scrollTop === 0) {
         target.style.top = '70vh';
         target.style.overflow = 'hidden';
+        if (next) {
+          next.style.top = '100vh';
+          next.style.overflow = 'hidden';
+        }
       }
     }
   };
@@ -180,7 +191,7 @@ const CalendarView = () => {
       >
         {response?.[0]?.content && (
           <section
-            className="absolute top-[70vh] h-[100%] inset-x-0 p-4 h-[auto] transition-[top] ease-in-out duration-1000"
+            className="absolute top-[70vh] h-[70vh] inset-x-0 p-4 transition-[top] ease-in-out duration-1000"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -204,9 +215,8 @@ const CalendarView = () => {
         )}
         {response?.[0]?.answer && (
           <section
-            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000 p-8 h-screen border-t border-t-primary-500 p-3"
+            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000 p-8 border-t border-t-primary-500 p-3"
             style={{
-              marginBottom: 'env(safe-area-inset-bottom)',
               backgroundColor: `${template.bgColor}`,
             }}
             onMouseDown={handleMouseDown}

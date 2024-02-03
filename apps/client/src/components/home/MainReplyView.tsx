@@ -30,7 +30,7 @@ const MainReplyView = ({
   const todayData = replyData[0];
   const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
   const [isSubmittedFeedBack, setIsSubmittedFeedBack] = useState(
-    todayData.feedback === 'NONE',
+    todayData.feedback !== 'NONE',
   );
 
   const handleSubmit = async (e: FormEvent) => {
@@ -66,10 +66,11 @@ const MainReplyView = ({
           <section className="mt-14 p-3">
             <DiaryReply template={template} response={todayData} />
           </section>
-          <section>
-            {showFeedbackQues &&
-              todayData.feedback === 'NONE' &&
-              (!isSubmittedFeedBack ? (
+
+          {showFeedbackQues &&
+            todayData.feedback === 'NONE' &&
+            (!isSubmittedFeedBack ? (
+              <section>
                 <div className="flex flex-col align-center justify-center">
                   <div className="flex justify-center items-center">
                     <Image
@@ -106,12 +107,10 @@ const MainReplyView = ({
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <p className="text-sub-indigo font-p-R18 text-center mb-14">
-                  감사합니다!
-                </p>
-              ))}
-          </section>
+              </section>
+            ) : (
+              <p className="text-sub-indigo font-p-R18 text-center mb-14">감사합니다!</p>
+            ))}
         </>
       )}
     </article>

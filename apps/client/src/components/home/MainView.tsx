@@ -22,6 +22,7 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
+import { useRouter } from 'next/navigation';
 // import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
@@ -33,13 +34,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
   const { data: session } = useSession();
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = useFullStrDate();
-  const [content, setContent] = useRecoilState(recordWriteState);
+  const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const templateRef = useRef(1);
   const toastRef = useRef<HTMLDivElement>(null);
   const [toastContent, setToastContent] = useState('');
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
   const requestApi = useFetch();
   const params = new URLSearchParams();
+  const router = useRouter();
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -57,14 +59,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
 
     if (value.length === 1000) {
       showToast('아쉽지만, 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
-      setContent(prev => ({
+      setWriteState(prev => ({
         ...prev,
         content: value,
       }));
       return;
     }
 
-    setContent(prev => ({
+    setWriteState(prev => ({
       ...prev,
       content: value,
     }));
@@ -75,7 +77,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
   };
 
   const handleSubmit = async () => {
-    if (content.content.length <= 10) {
+    if (writeState.content.length <= 10) {
       showToast('그루미에게 답장을 받기 위해서는, 10자 이상의 메시지가 필요해요');
       return;
     }
@@ -86,7 +88,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }
 
     replyPopupRef.current?.click();
-    setContent({ content: '', isWaiting: true });
+    setWriteState({ content: '', isWaiting: true });
     params.set('replied', 'waiting');
     history.pushState(null, '', `?${params}`);
 
@@ -94,25 +96,20 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       method: 'POST',
       id: session?.id,
       body: {
-        content: content.content,
+        content: writeState.content,
         template: templateRef.current.toString(),
       },
     });
 
     if (response && 'data' in response) {
       params.set('replied', 'true');
-      setContent({ content: '', isWaiting: false });
+      setWriteState({ content: '', isWaiting: false });
       history.pushState(null, '', `?${params}`);
+      router.refresh();
     } else {
       alert('문제 발생');
     }
   };
-
-  useEffect(() => {
-    if (content.isWaiting && replyPopupRef.current) {
-      replyPopupRef.current?.click();
-    }
-  }, [content.isWaiting]);
 
   return (
     <>
@@ -122,11 +119,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
-        allowTouchMove={!content.content}
+        allowTouchMove={!writeState.content}
         slidesPerView={'auto'}
         spaceBetween={0}
         modules={[Pagination]}
-        style={{ height: maxHeight, pointerEvents: content.content ? 'none' : 'initial' }}
+        style={{
+          height: maxHeight,
+          pointerEvents: writeState.content ? 'none' : 'initial',
+        }}
         grabCursor
         loop
       >
@@ -163,14 +163,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
                   onFocus={() => handleFocusInput(template.id)}
                   maxLength={1000}
                   minLength={11}
-                  value={content.content}
+                  value={writeState.content}
                 ></textarea>
-                <div className={`text-right ${content.content.length ? 'block' : ''}`}>
+                <div className={`text-right ${writeState.content.length ? 'block' : ''}`}>
                   <span className="inline-block bg-opacity-70 font-p-R16 p-1 text-primary-500">
                     <span
-                      className={`${content.content.length >= 1000 ? 'text-danger-500' : ''}`}
+                      className={`${writeState.content.length >= 1000 ? 'text-danger-500' : ''}`}
                     >
-                      {content.content.length}
+                      {writeState.content.length}
                     </span>{' '}
                     / 1000
                   </span>
@@ -198,7 +198,13 @@ const MainView = ({ maxHeight }: MainViewProps) => {
               height={134}
               className="mb-2"
             />
-            {/*<div className="absolute z-50">*/}
+            {/*<div*/}
+            {/*  className="absolute z-50"*/}
+            {/*  style={{*/}
+            {/*    width: '173px',*/}
+            {/*    height: '134px',*/}
+            {/*  }}*/}
+            {/*>*/}
             {/*  <MyLottieAnimation />*/}
             {/*</div>*/}
           </AlertDialogContent>

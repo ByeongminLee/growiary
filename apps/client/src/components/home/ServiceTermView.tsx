@@ -93,11 +93,8 @@ const ServiceTermView = () => {
   };
 
   useEffect(() => {
-    if (profile.userName) {
-      router.push('/');
-    }
     handleAlert();
-  }, [profile.userName, router]);
+  }, []);
 
   return (
     <section className="layout-full">
@@ -176,9 +173,9 @@ const ServiceTermView = () => {
           시작하기
         </Button>
       </form>
-      <button className="hidden" onClick={handleAlert}>
-        알림 허용 여부 버튼
-      </button>
+      {/*<button className="hidden" onClick={handleAlert}>*/}
+      {/*  알림 허용 여부 버튼*/}
+      {/*</button>*/}
     </section>
   );
 };

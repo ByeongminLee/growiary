@@ -10,21 +10,24 @@ import { useFetch } from '@/lib/useFetch';
 
 export const useUserProfile = (userProfile?: UserProfileDTO) => {
   const [profile, setProfile] = useRecoilState(userProfileState);
-  const requestApi = useFetch();
+  // const requestApi = useFetch();
   const { data: session } = useSession();
 
   useEffect(() => {
     if (!session) return;
 
     // 스토리지 X & 기본 값 X => 정보가져와서 스토리지 업데이트
-    if (typeof window !== 'undefined' || (!userProfile?.userName && !profile?.userName)) {
+    if (!userProfile?.userName && !profile?.userName) {
       (async () => {
-        const res =
-          session &&
-          ((await requestApi('/user', {
-            id: session.id,
-          })) as ApiResponse<ProfileResType>);
-        'data' in res && setProfile(await res.data.profile);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+          headers: {
+            Authorization: session.id,
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+        });
+        const json = await res.json();
+
+        'data' in json && setProfile(await json.data.profile);
       })();
       // 스토리지 X & 기본 값 O => 기본 값으로 스토리지 업데이트
     } else if (userProfile?.userName && !profile?.userName) {

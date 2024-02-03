@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-import LottieAnimation from '@/components/ui/lottie/LottieAnimation';
-import airplane from '@/components/ui/lottie/airplane.json';
+// import LottieAnimation from '@/components/ui/LottieAnimation';
+// import airplane from '/assets/airplane.json';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -219,7 +219,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
               <p className="pb-2 font-p-M14 text-grayscale-700">
                 구르미가 답장을 쓰고 있어요
               </p>
-              <LottieAnimation src={airplane} className="bg-primary-100" />
+              {/*<LottieAnimation src={airplane} className="bg-primary-100" />*/}
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

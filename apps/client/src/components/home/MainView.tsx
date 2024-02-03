@@ -58,7 +58,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     const value = (e.currentTarget as HTMLTextAreaElement).value;
 
     if (value.length === 1000) {
-      showToast('아쉽지만, 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
+      showToast('아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
       setWriteState(prev => ({
         ...prev,
         content: value,
@@ -78,7 +78,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
 
   const handleSubmit = async () => {
     if (writeState.content.length <= 10) {
-      showToast('그루미에게 답장을 받기 위해서는, 10자 이상의 메시지가 필요해요');
+      showToast('그루미에게 답장을 받기 위해서는 10자 이상의 메시지가 필요해요');
       return;
     }
 
@@ -110,6 +110,19 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       alert('문제 발생');
     }
   };
+
+  const showInitNoti = () => {
+    if (!toastRef.current) return;
+    showToast('오른쪽, 왼쪽으로 넘겨보세요');
+  };
+
+  useEffect(() => {
+    const isExperiencedUser = window.localStorage.getItem('hasExperience');
+    if (!isExperiencedUser) {
+      showInitNoti();
+      window.localStorage.setItem('hasExperience', 'true');
+    }
+  }, []);
 
   return (
     <>

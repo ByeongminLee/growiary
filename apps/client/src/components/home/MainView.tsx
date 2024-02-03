@@ -24,7 +24,8 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-// import MyLottieAnimation from '@/components/ui/Lottie';
+import LottieAnimation from '@/components/ui/lottie/LottieAnimation';
+import airplane from '@/components/ui/lottie/airplane.json';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -214,22 +215,12 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
         <AlertDialogOverlay>
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
-            <Image
-              src="/assets/images/message.png"
-              alt="growmi"
-              width={173}
-              height={134}
-              className="mb-2"
-            />
-            {/*<div*/}
-            {/*  className="absolute z-50"*/}
-            {/*  style={{*/}
-            {/*    width: '173px',*/}
-            {/*    height: '134px',*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <MyLottieAnimation />*/}
-            {/*</div>*/}
+            <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
+              <p className="pb-2 font-p-M14 text-grayscale-700">
+                구르미가 답장을 쓰고 있어요
+              </p>
+              <LottieAnimation src={airplane} className="bg-primary-100" />
+            </div>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>

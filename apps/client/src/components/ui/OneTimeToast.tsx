@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useEffect, useRef } from 'react';
 interface CenteredToastProps {
   children: ReactNode;
 }
-const CenteredToast = ({ children }: CenteredToastProps) => {
+const OneTimeToast = ({ children }: CenteredToastProps) => {
   const toastRef = useRef<HTMLDivElement | null>(null);
 
   const showToast = () => {
@@ -35,4 +35,4 @@ const CenteredToast = ({ children }: CenteredToastProps) => {
   );
 };
 
-export default CenteredToast;
+export default OneTimeToast;

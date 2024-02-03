@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
-import CenteredToast from '@/components/ui/CenteredToast';
+import OneTimeToast from '@/components/ui/OneTimeToast';
 // import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
@@ -198,12 +198,12 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       </Button>
       <Toast ref={toastRef}>{toastContent}</Toast>
       {!hasExperience && (
-        <CenteredToast>
+        <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>
             <Image src="/assets/icons/swipe.png" alt="swipe" width={96} height={88} />
           </div>
-        </CenteredToast>
+        </OneTimeToast>
       )}
       <AlertDialog>
         <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>

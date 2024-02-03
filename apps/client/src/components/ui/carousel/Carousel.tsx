@@ -31,6 +31,7 @@ export default function Carousel({ children, width, onReachEnd }: CarouselProps)
         handleReachEnd();
       }}
       modules={[Pagination]}
+      grabCursor={true}
     >
       {slides.map((slide, idx) => (
         <SwiperSlide key={idx}>{slide}</SwiperSlide>

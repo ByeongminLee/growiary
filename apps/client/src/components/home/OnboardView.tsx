@@ -1,11 +1,12 @@
 'use client';
 
 import Carousel from '@/components/ui/carousel/Carousel';
-import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/shadcn/button';
+import Image from 'next/image';
 
-const TempSlide = ({ text }: { text: string }) => {
+const Slide = ({ text }: { text: string }) => {
   return <div className="w-full h-[440px] bg-temp-img">{text}</div>;
 };
 
@@ -21,16 +22,25 @@ const OnboardView = () => {
     <section className="layout-full h-[calc(85vh-72px)]">
       <div className="grow flex items-center">
         <Carousel onReachEnd={onReachEnd} width="312px">
-          {slideContents.map((content, idx) => (
-            <TempSlide key={idx} text={content} />
+          {[...new Array(4)].map((v, i) => (
+            <Image
+              style={{
+                margin: '0 auto',
+              }}
+              key={i + 1}
+              src={`/assets/images/onboarding${i + 1}.png`}
+              alt={`onboarding${i + 1}`}
+              width={312}
+              height={440}
+            />
           ))}
         </Carousel>
       </div>
       <div className="grow-0 shrink-0 min-h-[60px]">
         {isLastSlide && (
-          <Link className="btn-primary btn-full" href="/login">
-            시작하기
-          </Link>
+          <Button asChild>
+            <Link href="/login">시작하기</Link>
+          </Button>
         )}
       </div>
     </section>

@@ -2,13 +2,13 @@
 
 import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
-import Button from '@/components/ui/Button';
-import { FormEvent, useRef, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
+import { Button } from '@/components/ui/shadcn/button';
 
 type FormType = {
   all: boolean;
@@ -18,6 +18,7 @@ type FormType = {
 };
 const ServiceTermView = () => {
   const router = useRouter();
+  const profile = useRecoilValue(userProfileState);
   const formRef = useRef<HTMLFormElement>(null);
   const requiredListRef = useRef<(keyof FormType)[]>(['service', 'privacy']);
   const [checkboxState, setCheckboxState] = useState<FormType>({
@@ -50,7 +51,7 @@ const ServiceTermView = () => {
       agreeTerms: { ...newUserProfile },
     }));
 
-    router.push('/login/nickname');
+    router.push('/signup/profile');
   };
 
   const handleClickTerm = (e: React.MouseEvent, type: keyof FormType) => {
@@ -79,6 +80,24 @@ const ServiceTermView = () => {
       }));
     }
   };
+
+  const handleAlert = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(function (result) {
+        if (result === 'granted') {
+        }
+      });
+    } else {
+      console.log('Notification API is not available in this browser');
+    }
+  };
+
+  useEffect(() => {
+    if (profile.userName) {
+      router.push('/');
+    }
+    handleAlert();
+  }, [profile.userName, router]);
 
   return (
     <section className="layout-full">
@@ -153,13 +172,13 @@ const ServiceTermView = () => {
             </div>
           </div>
         </div>
-        <Button
-          type="submit"
-          className={`btn-secondary ${!getCheckedRequiredCount() ? 'disabled' : ''}`}
-        >
+        <Button type="submit" variant="secondary" disabled={!getCheckedRequiredCount()}>
           시작하기
         </Button>
       </form>
+      <button className="hidden" onClick={handleAlert}>
+        알림 허용 여부 버튼
+      </button>
     </section>
   );
 };

@@ -2,9 +2,10 @@
 
 import { ReactNode } from 'react';
 import { loginHandler } from '@/utils/loginHandler';
+import { loginType } from '@/types';
 
 interface SocialLoginBtnProps {
-  type: 'google' | 'kakao' | 'naver';
+  type: loginType;
   children: ReactNode;
 }
 const SocialLoginBtn = ({ type, children }: SocialLoginBtnProps) => {

@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+import nextPwa from 'next-pwa';
+const withPwa = nextPwa({
+  dest: 'public',
+});
+
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -6,4 +11,4 @@ const nextConfig = {
   transpilePackages: ['@growiary/types'],
 };
 
-export default nextConfig;
+export default process.env.NODE_ENV === 'development' ? nextConfig : withPwa(nextConfig);

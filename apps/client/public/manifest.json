@@ -1,0 +1,17 @@
+{
+    "theme_color": "#F8F6F0",
+    "background_color": "#F8F6F0",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Growiary",
+    "short_name": "Growiary",
+    "description": "Growth Diary App",
+    "icons": [
+        {
+            "src": "/assets/app/growiary_app.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

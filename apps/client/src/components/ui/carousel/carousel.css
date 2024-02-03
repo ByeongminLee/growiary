@@ -1,0 +1,43 @@
+.swiper {
+    padding-bottom: 22px;
+}
+
+.swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+}
+
+.swiper-pagination-bullet-active {
+    @apply bg-branding-500;
+}
+
+.swiper-horizontal > .swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: -5px;
+}
+
+.mainCarousel.swiper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: calc(env(safe-area-inset-bottom) + 48px);
+    padding-bottom: 0px;
+}
+
+@supports (height: 100svh) {
+    .mainCarousel.swiper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin-top: env(safe-area-inset-top);
+        margin-bottom: calc(env(safe-area-inset-bottom) + 48px);
+    }
+}
+
+.mainCarousel .swiper-slide {
+    width: calc(100% - 14px);
+}

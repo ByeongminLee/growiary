@@ -1,3 +1,122 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 400;
+    src: url("/fonts/NanumMyeongjo.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 700;
+    src: url("/fonts/NanumMyeongjoBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Nanum Myeongjo";
+    font-weight: 900;
+    src: url("/fonts/NanumMyeongjoExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Pretendard";
+    src: url("/fonts/PretendardVariable.woff2") format("woff2");
+}
+
+:root {
+  --vh: 100%;
+}
+
+@layer base {
+  body {
+    @apply bg-grayscale-100;
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@layer components {
+  /* 레이아웃 */
+  .layout-full {
+    @apply w-full h-[calc(80vh-72px)] mt-[72px] px-[24px] flex flex-col justify-between;
+    margin-top: calc(env(safe-area-inset-top) + 72px);
+    color: #F8F6F0;
+    background-color: #35f654,
+  }
+
+  /* 폰트 관련 */
+  .font-n-R48 {
+    @apply font-normal;
+    font-size: 2.375rem;
+    line-height: 50px;
+    font-family: theme(fontFamily.nanum);
+  }
+  .font-n-R18 {
+    @apply font-normal text-lg leading-8;
+    font-family: theme(fontFamily.nanum);
+  }
+
+  .font-p-R48 {
+    @apply font-light;
+    font-size: 2.5rem;
+    line-height: 49px;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M24 {
+    @apply font-medium text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R24 {
+    @apply font-normal text-2xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M20 {
+    @apply font-semibold text-xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R18 {
+    @apply font-normal text-xl;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R17 {
+    @apply font-normal;
+    font-family: theme(fontFamily.pretendard);
+    font-size: 1.0625rem;
+    line-height: 26px;
+  }
+
+  .font-p-M16 {
+    @apply font-medium text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-R16 {
+    @apply font-normal text-base;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .font-p-M14 {
+    @apply font-medium text-sm leading-6;
+    font-family: theme(fontFamily.pretendard);
+  }
+
+  .diary-text:placeholder {
+    color: currentColor;
+  }
+
+  .diary-text + * {
+    display: none;
+  }
+
+  .diary-text:focus + * {
+    display: block;
+  }
+}
+

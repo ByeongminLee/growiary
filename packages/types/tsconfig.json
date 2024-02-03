@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@growiary/types/*": ["src/*"],
+    },
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+}

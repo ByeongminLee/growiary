@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/shadcn/button';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export const DesktopLandingView = () => {
   return (
@@ -25,7 +26,9 @@ export const DesktopLandingView = () => {
             이제 친구같은, 나와 함께 성장하는 AI 다이어리를 만나보세요.
           </p>
         </div>
-        <Button className="w-[232px]">다이어리 작성하러 가기</Button>
+        <Button className="w-[232px]" asChild>
+          <Link href="/">다이어리 작성하러 가기</Link>
+        </Button>
       </div>
       <div className="mt-[56px] w-full max-w-[1250px] flex-wrap flex justify-center mx-auto">
         {contents.map(content => (

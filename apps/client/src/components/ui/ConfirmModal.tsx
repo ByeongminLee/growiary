@@ -7,6 +7,7 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
+import { Button } from '@/components/ui/shadcn/button';
 
 interface ConfirmModalProps {
   title: string;
@@ -25,9 +26,9 @@ const ConfirmModal = ({ title, button, onClick, children }: ConfirmModalProps) =
             <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
               {children}
             </AlertDialogDescription>
-            <AlertDialogAction className="btn-secondary btn-full" onClick={onClick}>
-              확인했어요
-            </AlertDialogAction>
+            <Button variant="secondary" asChild>
+              <AlertDialogAction onClick={onClick}>확인했어요</AlertDialogAction>
+            </Button>
           </div>
         </AlertDialogContent>
       </AlertDialogOverlay>

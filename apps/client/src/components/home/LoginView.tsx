@@ -27,14 +27,14 @@ export const LoginView = () => {
           SNS 계정으로 간편하게 가입하세요
         </p>
         <div className="flex gap-x-[20px]">
-          <SocialLoginBtn type="naver">
-            <Image
-              width={54}
-              height={54}
-              src="/assets/social/naver.png"
-              alt="naver-login"
-            />
-          </SocialLoginBtn>
+          {/*<SocialLoginBtn type="naver">*/}
+          {/*  <Image*/}
+          {/*    width={54}*/}
+          {/*    height={54}*/}
+          {/*    src="/assets/social/naver.png"*/}
+          {/*    alt="naver-login"*/}
+          {/*  />*/}
+          {/*</SocialLoginBtn>*/}
           <SocialLoginBtn type="google">
             <Image
               width={54}

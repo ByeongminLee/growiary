@@ -123,9 +123,6 @@ const MainView = ({ maxHeight }: MainViewProps) => {
 
   return (
     <>
-      <p className="absolute top-12 left-6 z-50 font-p-R16 text-primary-500">
-        {year}년 {month}월 {date}일 {day}
-      </p>
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
@@ -143,11 +140,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         {Object.values(diaryTemplates).map(template => (
           <SwiperSlide
             key={template.id}
-            className={`px-6 pt-20 slide${template.id}`}
+            className={`px-6 pt-14 slide${template.id}`}
             style={{
               backgroundColor: template.bgColor,
             }}
           >
+            <p className="font-p-R16 mb-1" style={{ color: template.dateColor }}>
+              {year}년 {month}월 {date}일 {day}
+            </p>
             <div className="flex flex-col gap-3 h-full">
               <div className="flex justify-between">
                 <p

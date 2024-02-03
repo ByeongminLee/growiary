@@ -16,7 +16,8 @@ export const isValidDate = (givenDate: string, sep: string = '-') => {
   return date >= 1 && date <= new Date(year, month - 1, 0, 0, 0, 0).getDate();
 };
 
-export const getYMDFromDate = (givenDate: Date) => {
+export const getYMDFromDate = (date: Date) => {
+  const givenDate = new Date(date);
   return `${givenDate.getFullYear()}-${getTwoDigitNum(givenDate.getMonth() + 1)}-${getTwoDigitNum(givenDate.getDate())}`;
 };
 
@@ -35,5 +36,6 @@ export const getFirstAndLastDateFromSpecificDate = (selected: Date) => {
 };
 
 export const getDateFromServer = (date: string) => {
-  return date.slice(0, 10);
+  const newDate = new Date(date);
+  return `${newDate.getFullYear()}-${getTwoDigitNum(newDate.getMonth() + 1)}-${getTwoDigitNum(newDate.getDate())}`;
 };

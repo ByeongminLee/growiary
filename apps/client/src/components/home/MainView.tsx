@@ -114,9 +114,6 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     if (content.isWaiting && replyPopupRef.current) {
       replyPopupRef.current?.click();
     }
-    return () => {
-      replyPopupRef.current && (replyPopupRef.current = null);
-    };
   }, [content.isWaiting]);
 
   return (
@@ -193,30 +190,16 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       </Button>
       <Toast ref={toastRef}>{toastContent}</Toast>
       <AlertDialog>
-        <AlertDialogTrigger ref={replyPopupRef} className="hidden">
-          구르미 답장중 팝업
-        </AlertDialogTrigger>
+        <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
         <AlertDialogOverlay>
-          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
-            <div className="flex flex-col items-center gap-3">
-              <AlertDialogHeader className="font-p-R18 overflow-y-auto rounded">
-                <div className="flex flex-col justify-content items-center">
-                  <Image
-                    src="/assets/growmi/green_letter.svg"
-                    alt="growmi"
-                    width={64}
-                    height={64}
-                    className="mb-2"
-                  />
-                  <p>그루미가 답장을 쓰고 있어요</p>
-                </div>
-              </AlertDialogHeader>
-              <AlertDialogFooter className="grow w-full">
-                <Button type="button" variant="secondary" asChild>
-                  <AlertDialogAction>확인했어요</AlertDialogAction>
-                </Button>
-              </AlertDialogFooter>
-            </div>
+          <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
+            <Image
+              src="/assets/images/message.png"
+              alt="growmi"
+              width={173}
+              height={134}
+              className="mb-2"
+            />
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>

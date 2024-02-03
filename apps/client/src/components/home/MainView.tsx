@@ -22,7 +22,7 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
-import MyLottieAnimation from '@/components/ui/Lottie';
+// import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -80,10 +80,10 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       return;
     }
 
-    // if (record[`${year}-${month}-${date}`]?.length) {
-    //   showToast('그루미의 답장은 하루에 한 번만 가능해요');
-    //   return;
-    // }
+    if (record[`${year}-${month}-${date}`]?.length) {
+      showToast('그루미의 답장은 하루에 한 번만 가능해요');
+      return;
+    }
 
     replyPopupRef.current?.click();
     setContent({ content: '', isWaiting: true });

@@ -70,16 +70,15 @@ const NickNameSettingView = () => {
     router.push('/');
   };
 
+  // 오류 발생
   useEffect(() => {
     for (let agreement of RequiredAgreements) {
       if (!userProfile.agreeTerms?.[agreement]) {
         router.push('/signup/agreement');
         return;
-      } else if (userProfile.userName) {
-        router.push('/');
       }
     }
-  }, [router, userProfile.agreeTerms, userProfile.userName]);
+  }, [router, userProfile.agreeTerms]);
 
   return (
     <section className="layout-full">
@@ -105,7 +104,7 @@ const NickNameSettingView = () => {
                 className="w-4 h-4 mr-[6px]"
                 width={16}
                 height={16}
-                src="/assets/caution.png"
+                src="/assets/icons/caution.png"
                 alt="invalid nickname value"
               />
               {caution}

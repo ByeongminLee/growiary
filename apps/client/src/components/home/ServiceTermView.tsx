@@ -93,9 +93,6 @@ const ServiceTermView = () => {
   };
 
   useEffect(() => {
-    if (profile.userName) {
-      router.push('/');
-    }
     handleAlert();
   }, [profile.userName, router]);
 

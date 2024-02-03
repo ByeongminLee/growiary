@@ -164,7 +164,12 @@ const MainView = ({ maxHeight }: MainViewProps) => {
                   className="mr-4"
                 />
               </div>
-              <div className="grow mb-[140px] ">
+              <div
+                className="h-full"
+                style={{
+                  marginBottom: 'calc(env(safe-area-inset-bottom) + 48px + 124px)',
+                }}
+              >
                 <textarea
                   className={`diary-text caret-branding-600 p-2 placeholder:currentcolor font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0`}
                   style={{ color: template.answerColor, pointerEvents: 'initial' }}

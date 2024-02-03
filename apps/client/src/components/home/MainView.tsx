@@ -22,6 +22,7 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
+import { useRouter } from 'next/navigation';
 // import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
@@ -40,6 +41,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
   const requestApi = useFetch();
   const params = new URLSearchParams();
+  const router = useRouter();
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -86,11 +88,10 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }
 
     replyPopupRef.current?.click();
-    // console.log(replyPopupRef.current);
     setWriteState({ content: '', isWaiting: true });
     params.set('replied', 'waiting');
     history.pushState(null, '', `?${params}`);
-    // return;
+
     const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
       id: session?.id,
@@ -104,16 +105,11 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       params.set('replied', 'true');
       setWriteState({ content: '', isWaiting: false });
       history.pushState(null, '', `?${params}`);
+      router.refresh();
     } else {
       alert('문제 발생');
     }
   };
-
-  useEffect(() => {
-    if (writeState.isWaiting && replyPopupRef.current) {
-      replyPopupRef.current?.click();
-    }
-  }, [writeState.isWaiting]);
 
   return (
     <>

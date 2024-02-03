@@ -31,8 +31,8 @@ interface MainViewProps {
   maxHeight?: string;
 }
 
-const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
-  const { data: session, status } = useSession();
+const MainView = ({ maxHeight }: MainViewProps) => {
+  const { data: session } = useSession();
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = useFullStrDate();
   const [content, setContent] = useRecoilState(recordWriteState);
@@ -117,7 +117,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
     return () => {
       replyPopupRef.current && (replyPopupRef.current = null);
     };
-  }, [replyPopupRef.current]);
+  }, [content.isWaiting]);
 
   return (
     <>
@@ -135,7 +135,7 @@ const MainView = ({ userProfile: profile, maxHeight }: MainViewProps) => {
         grabCursor
         loop
       >
-        {Object.values(diaryTemplates).map((template, i) => (
+        {Object.values(diaryTemplates).map(template => (
           <SwiperSlide
             key={template.id}
             className={`px-6 pt-20 slide${template.id}`}

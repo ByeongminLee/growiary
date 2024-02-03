@@ -36,7 +36,7 @@ export function NavigationEvents() {
     if (pathname !== '/' && writingState.content) {
       stopRecordRef.current?.click();
     }
-  }, [pathname, writingState.content, stopRecordRef.current]);
+  }, [pathname, writingState.content]);
 
   // 답변 도착
   useEffect(() => {
@@ -45,7 +45,7 @@ export function NavigationEvents() {
     if (pathname === '/' && searchParams.get('replied') === 'true') {
       router.refresh();
     }
-  }, [pathname, params]);
+  }, [pathname, params, router]);
 
   return (
     <>

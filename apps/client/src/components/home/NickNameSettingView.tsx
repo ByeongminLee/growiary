@@ -79,7 +79,7 @@ const NickNameSettingView = () => {
         router.push('/');
       }
     }
-  }, []);
+  }, [router, userProfile.agreeTerms, userProfile.userName]);
 
   return (
     <section className="layout-full">

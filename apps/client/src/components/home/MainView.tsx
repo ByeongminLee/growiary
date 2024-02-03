@@ -23,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
+import CenteredToast from '@/components/ui/CenteredToast';
 // import MyLottieAnimation from '@/components/ui/Lottie';
 
 interface MainViewProps {
@@ -39,6 +40,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
   const toastRef = useRef<HTMLDivElement>(null);
   const [toastContent, setToastContent] = useState('');
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const [hasExperience, setHasExperience] = useState(true);
   const requestApi = useFetch();
   const params = new URLSearchParams();
   const router = useRouter();
@@ -111,18 +113,13 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }
   };
 
-  const showInitNoti = () => {
-    if (!toastRef.current) return;
-    showToast('오른쪽, 왼쪽으로 넘겨보세요');
-  };
-
   useEffect(() => {
     const isExperiencedUser = window.localStorage.getItem('hasExperience');
     if (!isExperiencedUser) {
-      showInitNoti();
+      setHasExperience(false);
       window.localStorage.setItem('hasExperience', 'true');
     }
-  }, []);
+  }, [hasExperience]);
 
   return (
     <>
@@ -200,6 +197,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         그루미에게 답장받기
       </Button>
       <Toast ref={toastRef}>{toastContent}</Toast>
+      {!hasExperience && (
+        <CenteredToast>
+          <div className="flex flex-col items-center justify-center">
+            <p>오른쪽, 왼쪽으로 넘겨보세요</p>
+            <Image src="/assets/icons/swipe.png" alt="swipe" width={96} height={88} />
+          </div>
+        </CenteredToast>
+      )}
       <AlertDialog>
         <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
         <AlertDialogOverlay>

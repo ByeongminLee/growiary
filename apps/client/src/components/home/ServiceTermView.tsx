@@ -81,11 +81,23 @@ const ServiceTermView = () => {
     }
   };
 
+  const handleAlert = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(function (result) {
+        if (result === 'granted') {
+        }
+      });
+    } else {
+      console.log('Notification API is not available in this browser');
+    }
+  };
+
   useEffect(() => {
     if (profile.userName) {
       router.push('/');
     }
-  }, []);
+    handleAlert();
+  }, [profile.userName, router]);
 
   return (
     <section className="layout-full">
@@ -164,6 +176,9 @@ const ServiceTermView = () => {
           시작하기
         </Button>
       </form>
+      <button className="hidden" onClick={handleAlert}>
+        알림 허용 여부 버튼
+      </button>
     </section>
   );
 };

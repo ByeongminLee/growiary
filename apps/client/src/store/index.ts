@@ -17,6 +17,7 @@ export type RecordWriteStateType = {
   default: {
     content: string;
     isWaiting: boolean;
+    isSubmittedFeedback: boolean;
   };
 };
 
@@ -61,5 +62,6 @@ export const recordWriteState = atom(<RecordWriteStateType>{
   default: {
     content: '',
     isWaiting: false,
+    isSubmittedFeedback: false,
   },
 });

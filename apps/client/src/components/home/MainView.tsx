@@ -91,7 +91,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }
 
     replyPopupRef.current?.click();
-    setWriteState({ content: '', isWaiting: true });
+    setWriteState(prev => ({ ...prev, content: '', isWaiting: true }));
     params.set('replied', 'waiting');
     history.pushState(null, '', `?${params}`);
 
@@ -106,7 +106,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
 
     if (response && 'data' in response) {
       params.set('replied', 'true');
-      setWriteState({ content: '', isWaiting: false });
+      setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
       history.pushState(null, '', `?${params}`);
       tracking('그루미에게 답장받기 클릭');
       router.refresh();

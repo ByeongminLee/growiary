@@ -46,8 +46,7 @@ const ProfileView = () => {
 
   useEffect(() => {
     setProfile(userProfile);
-    return () => {};
-  }, [session?.id]);
+  }, [session?.id, userProfile]);
 
   // const handleSubmit = async (e: FormEvent) => {
   //   e.preventDefault();

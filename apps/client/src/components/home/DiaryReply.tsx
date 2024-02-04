@@ -17,7 +17,7 @@ const DiaryReply = ({ template, response }: DiaryReplyProps) => {
 
   useEffect(() => {
     setProfile(userProfile);
-  }, [setProfile]);
+  }, [userProfile]);
 
   return (
     <section

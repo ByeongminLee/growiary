@@ -111,7 +111,7 @@ const ProfileView = () => {
                     <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
                       {serviceContent}
                     </AlertDialogDescription>
-                    <Button variant="secondary">
+                    <Button variant="secondary" asChild>
                       <AlertDialogAction className="btn-full">
                         확인했어요
                       </AlertDialogAction>
@@ -143,7 +143,7 @@ const ProfileView = () => {
                     <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
                       {privacyContent}
                     </AlertDialogDescription>
-                    <Button variant="secondary">
+                    <Button variant="secondary" asChild>
                       <AlertDialogAction className="btn-full">
                         확인했어요
                       </AlertDialogAction>

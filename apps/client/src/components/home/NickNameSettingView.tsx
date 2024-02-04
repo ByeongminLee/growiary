@@ -11,6 +11,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 import { ApiResponse, RequiredAgreements } from '@/types';
 import { UserProfileDTO } from '@growiary/types';
 import { Button } from '@/components/ui/shadcn/button';
+import { tracking } from '@/utils/mixPannel';
 
 const NickNameSettingView = () => {
   const router = useRouter();
@@ -65,6 +66,7 @@ const NickNameSettingView = () => {
   };
 
   const handleLeavePage = () => {
+    tracking('닉네임 작성 완료');
     router.push('/');
   };
 

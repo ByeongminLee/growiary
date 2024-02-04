@@ -10,6 +10,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
+import { tracking } from '@/utils/mixPannel';
 
 type FormType = {
   all: boolean;
@@ -167,7 +168,12 @@ const ServiceTermView = () => {
             </div>
           </div>
         </div>
-        <Button type="submit" variant="secondary" disabled={!getCheckedRequiredCount()}>
+        <Button
+          type="submit"
+          variant="secondary"
+          disabled={!getCheckedRequiredCount()}
+          onClick={() => tracking('이용 약관 동의 확인')}
+        >
           시작하기
         </Button>
       </form>

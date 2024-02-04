@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/shadcn/button';
 import Image from 'next/image';
+import { tracking } from '@/utils/mixPannel';
 
 const Slide = ({ text }: { text: string }) => {
   return <div className="w-full h-[440px] bg-temp-img">{text}</div>;
@@ -38,7 +39,7 @@ const OnboardView = () => {
       </div>
       <div className="grow-0 shrink-0 min-h-[60px]">
         {isLastSlide && (
-          <Button asChild>
+          <Button asChild onClick={() => tracking('로그인 페이지 이동')}>
             <Link href="/login">시작하기</Link>
           </Button>
         )}

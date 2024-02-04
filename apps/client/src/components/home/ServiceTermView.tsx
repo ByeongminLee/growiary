@@ -111,7 +111,6 @@ const ServiceTermView = () => {
               checked={checkboxState.all}
               value="all"
               id="all"
-              checkState="minus"
             />
             <Label htmlFor="all" className="font-p-R18 text-primary-800">
               약관 전체 동의

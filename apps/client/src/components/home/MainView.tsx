@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-// import MyLottieAnimation from '@/components/ui/Lottie';
+// import LottieAnimation from '@/components/ui/LottieAnimation';
 
 interface MainViewProps {
   userProfile?: UserProfileDTO;
@@ -123,9 +123,6 @@ const MainView = ({ maxHeight }: MainViewProps) => {
 
   return (
     <>
-      <p className="absolute top-12 left-6 z-50 font-p-R16 text-primary-500">
-        {year}년 {month}월 {date}일 {day}
-      </p>
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
@@ -143,11 +140,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         {Object.values(diaryTemplates).map(template => (
           <SwiperSlide
             key={template.id}
-            className={`px-6 pt-20 slide${template.id}`}
+            className={`px-6 pt-14 slide${template.id}`}
             style={{
               backgroundColor: template.bgColor,
             }}
           >
+            <p className="font-p-R16 mb-1" style={{ color: template.dateColor }}>
+              {year}년 {month}월 {date}일 {day}
+            </p>
             <div className="flex flex-col gap-3 h-full">
               <div className="flex justify-between">
                 <p
@@ -164,9 +164,14 @@ const MainView = ({ maxHeight }: MainViewProps) => {
                   className="mr-4"
                 />
               </div>
-              <div className="grow mb-[140px] ">
+              <div
+                className="h-full"
+                style={{
+                  marginBottom: 'calc(env(safe-area-inset-bottom) + 48px + 124px)',
+                }}
+              >
                 <textarea
-                  className={`diary-text caret-branding-600 p-2 placeholder:currentcolor font-p-R17 block bg-transparent w-full h-full mb-1 resize-none`}
+                  className={`diary-text caret-branding-600 p-2 placeholder:currentcolor font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0`}
                   style={{ color: template.answerColor, pointerEvents: 'initial' }}
                   placeholder={template.placeholder}
                   onChange={handleChangeContent}
@@ -209,22 +214,19 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
         <AlertDialogOverlay>
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
-            <Image
-              src="/assets/images/message.png"
-              alt="growmi"
-              width={173}
-              height={134}
-              className="mb-2"
-            />
-            {/*<div*/}
-            {/*  className="absolute z-50"*/}
-            {/*  style={{*/}
-            {/*    width: '173px',*/}
-            {/*    height: '134px',*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <MyLottieAnimation />*/}
-            {/*</div>*/}
+            <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
+              {/*<p className="pb-2 font-p-M14 text-grayscale-700">*/}
+              {/*  구르미가 답장을 쓰고 있어요*/}
+              {/*</p>*/}
+              <Image
+                src="/assets/images/message.png"
+                alt="growmi"
+                width={173}
+                height={134}
+                className="mb-2"
+              />
+              {/*<LottieAnimation src={'airplane'} className="bg-primary-100" />*/}
+            </div>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>

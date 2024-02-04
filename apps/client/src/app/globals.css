@@ -81,7 +81,7 @@
   }
 
   .font-p-R18 {
-    @apply font-normal text-xl;
+    @apply font-normal text-lg;
     font-family: theme(fontFamily.pretendard);
   }
 

@@ -1,5 +1,6 @@
 export type DiaryTemplate = {
   id: number;
+  dateColor: string;
   bgColor: string;
   question: string;
   questionColor: string;

@@ -46,8 +46,7 @@ const ProfileView = () => {
 
   useEffect(() => {
     setProfile(userProfile);
-    return () => {};
-  }, [session?.id]);
+  }, [session?.id, userProfile]);
 
   // const handleSubmit = async (e: FormEvent) => {
   //   e.preventDefault();
@@ -165,7 +164,12 @@ const ProfileView = () => {
 
       <div className="justify-end mt-auto">
         <AlertDialog>
-          <Button type="button" variant="secondary" className="w-auto" asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-auto border-0 hover:bg-branding-300 active:bg-branding-300"
+            asChild
+          >
             <AlertDialogTrigger>로그아웃</AlertDialogTrigger>
           </Button>
 

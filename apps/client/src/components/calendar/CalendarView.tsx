@@ -186,7 +186,7 @@ const CalendarView = () => {
         style={{
           marginTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          backgroundColor: `${template.bgColor}`,
+          // backgroundColor: `${template.bgColor}`,
         }}
       >
         {response?.[0]?.content && (

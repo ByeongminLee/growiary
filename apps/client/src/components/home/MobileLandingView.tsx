@@ -16,14 +16,14 @@ export const MobileLandingView = () => {
           alt="line"
           width={587}
           height={5}
-          className="absolute top-[806px] inset-x-0 w-screen"
+          className="absolute top-[416px] inset-x-0 w-screen"
         />
         <Image
           src="/assets/images/growmi_with_person.png"
           alt="growmi_with_person"
           width={128}
           height={128}
-          className="absolute top-[736px] right-[20px]"
+          className="absolute top-[336px] right-[20px]"
         />
       </section>
       <section className="flex flex-col items-center">

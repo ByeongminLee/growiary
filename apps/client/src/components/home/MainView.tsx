@@ -198,7 +198,10 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         ))}
       </Swiper>
       <Button
-        className="absolute w-[calc(100%-48px)] bottom-9 left-6 z-50"
+        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50"
+        style={{
+          marginBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
+        }}
         onClick={handleSubmit}
       >
         그루미에게 답장받기

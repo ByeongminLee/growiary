@@ -30,7 +30,7 @@ const MainReplyView = ({
   const todayData = replyData[0];
   const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
   const [isSubmittedFeedBack, setIsSubmittedFeedBack] = useState(
-    todayData.feedback === 'NONE',
+    todayData.feedback !== 'NONE',
   );
 
   const handleSubmit = async (e: FormEvent) => {
@@ -50,26 +50,21 @@ const MainReplyView = ({
 
   return (
     <article
-      className="h-full p-6 overflow-auto"
+      className="h-full overflow-auto pb-[22px]"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
-      <p className="pt-6 font-p-R16 text-primary-500 mb-1">
+      <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      {todayData.content && (
-        <section>
-          <DiaryContent template={template} response={todayData} />
-        </section>
-      )}
+      {todayData.content && <DiaryContent template={template} response={todayData} />}
       {todayData.answer && (
         <>
-          <section className="mt-14 p-3">
-            <DiaryReply template={template} response={todayData} />
-          </section>
-          <section>
-            {showFeedbackQues &&
-              todayData.feedback === 'NONE' &&
-              (!isSubmittedFeedBack ? (
+          <DiaryReply template={template} response={todayData} />
+
+          {showFeedbackQues &&
+            todayData.feedback === 'NONE' &&
+            (!isSubmittedFeedBack ? (
+              <section>
                 <div className="flex flex-col align-center justify-center">
                   <div className="flex justify-center items-center">
                     <Image
@@ -106,12 +101,10 @@ const MainReplyView = ({
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <p className="text-sub-indigo font-p-R18 text-center mb-14">
-                  감사합니다!
-                </p>
-              ))}
-          </section>
+              </section>
+            ) : (
+              <p className="text-sub-indigo font-p-R18 text-center mb-14">감사합니다!</p>
+            ))}
         </>
       )}
     </article>

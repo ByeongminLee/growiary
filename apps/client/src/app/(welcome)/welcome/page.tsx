@@ -1,5 +1,5 @@
-import OnboardView from '@/components/home/OnboardView';
+import WholeLandingView from '@/components/home/WholeLandingView';
 
 export default async function WelcomePage() {
-  return <OnboardView />;
+  return <WholeLandingView />;
 }

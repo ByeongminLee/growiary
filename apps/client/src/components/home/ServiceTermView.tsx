@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
+import { privacyContent, serviceContent } from '@/utils/agreementContents';
 
 type FormType = {
   all: boolean;
@@ -93,11 +94,8 @@ const ServiceTermView = () => {
   };
 
   useEffect(() => {
-    if (profile.userName) {
-      router.push('/');
-    }
     handleAlert();
-  }, [profile.userName, router]);
+  }, []);
 
   return (
     <section className="layout-full">
@@ -114,7 +112,6 @@ const ServiceTermView = () => {
               checked={checkboxState.all}
               value="all"
               id="all"
-              checkState="minus"
             />
             <Label htmlFor="all" className="font-p-R18 text-primary-800">
               약관 전체 동의
@@ -146,9 +143,8 @@ const ServiceTermView = () => {
               <Label htmlFor="service" className="font-p-R18 text-primary-800">
                 (필수) 서비스 이용약관
               </Label>
-              <ConfirmModal title="서비스 이용약관" button={<Union />}>
-                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
-                is ContentHere is ContentHere is ContentHere is Content
+              <ConfirmModal title="서비스 이용약관" height="70vh" button={<Union />}>
+                {serviceContent}
               </ConfirmModal>
             </div>
           </div>
@@ -165,9 +161,8 @@ const ServiceTermView = () => {
               <Label htmlFor="privacy" className="font-p-R18 text-primary-800">
                 (필수) 개인정보 처리방침
               </Label>
-              <ConfirmModal title="개인정보 처리방침" button={<Union />}>
-                ContentHere is ContentHere is Content Here is ContentHere is ContentHere
-                is ContentHere is ContentHere is ContentHere is Content
+              <ConfirmModal title="개인정보 처리방침" height="70vh" button={<Union />}>
+                {privacyContent}
               </ConfirmModal>
             </div>
           </div>
@@ -176,9 +171,9 @@ const ServiceTermView = () => {
           시작하기
         </Button>
       </form>
-      <button className="hidden" onClick={handleAlert}>
-        알림 허용 여부 버튼
-      </button>
+      {/*<button className="hidden" onClick={handleAlert}>*/}
+      {/*  알림 허용 여부 버튼*/}
+      {/*</button>*/}
     </section>
   );
 };

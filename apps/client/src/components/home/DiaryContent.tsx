@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/shadcn/button';
 import { DiaryTemplate } from '@/types';
 
 type DiaryContentProps = {
@@ -7,7 +6,7 @@ type DiaryContentProps = {
 };
 const DiaryContent = ({ template, response }: DiaryContentProps) => {
   return (
-    <>
+    <section className="px-9 pb-8">
       <h2 style={{ color: `${template.questionColor}` }} className="font-p-M20 mb-4">
         {template.question}
       </h2>
@@ -19,7 +18,7 @@ const DiaryContent = ({ template, response }: DiaryContentProps) => {
           </p>
         ))}
       </div>
-    </>
+    </section>
   );
 };
 

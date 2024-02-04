@@ -36,13 +36,13 @@ function Calendar({
         month: 'grow space-y-4',
         caption: 'flex justify-center pt-1 relative items-baseline',
         caption_label: 'text-sm font-medium',
-        nav: 'space-x-1 flex items-center',
+        nav: 'space-x-1 flex items-end',
         nav_button: cn(
           // buttonVariants({ variant: 'ghost' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+          'h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100 flex ',
         ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
+        nav_button_previous: 'absolute left-1 h-4 w-4',
+        nav_button_next: 'absolute right-1 h-4 w-4',
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:
@@ -55,7 +55,7 @@ function Calendar({
         ),
         day_range_end: 'day-range-end',
         day_selected:
-          'w-10 h-10 bg-[#DFDED5FF] rounded-full bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+          'w-10 h-10 text-primary-foreground relative after:content-[""] after:absolute after:block after:top-[50%] after:left-[50%] after:translate-x-[-50%] after:translate-y-[-50%] after:z-[-1] after:rounded-full after:w-7 after:h-7 after:bg-grayscale-300 after:rounded=full hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
         day_today: 'bg-accent text-accent-foreground',
         day_outside:
           'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
@@ -72,7 +72,7 @@ function Calendar({
 
           return (
             <div className="font-p-R18 text-grayscale-800">
-              {getYear(props.displayMonth)}년 {getMonth(props.displayMonth) + 1}월의 답장
+              {getMonth(props.displayMonth) + 1}월의 답장
               <div className="relative flex justify-center">
                 <Image
                   className="relative"

@@ -8,14 +8,14 @@ export const LoginView = () => {
         <Image src="/assets/app/logo.png" alt="growiary" width={312} height={113} />
         <h1 className="font-p-M24 text-primary-900 mt-2">AI와 함께하는 회고 다이어리</h1>
         <Image
-          src="/assets/app/line.svg"
+          src="/assets/images/line.svg"
           alt="line"
           width={587}
           height={5}
           className="absolute top-[416px] inset-x-0 w-screen"
         />
         <Image
-          src="/assets/app/growmi_with_person.png"
+          src="/assets/images/growmi_with_person.png"
           alt="grwomi_with_person"
           width={128}
           height={128}
@@ -27,14 +27,14 @@ export const LoginView = () => {
           SNS 계정으로 간편하게 가입하세요
         </p>
         <div className="flex gap-x-[20px]">
-          <SocialLoginBtn type="naver">
-            <Image
-              width={54}
-              height={54}
-              src="/assets/social/naver.png"
-              alt="naver-login"
-            />
-          </SocialLoginBtn>
+          {/*<SocialLoginBtn type="naver">*/}
+          {/*  <Image*/}
+          {/*    width={54}*/}
+          {/*    height={54}*/}
+          {/*    src="/assets/social/naver.png"*/}
+          {/*    alt="naver-login"*/}
+          {/*  />*/}
+          {/*</SocialLoginBtn>*/}
           <SocialLoginBtn type="google">
             <Image
               width={54}

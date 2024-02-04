@@ -12,7 +12,7 @@ interface SocialLoginBtnProps {
 const SocialLoginBtn = ({ type, children }: SocialLoginBtnProps) => {
   const handleLogin = () => {
     loginHandler(type);
-    tracking('로그인 하기', { loginType: type });
+    tracking('SNS 로그인', { loginType: type });
   };
 
   return (

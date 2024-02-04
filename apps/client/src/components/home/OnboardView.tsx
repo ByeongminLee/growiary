@@ -39,7 +39,7 @@ const OnboardView = () => {
       </div>
       <div className="grow-0 shrink-0 min-h-[60px]">
         {isLastSlide && (
-          <Button asChild onClick={() => tracking('로그인 페이지 이동')}>
+          <Button asChild onClick={() => tracking('앱 온보딩 페이지')}>
             <Link href="/login">시작하기</Link>
           </Button>
         )}

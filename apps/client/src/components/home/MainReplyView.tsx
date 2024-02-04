@@ -10,8 +10,8 @@ import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types'
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useFetch } from '@/lib/useFetch';
-import { useSetRecoilState } from 'recoil';
-import { recordState } from '@/store';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { recordState, recordWriteState } from '@/store';
 
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
@@ -29,9 +29,7 @@ const MainReplyView = ({
   const requestApi = useFetch();
   const todayData = replyData[0];
   const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
-  const [isSubmittedFeedBack, setIsSubmittedFeedBack] = useState(
-    todayData.feedback !== 'NONE',
-  );
+  const [recordWrite, setRecordWrite] = useRecoilState(recordWriteState);
 
   const handleSubmit = async (e: FormEvent) => {
     const response = (await requestApi('/post/feedback', {
@@ -44,7 +42,10 @@ const MainReplyView = ({
     })) as ApiResponse<{ status: ResponseStatus; message: string }>;
     const { status } = await response;
     if (status === 200) {
-      setIsSubmittedFeedBack(true);
+      setRecordWrite(prev => ({
+        ...prev,
+        isSubmittedFeedback: true,
+      }));
     }
   };
 
@@ -63,7 +64,7 @@ const MainReplyView = ({
 
           {showFeedbackQues &&
             todayData.feedback === 'NONE' &&
-            (!isSubmittedFeedBack ? (
+            (!recordWrite.isSubmittedFeedback ? (
               <section>
                 <div className="flex flex-col align-center justify-center">
                   <div className="flex justify-center items-center">

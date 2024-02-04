@@ -1,11 +1,8 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
-import React, { FormEvent, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { userProfileState } from '@/store';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
 import { Label } from '@/components/ui/shadcn/label';
-import ConfirmModal from '@/components/ui/ConfirmModal';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
 import { useUserProfile } from '@/lib/useUserProfile';
@@ -21,6 +18,7 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
+import { privacyContent, serviceContent } from '@/utils/agreementContents';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -107,16 +105,17 @@ const ProfileView = () => {
                 </div>
               </AlertDialogTrigger>
               <AlertDialogOverlay>
-                <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md	">
-                  <div className="flex flex-col gap-3">
+                <AlertDialogContent className="w-[90%] rounded-md	">
+                  <div className="flex flex-col gap-3 h-[70vh]">
                     <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
                     <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
-                      ContentHere is ContentHere is Content Here is ContentHere is
-                      ContentHere is ContentHere is ContentHere is ContentHere is Content
+                      {serviceContent}
                     </AlertDialogDescription>
-                    <AlertDialogAction className="btn-secondary btn-full">
-                      확인했어요
-                    </AlertDialogAction>
+                    <Button variant="secondary">
+                      <AlertDialogAction className="btn-full">
+                        확인했어요
+                      </AlertDialogAction>
+                    </Button>
                   </div>
                 </AlertDialogContent>
               </AlertDialogOverlay>
@@ -138,16 +137,17 @@ const ProfileView = () => {
                 </div>
               </AlertDialogTrigger>
               <AlertDialogOverlay>
-                <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md	">
-                  <div className="flex flex-col gap-3">
+                <AlertDialogContent className="w-[90%] rounded-md">
+                  <div className="flex flex-col gap-3 h-[70vh]">
                     <h2 className="font-p-M24 text-center">개인정보 처리방침</h2>
                     <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
-                      ContentHere is ContentHere is Content Here is ContentHere is
-                      ContentHere is ContentHere is ContentHere is ContentHere is Content
+                      {privacyContent}
                     </AlertDialogDescription>
-                    <AlertDialogAction className="btn-secondary btn-full">
-                      확인했어요
-                    </AlertDialogAction>
+                    <Button variant="secondary">
+                      <AlertDialogAction className="btn-full">
+                        확인했어요
+                      </AlertDialogAction>
+                    </Button>
                   </div>
                 </AlertDialogContent>
               </AlertDialogOverlay>

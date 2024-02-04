@@ -14,13 +14,25 @@ interface ConfirmModalProps {
   button: ReactNode;
   children: ReactNode;
   onClick?: () => void;
+  height?: string;
 }
-const ConfirmModal = ({ title, button, onClick, children }: ConfirmModalProps) => {
+const ConfirmModal = ({
+  title,
+  button,
+  onClick,
+  children,
+  height,
+}: ConfirmModalProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger className="ml-auto md:mr-12">{button}</AlertDialogTrigger>
       <AlertDialogOverlay>
-        <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md	">
+        <AlertDialogContent
+          className="max-h-[70vh] w-[90%] rounded-md"
+          style={{
+            height: height || 'auto',
+          }}
+        >
           <div className="flex flex-col gap-3">
             <h2 className="font-p-M24 text-center">{title}</h2>
             <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">

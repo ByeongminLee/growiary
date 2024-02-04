@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { loginHandler } from '@/utils/loginHandler';
 import { loginType } from '@/types';
+import { tracking } from '@/utils/mixPannel';
 
 interface SocialLoginBtnProps {
   type: loginType;
@@ -11,6 +12,7 @@ interface SocialLoginBtnProps {
 const SocialLoginBtn = ({ type, children }: SocialLoginBtnProps) => {
   const handleLogin = () => {
     loginHandler(type);
+    tracking('로그인 하기', { loginType: type });
   };
 
   return (

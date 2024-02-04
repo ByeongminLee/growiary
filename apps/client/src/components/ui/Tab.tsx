@@ -3,15 +3,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { tracking } from '@/utils/mixPannel';
 
 type TabType = 'home' | 'calendar' | 'profile';
 const Tab = () => {
   const pathname = usePathname();
   const tabs = [
-    { name: 'home', href: '/' },
-    { name: 'calendar', href: '/calendar' },
-    { name: 'profile', href: '/profile' },
-  ] as { name: TabType; href: string }[];
+    { name: 'home', href: '/', page: '메인 페이지' },
+    { name: 'calendar', href: '/calendar', page: '캘린더 페이지' },
+    { name: 'profile', href: '/profile', page: '프로필 페이지' },
+  ] as { name: TabType; href: string; page: string }[];
 
   return (
     <nav
@@ -27,6 +28,11 @@ const Tab = () => {
             <Link
               className="w-full h-full flex justify-center items-center"
               href={tab.href}
+              onClick={() =>
+                tracking(tab.page, {
+                  message: '하단 탭 클릭',
+                })
+              }
             >
               <Image
                 src={

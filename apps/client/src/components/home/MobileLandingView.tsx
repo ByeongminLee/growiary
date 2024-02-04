@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Button } from '../ui/shadcn/button';
 import Link from 'next/link';
+import { tracking } from '@/utils/mixPannel';
 
 export const MobileLandingView = () => {
   return (
@@ -26,7 +27,7 @@ export const MobileLandingView = () => {
         />
       </section>
       <section className="flex flex-col items-center">
-        <Button asChild>
+        <Button asChild onClick={() => tracking('/welcome/introduce 이동')}>
           <Link href="/welcome/introduce">다이어리 작성하러 가기</Link>
         </Button>
       </section>

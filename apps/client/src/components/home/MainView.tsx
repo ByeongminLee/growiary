@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
+import { tracking } from '@/utils/mixPannel';
 // import LottieAnimation from '@/components/ui/LottieAnimation';
 
 interface MainViewProps {
@@ -107,6 +108,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
       params.set('replied', 'true');
       setWriteState({ content: '', isWaiting: false });
       history.pushState(null, '', `?${params}`);
+      tracking('그루미에게 답장받기 클릭');
       router.refresh();
     } else {
       alert('문제 발생');

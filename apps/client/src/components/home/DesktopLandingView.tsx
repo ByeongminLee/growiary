@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/shadcn/button';
+import { tracking } from '@/utils/mixPannel';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,7 +27,11 @@ export const DesktopLandingView = () => {
             이제 친구같은, 나와 함께 성장하는 AI 다이어리를 만나보세요.
           </p>
         </div>
-        <Button className="w-[232px]" asChild>
+        <Button
+          className="w-[232px]"
+          asChild
+          onClick={() => tracking('로그인 페이지 이동')}
+        >
           <Link href="/login">다이어리 작성하러 가기</Link>
         </Button>
       </div>

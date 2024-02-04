@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import { useFetch } from '@/lib/useFetch';
 import { useSetRecoilState } from 'recoil';
 import { recordState } from '@/store';
+import { tracking } from '@/utils/mixPannel';
 
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
@@ -34,6 +35,7 @@ const MainReplyView = ({
   );
 
   const handleSubmit = async (e: FormEvent) => {
+    tracking('답장 피드백 제출');
     const response = (await requestApi('/post/feedback', {
       method: 'POST',
       id: session?.id,

@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
+import { tracking } from '@/utils/mixPannel';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -169,6 +170,7 @@ const ProfileView = () => {
             variant="ghost"
             className="w-auto border-0 hover:bg-branding-300 active:bg-branding-300"
             asChild
+            onClick={() => tracking('로그아웃')}
           >
             <AlertDialogTrigger>로그아웃</AlertDialogTrigger>
           </Button>

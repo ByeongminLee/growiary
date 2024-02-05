@@ -83,21 +83,6 @@ const ServiceTermView = () => {
     }
   };
 
-  const handleAlert = () => {
-    if ('Notification' in window) {
-      Notification.requestPermission().then(function (result) {
-        if (result === 'granted') {
-        }
-      });
-    } else {
-      console.log('Notification API is not available in this browser');
-    }
-  };
-
-  useEffect(() => {
-    handleAlert();
-  }, []);
-
   return (
     <section className="layout-full">
       <h1 className="font-p-M24 text-primary-900 mb-[29px]">서비스 이용 동의</h1>
@@ -177,9 +162,6 @@ const ServiceTermView = () => {
           시작하기
         </Button>
       </form>
-      {/*<button className="hidden" onClick={handleAlert}>*/}
-      {/*  알림 허용 여부 버튼*/}
-      {/*</button>*/}
     </section>
   );
 };

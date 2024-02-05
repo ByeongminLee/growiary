@@ -9,10 +9,10 @@ type TabType = 'home' | 'calendar' | 'profile';
 const Tab = () => {
   const pathname = usePathname();
   const tabs = [
-    { name: 'home', href: '/', page: '메인 페이지' },
-    { name: 'calendar', href: '/calendar', page: '캘린더 페이지' },
-    { name: 'profile', href: '/profile', page: '프로필 페이지' },
-  ] as { name: TabType; href: string; page: string }[];
+    { name: 'home', href: '/', ext: 'svg', page: '메인 페이지' },
+    { name: 'calendar', href: '/calendar', ext: 'png', page: '캘린더 페이지' },
+    { name: 'profile', href: '/profile', ext: 'png', page: '프로필 페이지' },
+  ] as { name: TabType; href: string; ext: 'png' | 'svg'; page: string }[];
 
   return (
     <nav
@@ -37,12 +37,17 @@ const Tab = () => {
               <Image
                 src={
                   pathname === tab.href
-                    ? `/assets/icons/${tab.name}_black.svg`
-                    : `/assets/icons/${tab.name}.svg`
+                    ? `/assets/icons/${tab.name}_black.${tab.ext}`
+                    : `/assets/icons/${tab.name}.${tab.ext}`
                 }
                 alt={tab.name}
                 width={24}
                 height={24}
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                }}
+                priority
               />
             </Link>
           </li>

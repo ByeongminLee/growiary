@@ -76,10 +76,11 @@ function Calendar({
               <div className="relative flex justify-center">
                 <Image
                   className="relative"
-                  src="/assets/icons/green_growmi.svg"
+                  src="/assets/images/green_no_face.png"
                   alt="횟수"
                   width={74}
                   height={76}
+                  priority
                 />
                 <span className="absolute top-[27px] left-0 right-0 transform- text-center font-p-M20 text-primary-900">
                   {repliedDays.filter(date => date.slice(5, 7) === month).length}회
@@ -121,6 +122,7 @@ function Calendar({
                   alt="today"
                   src="/assets/icons/today.svg"
                   className="w-auto h-auto block absolute bottom-0 left-[50%] translate-x-[-50%]"
+                  priority
                 />
               )}
             </>

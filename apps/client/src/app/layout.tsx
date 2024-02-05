@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 import { APP_INFO } from '@/utils/appInfo';
 import RecoilRootProvider from '@/components/RecoilRootProvider';
+import PushMessage from '@/components/PushMessage';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -62,7 +63,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <RecoilRootProvider>{children}</RecoilRootProvider>
+          <RecoilRootProvider>
+            {children}
+            <PushMessage />
+          </RecoilRootProvider>
         </Providers>
       </body>
     </html>

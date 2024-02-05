@@ -3,5 +3,5 @@ export const APP_INFO = {
   DEFAULT_TITLE: 'Growiary',
   TITLE_TEMPLATE: '%s - Growiary',
   DESCRIPTION: 'Growth Diary with AI',
-  URL: new URL('http://localhost:3000'),
+  URL: new URL('https://growiary.com'),
 };

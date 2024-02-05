@@ -173,7 +173,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
                 }}
               >
                 <textarea
-                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R17 placeholder:font-primary-600 font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0`}
+                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R17 placeholder:font-primary-600 font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:border-0`}
                   style={{ color: template.answerColor, pointerEvents: 'initial' }}
                   placeholder={template.placeholder}
                   onChange={handleChangeContent}

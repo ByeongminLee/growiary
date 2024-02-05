@@ -1,5 +1,5 @@
 'use client';
-import Tab from '@/components/ui/Tab';
+import Tab from '@/components/home/Tab';
 import { NavigationEvents } from '@/components/home/NavigationEvents';
 import { Suspense } from 'react';
 

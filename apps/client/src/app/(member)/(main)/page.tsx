@@ -1,11 +1,11 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
-import MainView from '@/components/home/MainView';
+import MainView from '@/components/home/main/MainView';
 import { ApiResponse, ProfileResType, RecordType } from '@/types';
 import { redirect } from 'next/navigation';
 import { requestApi } from '@/utils/requestApi';
 import { getTwoDigitNum, getYMDFromDate } from '@/utils/getDateFormat';
-import MainReplyView from '@/components/home/MainReplyView';
+import MainReplyView from '@/components/home/main/MainReplyView';
 import { Suspense } from 'react';
 
 export default async function HomePage() {

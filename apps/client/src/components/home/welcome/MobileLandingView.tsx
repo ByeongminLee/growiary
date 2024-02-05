@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Button } from '../ui/shadcn/button';
+import { Button } from '../../ui/shadcn/button';
 import Link from 'next/link';
 import { tracking } from '@/utils/mixPannel';
 

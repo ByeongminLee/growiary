@@ -1,4 +1,4 @@
-import WholeLandingView from '@/components/home/WholeLandingView';
+import WholeLandingView from '@/components/home/welcome/WholeLandingView';
 
 export default async function WelcomePage() {
   return <WholeLandingView />;

@@ -1,6 +1,6 @@
-import OnboardView from '@/components/home/OnboardView';
-import { DesktopLandingView } from '@/components/home/DesktopLandingView';
-import { MobileLandingView } from '@/components/home/MobileLandingView';
+import OnboardView from '@/components/home/welcome/OnboardView';
+import { DesktopLandingView } from '@/components/home/welcome/DesktopLandingView';
+import { MobileLandingView } from '@/components/home/welcome/MobileLandingView';
 
 type WelcomePageProps = {
   params: { screen: string };

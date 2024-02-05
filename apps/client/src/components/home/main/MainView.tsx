@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import '../ui/carousel/carousel.css';
+import '../../ui/carousel/carousel.css';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';

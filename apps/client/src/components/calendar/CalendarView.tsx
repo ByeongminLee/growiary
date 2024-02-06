@@ -5,33 +5,67 @@ import { SelectSingleEventHandler } from 'react-day-picker';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
-import { ApiResponse, CollectedRecordType, RecordType } from '@/types';
+import { CollectedRecordType, RecordType } from '@/types';
 import { useSession } from 'next-auth/react';
-import { useFullStrDate } from '@/lib/useFullStrDate';
-import { useFetch } from '@/lib/useFetch';
 import {
   getDateFromServer,
   getFirstAndLastDateFromSpecificDate,
+  getFullStrDate,
   getTwoDigitNum,
   getYMDFromDate,
 } from '@/utils/getDateFormat';
 import { useRecoilState } from 'recoil';
 import { recordState } from '@/store';
+import { QueryClient, useMutation } from '@tanstack/react-query';
+import { getRecords } from '@/utils/requestRecord';
 
 const CalendarView = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const requestApi = useFetch();
-  const [year, month, date, day] = useFullStrDate(selectedDate);
-  const [records, setRecords] = useRecoilState(recordState);
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
-
-  const template = diaryTemplates[response?.[0]?.template || '1'];
-
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [records, setRecords] = useRecoilState(recordState);
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
+  const template = diaryTemplates[response?.[0]?.template || '1'];
+  const [year, month, date, day] = getFullStrDate(selectedDate);
+  const queryClient = new QueryClient();
+  const mutation = useMutation({
+    mutationKey: ['records'],
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: string;
+      body: { startDate: string; endDate: string };
+    }) =>
+      getRecords({
+        id,
+        body,
+      }),
+    onSuccess: result => {
+      queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
+        const collectedData = result.data.reduce(
+          (f: CollectedRecordType, v: RecordType) => {
+            const key = getDateFromServer(v.createAt);
+            return {
+              ...f,
+              [key]: [...(f[key] || []), v],
+            };
+          },
+          {} as CollectedRecordType,
+        );
+        setRecords(collectedData);
+        setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
+
+        return {
+          ...old,
+          ...collectedData,
+        };
+      });
+    },
+  });
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
@@ -46,7 +80,7 @@ const CalendarView = () => {
     const clientY = 'touches' in e ? e.touches[0]?.clientY : e.clientY;
     const movedY = initPosYRef.current - clientY;
     const target = e.currentTarget as HTMLElement;
-    const { top, bottom, height } = target.getBoundingClientRect();
+    const { top, height } = target.getBoundingClientRect();
     const next = target.nextElementSibling as HTMLElement;
     // up
     if (movedY > 0) {
@@ -96,36 +130,16 @@ const CalendarView = () => {
     setIsMouseDown(false);
   };
 
-  const handleSelectDate: SelectSingleEventHandler = (
-    day,
-    selectedDay,
-    activeModifiers,
-    e,
-  ) => {
+  const handleSelectDate: SelectSingleEventHandler = (day, selectedDay) => {
     setSelectedDate(selectedDay);
     setResponse(records[getYMDFromDate(selectedDay)]);
   };
   const handleMonthChange = async (month: Date) => {
-    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
-    const response = (await requestApi('/post/filter', {
-      method: 'POST',
-      id: session?.id,
-      body: {
-        startDate: firstDate,
-        endDate: lastDate,
-      },
-    })) as ApiResponse<RecordType[]>;
-    if ('data' in response) {
-      const collectedData = response.data.reduce((f: CollectedRecordType, v) => {
-        const key = getDateFromServer(v.createAt);
-        return {
-          ...f,
-          [key]: [...(f[key] || []), v],
-        };
-      }, {} as CollectedRecordType);
-      setRecords(collectedData);
-      setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
-    }
+    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(month);
+    await mutation.mutateAsync({
+      id: session!.id,
+      body: { startDate: firstDate, endDate: lastDate },
+    });
   };
 
   useEffect(() => {
@@ -138,29 +152,13 @@ const CalendarView = () => {
   }, [session?.id]);
 
   useEffect(() => {
+    if (!session?.id) return;
+    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
     (async () => {
-      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
-      const response = (await requestApi('/post/filter', {
-        method: 'POST',
-        id: session?.id,
-        body: {
-          startDate: firstDate,
-          endDate: lastDate,
-        },
-      })) as ApiResponse<RecordType[]>;
-      if ('data' in response) {
-        const collectedData = response.data.reduce((f: CollectedRecordType, v) => {
-          const key = getDateFromServer(v.createAt);
-          return {
-            ...f,
-            [key]: [...(f[key] || []), v],
-          };
-        }, {} as CollectedRecordType);
-
-        setRecords(collectedData);
-
-        setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
-      }
+      await mutation.mutateAsync({
+        id: session.id,
+        body: { startDate: firstDate, endDate: lastDate },
+      });
     })();
   }, [session?.id]);
 
@@ -186,7 +184,6 @@ const CalendarView = () => {
         style={{
           marginTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          // backgroundColor: `${template.bgColor}`,
         }}
       >
         {response?.[0]?.content && (

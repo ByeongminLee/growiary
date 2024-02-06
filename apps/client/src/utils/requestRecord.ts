@@ -1,11 +1,16 @@
-type FetchRecordProps<T> = {
-  id?: string;
-  body?: T;
+import { RecordType } from '@/types';
+
+type FetchRecordProps = {
+  id: string;
+  body: {
+    startDate: string;
+    endDate: string;
+  };
 };
-export const getRecords = async <T, R>({
+export const getRecords = async ({
   id = '',
   body,
-}: FetchRecordProps<T>): Promise<R> => {
+}: FetchRecordProps): Promise<{ data: RecordType[] }> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/filter`, {
     method: 'POST',
     headers: {

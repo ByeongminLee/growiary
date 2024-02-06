@@ -30,10 +30,10 @@ export default async function HomePage() {
       id: session?.id,
     })) as ApiResponse<ProfileResType>;
 
-    const initialRecord = (await getRecords({
+    const initialRecord = await getRecords({
       id: session?.id,
       body: { startDate, endDate },
-    })) as ApiResponse<RecordType[]>;
+    });
 
     const todayReply =
       'data' in initialRecord &&

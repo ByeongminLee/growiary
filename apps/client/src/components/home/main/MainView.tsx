@@ -10,7 +10,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
-import { useFullStrDate } from '@/lib/useFullStrDate';
 import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
@@ -24,12 +23,13 @@ import {
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
 import { tracking } from '@/utils/mixPannel';
+import { getFullStrDate } from '@/utils/getDateFormat';
 // import LottieAnimation from '@/components/ui/LottieAnimation';
 
 const MainView = () => {
   const { data: session } = useSession();
   const record = useRecoilValue(recordState);
-  const [year, month, date, day] = useFullStrDate();
+  const [year, month, date, day] = getFullStrDate();
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const templateRef = useRef(1);
   const toastRef = useRef<HTMLDivElement>(null);

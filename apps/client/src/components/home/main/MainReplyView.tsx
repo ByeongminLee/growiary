@@ -16,20 +16,19 @@ import { recordWriteState } from '@/store';
 
 interface MainReplyViewProps {
   userProfile?: UserProfileDTO;
-  replyData?: RecordType[];
+  todayReply?: RecordType;
   showFeedbackQues?: boolean;
 }
 
 const MainReplyView = ({
   userProfile,
-  replyData = [],
+  todayReply = {} as RecordType,
   showFeedbackQues = true,
 }: MainReplyViewProps) => {
   const { data: session, status } = useSession();
   const [year, month, date, day] = useFullStrDate();
   const requestApi = useFetch();
-  const todayData = replyData[0];
-  const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
+  const template: DiaryTemplate = todayReply && diaryTemplates[todayReply.template];
   const [recordWrite, setRecordWrite] = useRecoilState(recordWriteState);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,7 +37,7 @@ const MainReplyView = ({
       method: 'POST',
       id: session?.id,
       body: {
-        postId: todayData.postId,
+        postId: todayReply.postId,
         feedback: e.currentTarget.getAttribute('data-feedback'),
       },
     })) as ApiResponse<{ status: ResponseStatus; message: string }>;
@@ -59,13 +58,13 @@ const MainReplyView = ({
       <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      {todayData.content && <DiaryContent template={template} response={todayData} />}
-      {todayData.answer && (
+      {todayReply.content && <DiaryContent template={template} response={todayReply} />}
+      {todayReply.answer && (
         <>
-          <DiaryReply template={template} response={todayData} />
+          <DiaryReply template={template} response={todayReply} />
 
           {showFeedbackQues &&
-            todayData.feedback === 'NONE' &&
+            todayReply.feedback === 'NONE' &&
             (!recordWrite.isSubmittedFeedback ? (
               <section>
                 <div className="flex flex-col align-center justify-center">

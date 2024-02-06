@@ -20,7 +20,7 @@ export const getRecords = async ({
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    // throw new Error('Network response was not ok');
   }
   return response.json();
 };

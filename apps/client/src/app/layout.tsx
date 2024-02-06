@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: APP_INFO.DEFAULT_TITLE,
+    title: APP_INFO.NAME,
     // startUpImage: [],
   },
   keywords: ['growth', 'diary', 'ai'],

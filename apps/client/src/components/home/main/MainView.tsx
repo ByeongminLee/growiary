@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
 import { useFullStrDate } from '@/lib/useFullStrDate';
-import { UserProfileDTO } from '@growiary/types';
 import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
@@ -27,12 +26,7 @@ import OneTimeToast from '@/components/ui/OneTimeToast';
 import { tracking } from '@/utils/mixPannel';
 // import LottieAnimation from '@/components/ui/LottieAnimation';
 
-interface MainViewProps {
-  userProfile?: UserProfileDTO;
-  maxHeight?: string;
-}
-
-const MainView = ({ maxHeight }: MainViewProps) => {
+const MainView = () => {
   const { data: session } = useSession();
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = useFullStrDate();
@@ -133,7 +127,6 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         spaceBetween={0}
         modules={[Pagination]}
         style={{
-          height: maxHeight,
           pointerEvents: writeState.content ? 'none' : 'initial',
         }}
         grabCursor

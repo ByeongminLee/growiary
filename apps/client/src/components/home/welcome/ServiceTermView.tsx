@@ -2,7 +2,7 @@
 
 import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';

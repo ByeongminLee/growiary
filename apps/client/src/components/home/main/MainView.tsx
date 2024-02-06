@@ -6,7 +6,7 @@ import 'swiper/css/pagination';
 import '../../ui/carousel/carousel.css';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';

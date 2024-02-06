@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/shadcn/input';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';

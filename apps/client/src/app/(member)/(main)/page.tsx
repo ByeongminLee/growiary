@@ -1,7 +1,7 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 import MainView from '@/components/home/main/MainView';
-import { ApiResponse, ProfileResType, RecordType } from '@/types';
+import { ApiResponse, ProfileResType } from '@/types';
 import { redirect } from 'next/navigation';
 import { getTwoDigitNum } from '@/utils/getDateFormat';
 import MainReplyView from '@/components/home/main/MainReplyView';

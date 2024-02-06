@@ -6,12 +6,9 @@ import { DayPicker, MonthChangeEventHandler } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/shadcn/button';
-import { getDate, getMonth, getYear } from 'date-fns';
+import { getDate, getMonth } from 'date-fns';
 import { getTwoDigitNum, getYMDFromDate, Weekdays } from '@/utils/getDateFormat';
 import Image from 'next/image';
-import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { recordState } from '@/store';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   repliedDays?: string[];

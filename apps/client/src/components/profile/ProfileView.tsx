@@ -1,6 +1,6 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/shadcn/label';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';

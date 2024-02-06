@@ -6,8 +6,6 @@ import { APP_INFO } from '@/utils/appInfo';
 import RecoilRootProvider from '@/components/RecoilRootProvider';
 import PushMessage from '@/components/PushMessage';
 import ReactQueryProvider from '@/components/ReactQueryProvider';
-import { HydrationBoundary, dehydrate, QueryClient } from '@tanstack/react-query';
-import { cache } from 'sharp';
 
 const inter = Inter({ subsets: ['latin'] });
 

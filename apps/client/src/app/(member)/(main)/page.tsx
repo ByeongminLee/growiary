@@ -23,7 +23,7 @@ export default async function HomePage() {
       0,
       0,
     );
-    const tomorrow = new Date(todayNoon.getTime() + 60 * 60 * 24 * 1000);
+    const tomorrow = new Date(todayNoon.getTime() + 60 * 60 * 48 * 1000);
     const startDate = `${todayNoon.getUTCFullYear()}-${getTwoDigitNum(todayNoon.getUTCMonth() + 1)}-${getTwoDigitNum(todayNoon.getUTCDate())}`;
     const endDate = `${tomorrow.getUTCFullYear()}-${getTwoDigitNum(tomorrow.getUTCMonth() + 1)}-${getTwoDigitNum(tomorrow.getUTCDate())}`;
     const initialProfile = (await getProfile({

@@ -188,7 +188,7 @@ const CalendarView = () => {
       >
         {response?.[0]?.content && (
           <div
-            className="absolute top-[70vh] h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
+            className="absolute top-[70vh] h-[70vh] pt-3 inset-x-0 transition-[top] ease-in-out duration-1000"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -199,10 +199,11 @@ const CalendarView = () => {
             onTouchEnd={handleMouseUp}
             style={{
               marginBottom: 'env(safe-area-inset-bottom)',
+              paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
               backgroundColor: `${template.bgColor}`,
             }}
           >
-            <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
+            <p className="mx-9 font-p-R16 text-primary-500 mb-1">
               {year}년 {month}월 {date}일 {day}
             </p>
             <DiaryContent template={template} response={response[0]} />
@@ -210,9 +211,10 @@ const CalendarView = () => {
         )}
         {response?.[0]?.answer && (
           <div
-            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000 border-t border-t-primary-500"
+            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000"
             style={{
               backgroundColor: `${template.bgColor}`,
+              paddingTop: 'env(safe-area-inset-top)',
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -223,6 +225,7 @@ const CalendarView = () => {
             onTouchCancel={handleMouseUp}
             onTouchEnd={handleMouseUp}
           >
+            <div className="border-t border-t-primary-500"></div>
             <DiaryReply response={response[0]} />
           </div>
         )}

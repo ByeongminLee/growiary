@@ -135,7 +135,7 @@ const MainView = () => {
         {Object.values(diaryTemplates).map(template => (
           <SwiperSlide
             key={template.id}
-            className={`px-6 pt-14 slide${template.id}`}
+            className={`px-6 slide${template.id}`}
             style={{
               backgroundColor: template.bgColor,
             }}
@@ -191,10 +191,7 @@ const MainView = () => {
         ))}
       </Swiper>
       <Button
-        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50"
-        style={{
-          marginBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
-        }}
+        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
         onClick={handleSubmit}
       >
         그루미에게 답장받기

@@ -27,7 +27,7 @@ function Calendar({
     <DayPicker
       onMonthChange={onMonthChange}
       showOutsideDays={showOutsideDays}
-      className={cn('p-3', className)}
+      className={cn('p-3 pt-0', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'grow space-y-4',

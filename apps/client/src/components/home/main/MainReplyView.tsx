@@ -52,7 +52,7 @@ const MainReplyView = ({
       className="h-full overflow-auto pb-[22px]"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
-      <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
+      <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
       {todayReply.content && <DiaryContent template={template} response={todayReply} />}

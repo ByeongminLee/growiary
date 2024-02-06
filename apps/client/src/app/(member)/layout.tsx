@@ -7,10 +7,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <main
-        className="fixed inset-x-0 inset-y-0"
+        className="fixed inset-x-0 inset-y-0 bg-grayscale-100"
         style={{
           marginBottom: '48px',
-          marginTop: 'env(safe-area-inset-top)',
         }}
       >
         {children}

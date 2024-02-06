@@ -32,9 +32,9 @@ const ProfileView = () => {
   };
 
   return (
-    <div className="p-6 flex flex-col h-full">
+    <div className="p-6 pt-0 flex flex-col h-full">
       {/*<form onSubmit={handleSubmit}>*/}
-      <section className="mt-8">
+      <section>
         <div className="mb-1.5 flex justify-start items-center">
           {/*{isChangeNickname ? (*/}
           {/*  <Input*/}

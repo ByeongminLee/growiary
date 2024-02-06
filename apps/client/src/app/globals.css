@@ -26,14 +26,17 @@
 }
 
 :root {
-  --vh: 100%;
+  --safe-margin: 36px;
 }
 
 @layer base {
   body {
-    @apply bg-grayscale-100;
     margin-top: env(safe-area-inset-top);
     margin-bottom: env(safe-area-inset-bottom);
+  }
+
+  main > *:first-child {
+    padding-top: calc(env(safe-area-inset-top) + var(--safe-margin));
   }
 }
 

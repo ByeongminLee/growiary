@@ -1,12 +1,9 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/shadcn/input';
 import { Label } from '@/components/ui/shadcn/label';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
-import { useUserProfile } from '@/lib/useUserProfile';
-import { UserProfileDTO } from '@growiary/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,51 +16,15 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
-
-const updateUserName = async (id: string, userName: string) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: id,
-      'Content-Type': 'application/json; charset=utf-8',
-    },
-    body: JSON.stringify({ userName: userName }),
-  });
-  return await response.json();
-};
-
+import { useUserName } from '@/lib/useUserName';
 const ProfileView = () => {
-  const { data: session, status } = useSession();
-  const [profile, setProfile] = useState<UserProfileDTO | null>(null);
-  const userProfile = useUserProfile();
-  const [isChangeNickname, setIsChangeNickname] = useState(false);
-
-  const handleClickChangeName = async () => {
-    setIsChangeNickname(true);
-  };
+  const { data: session } = useSession();
+  const userName = useUserName();
+  const [nickname, setNickname] = useState(userName);
 
   useEffect(() => {
-    setProfile(userProfile);
-  }, [session?.id, userProfile]);
-
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   const input = (e.target as HTMLFormElement).username.value;
-  //   if (!session || !input) return;
-  //
-  //   const json: ApiResponse<{ profile: UserProfileDTO }> = await updateUserName(
-  //     session.id,
-  //     input,
-  //   );
-  //
-  //   json.status === 200 &&
-  //     setUserProfile(prev => ({
-  //       ...prev,
-  //       userName: input,
-  //     }));
-  //
-  //   setIsChangeNickname(false);
-  // };
+    setNickname(userName);
+  }, [userName]);
 
   const handleClickLogOut = () => {
     sessionStorage.clear();
@@ -75,17 +36,20 @@ const ProfileView = () => {
       {/*<form onSubmit={handleSubmit}>*/}
       <section className="mt-8">
         <div className="mb-1.5 flex justify-start items-center">
-          {isChangeNickname ? (
-            <Input
-              name="username"
-              disabled={!isChangeNickname}
-              defaultValue={profile?.userName}
-            />
-          ) : (
-            <div className="font-p-M24">
-              <span className="text-branding-600 mr-[5px]">{profile?.userName}</span>님
-            </div>
-          )}
+          {/*{isChangeNickname ? (*/}
+          {/*  <Input*/}
+          {/*    name="username"*/}
+          {/*    disabled={!isChangeNickname}*/}
+          {/*    defaultValue={profile?.userName}*/}
+          {/*  />*/}
+          {/*) : (*/}
+          <div className="font-p-M24">
+            <span className="text-branding-600 mr-[5px]" suppressHydrationWarning>
+              {nickname}
+            </span>
+            님
+          </div>
+          {/*)}*/}
         </div>
         <div className="text-primary-400">{session?.user?.email}</div>
       </section>

@@ -226,7 +226,7 @@ const CalendarView = () => {
             onTouchCancel={handleMouseUp}
             onTouchEnd={handleMouseUp}
           >
-            <DiaryReply template={template} response={response[0]} />
+            <DiaryReply response={response[0]} />
           </div>
         )}
       </article>

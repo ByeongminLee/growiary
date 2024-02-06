@@ -5,6 +5,9 @@ import { Providers } from '@/components/Providers';
 import { APP_INFO } from '@/utils/appInfo';
 import RecoilRootProvider from '@/components/RecoilRootProvider';
 import PushMessage from '@/components/PushMessage';
+import ReactQueryProvider from '@/components/ReactQueryProvider';
+import { HydrationBoundary, dehydrate, QueryClient } from '@tanstack/react-query';
+import { cache } from 'sharp';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -63,10 +66,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <RecoilRootProvider>
-            {children}
-            <PushMessage />
-          </RecoilRootProvider>
+          <ReactQueryProvider>
+            <RecoilRootProvider>
+              {children}
+              <PushMessage />
+            </RecoilRootProvider>
+          </ReactQueryProvider>
         </Providers>
       </body>
     </html>

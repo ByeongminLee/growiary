@@ -1,32 +1,29 @@
 'use client';
-import { UserProfileDTO } from '@growiary/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/shadcn/button';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
-import { useFullStrDate } from '@/lib/useFullStrDate';
 import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { useFetch } from '@/lib/useFetch';
 import { tracking } from '@/utils/mixPannel';
 import { useRecoilState } from 'recoil';
 import { recordWriteState } from '@/store';
+import { getFullStrDate } from '@/utils/getDateFormat';
 
 interface MainReplyViewProps {
-  userProfile?: UserProfileDTO;
   todayReply?: RecordType;
   showFeedbackQues?: boolean;
 }
 
 const MainReplyView = ({
-  userProfile,
   todayReply = {} as RecordType,
   showFeedbackQues = true,
 }: MainReplyViewProps) => {
-  const { data: session, status } = useSession();
-  const [year, month, date, day] = useFullStrDate();
+  const { data: session } = useSession();
+  const [year, month, date, day] = getFullStrDate();
   const requestApi = useFetch();
   const template: DiaryTemplate = todayReply && diaryTemplates[todayReply.template];
   const [recordWrite, setRecordWrite] = useRecoilState(recordWriteState);
@@ -61,7 +58,7 @@ const MainReplyView = ({
       {todayReply.content && <DiaryContent template={template} response={todayReply} />}
       {todayReply.answer && (
         <>
-          <DiaryReply template={template} response={todayReply} />
+          <DiaryReply response={todayReply} />
 
           {showFeedbackQues &&
             todayReply.feedback === 'NONE' &&

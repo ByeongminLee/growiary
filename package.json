@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "client": "pnpm -F @growiary/client",
+    "admin": "pnpm -F @growiary/admin",
     "serve": "pnpm -F @growiary/server"
   },
   "devDependencies": {

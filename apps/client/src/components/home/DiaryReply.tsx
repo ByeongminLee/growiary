@@ -35,7 +35,7 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
           alt="growmi"
         />
       </div>
-      <div className="text-grayscale-800 font-p-R17 bg-opacity-70 p-6 rounded-2xl relative after:content-[''] after:absolute after:top-[-16px] after:right-14 after:w-[18px] after:h-[12px] after:bg-transparent after:border-8 after:border-transparent after:border-r-opacity-70 after:border-r-[11px] after:rounded-tr-[25px] after:border-b-opacity-70">
+      <div className="text-grayscale-800 font-p-R18-2 bg-opacity-70 p-6 rounded-2xl relative after:content-[''] after:absolute after:top-[-16px] after:right-14 after:w-[18px] after:h-[12px] after:bg-transparent after:border-8 after:border-transparent after:border-r-opacity-70 after:border-r-[11px] after:rounded-tr-[25px] after:border-b-opacity-70">
         {response.answer.split('\n').map((el: string, idx: number) => (
           <p key={idx}>
             {el}

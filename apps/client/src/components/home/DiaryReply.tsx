@@ -10,7 +10,7 @@ type DiaryReplyProps = {
 
 const DiaryReply = ({ response }: DiaryReplyProps) => {
   const userName = useUserName();
-  const [nickname, setNickname] = useState(userName);
+  const [nickname, setNickname] = useState('');
 
   useEffect(() => {
     setNickname(userName);

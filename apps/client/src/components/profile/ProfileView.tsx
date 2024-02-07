@@ -20,7 +20,7 @@ import { useUserName } from '@/lib/useUserName';
 const ProfileView = () => {
   const { data: session } = useSession();
   const userName = useUserName();
-  const [nickname, setNickname] = useState(userName);
+  const [nickname, setNickname] = useState('');
 
   useEffect(() => {
     setNickname(userName);

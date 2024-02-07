@@ -62,7 +62,7 @@ const ProfileView = () => {
                   htmlFor="service"
                   className="font-p-M16 py-3 text-primary-800 cursor-pointer"
                 >
-                  (필수) 서비스 이용약관
+                  서비스 이용약관
                 </Label>
                 <div className="ml-auto md:mr-12">
                   <Union />
@@ -94,7 +94,7 @@ const ProfileView = () => {
                   htmlFor="privacy"
                   className="font-p-M16  py-3 text-primary-800 cursor-pointer"
                 >
-                  (필수) 개인정보 처리방침
+                  개인정보 처리방침
                 </Label>
                 <div className="ml-auto md:mr-12">
                   <Union />

@@ -46,7 +46,7 @@ const CalendarView = () => {
       }),
     onSuccess: result => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-        const collectedData = result.data.reduce(
+        const collectedData = [...(result.data || [])].reduce(
           (f: CollectedRecordType, v: RecordType) => {
             const key = getDateFromServer(v.createAt);
             return {

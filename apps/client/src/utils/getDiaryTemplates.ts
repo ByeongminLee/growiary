@@ -7,6 +7,16 @@ const colors = config?.theme?.extend?.colors as {
   };
 };
 export const diaryTemplates: { [key: string]: DiaryTemplate } = {
+  '0': {
+    id: '0',
+    dateColor: colors?.primary?.[400],
+    bgColor: colors?.grayscale?.[100],
+    question: `오늘 무슨 일이 있었는지 \n말해줄래요?`,
+    questionColor: colors?.primary?.[900],
+    placeholder: '그루미와 함께 대화하다보면 어느샌가 성장해 있을 거에요',
+    answerColor: colors?.grayscale?.['800'],
+    charSrc: '/assets/growmi/green_letter.svg',
+  },
   '1': {
     id: '1',
     dateColor: colors?.primary?.[400],

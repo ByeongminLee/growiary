@@ -31,14 +31,20 @@ const MainView = () => {
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = getFullStrDate();
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
-  const templateRef = useRef(1);
+  const templateRef = useRef('1');
   const toastRef = useRef<HTMLDivElement>(null);
-  const [toastContent, setToastContent] = useState('');
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const [toastContent, setToastContent] = useState('');
+  const [scrollHeight, setScrollHeight] = useState('100%');
   const [hasExperience, setHasExperience] = useState(true);
   const requestApi = useFetch();
   const params = new URLSearchParams();
   const router = useRouter();
+  const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
+
+  const assignRef = (index: string) => (element: HTMLTextAreaElement) => {
+    refsArray.current[index] = element;
+  };
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -69,8 +75,12 @@ const MainView = () => {
     }));
   };
 
-  const handleFocusInput = (id: number) => {
+  const handleFocusInput = (id: string) => {
     templateRef.current = id;
+  };
+
+  const handleBlurInput = (id: string) => {
+    setScrollHeight('100%');
   };
 
   const handleSubmit = async () => {
@@ -116,6 +126,17 @@ const MainView = () => {
       window.localStorage.setItem('hasExperience', 'true');
     }
   }, [hasExperience]);
+
+  useEffect(() => {
+    const refHeight = refsArray.current[templateRef.current].clientHeight;
+    const handleScroll = () => {
+      const sub = document.documentElement.scrollHeight - window.innerHeight;
+      if (sub === 0) return;
+      setScrollHeight(refHeight - Math.abs(sub) + 'px');
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+  });
 
   return (
     <>
@@ -166,11 +187,17 @@ const MainView = () => {
                 }}
               >
                 <textarea
-                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R17 placeholder:font-primary-600 font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
-                  style={{ color: template.answerColor, pointerEvents: 'initial' }}
+                  ref={assignRef(template.id)}
+                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R17 placeholder:font-primary-600 font-p-R17 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
+                  style={{
+                    color: template.answerColor,
+                    pointerEvents: 'initial',
+                    height: scrollHeight,
+                  }}
                   placeholder={template.placeholder}
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
+                  onBlur={() => handleBlurInput(template.id)}
                   maxLength={1000}
                   minLength={11}
                   value={writeState.content}

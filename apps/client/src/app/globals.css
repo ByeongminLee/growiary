@@ -62,55 +62,80 @@
   }
 
   .font-p-R48 {
-    @apply font-light;
-    font-size: 2.5rem;
+    font-family: Pretendard, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
     line-height: 49px;
-    font-family: theme(fontFamily.pretendard);
+    letter-spacing: -2.5px;
   }
 
   .font-p-M24 {
-    @apply font-medium text-2xl;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 32px;
+    letter-spacing: -1.2000000476837158px;
   }
 
   .font-p-R24 {
-    @apply font-normal text-2xl;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 32px;
+    letter-spacing: -0.5px;
+
   }
 
   .font-p-M20 {
-    @apply font-semibold text-xl;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: -1.25px;
+
   }
 
   .font-p-R18 {
-    @apply font-normal text-lg;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: -1.25px;
   }
 
   .font-p-R17 {
-    @apply font-normal;
-    font-family: theme(fontFamily.pretendard);
-    font-size: 1.0625rem;
-    line-height: 26px;
+    font-family: Pretendard, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 27px;
+    letter-spacing: -0.25px;
   }
 
   .font-p-M16 {
-    @apply font-medium text-base;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.7058823704719543px;
   }
 
   .font-p-R16 {
-    @apply font-normal text-base;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: -0.7058823704719543px;
   }
 
   .font-p-M14 {
-    @apply font-medium text-sm leading-6;
-    font-family: theme(fontFamily.pretendard);
+    font-family: Pretendard, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.7058823704719543px;
   }
 
-  .diary-text:placeholder {
+  .diary-text::placeholder {
     color: currentColor;
   }
 

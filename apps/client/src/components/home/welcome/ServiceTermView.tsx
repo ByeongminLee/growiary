@@ -3,7 +3,6 @@
 import { Label } from '@/components/ui/shadcn/label';
 import Checkbox from '@/components/ui/Checkbox';
 import { FormEvent, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -11,6 +10,7 @@ import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
 import { tracking } from '@/utils/mixPannel';
+import { useSetRecoilState } from 'recoil';
 
 type FormType = {
   all: boolean;
@@ -20,7 +20,6 @@ type FormType = {
 };
 const ServiceTermView = () => {
   const router = useRouter();
-  const profile = useRecoilValue(userProfileState);
   const formRef = useRef<HTMLFormElement>(null);
   const requiredListRef = useRef<(keyof FormType)[]>(['service', 'privacy']);
   const [checkboxState, setCheckboxState] = useState<FormType>({

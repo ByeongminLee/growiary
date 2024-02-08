@@ -125,6 +125,34 @@ const CalendarView = () => {
     }
   };
 
+  const handleContentClick = (e: React.MouseEvent | React.TouchEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const { height } = target.getBoundingClientRect();
+    const top = isNaN(parseInt(target.style.top, 10))
+      ? initArticleYPosRef.current
+      : parseInt(target.style.top, 10);
+    const prev = target.previousElementSibling;
+    const next = target.nextElementSibling as HTMLElement;
+    // up
+    if (top > 0 && top < window.innerHeight) {
+      target.style.top = '0px';
+      target.style.overflow = 'scroll';
+      if (next) {
+        (next as HTMLElement).style.top = height + 'px';
+      }
+      return;
+    }
+    // down
+    if (top === 0) {
+      target.style.top = prev ? '70vh' : initArticleYPosRef.current + 'px';
+      target.style.overflow = 'hidden';
+      if (next) {
+        next.style.top = '100vh';
+        next.style.overflow = 'hidden';
+      }
+    }
+  };
+
   const handleMouseUp = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     setIsMouseDown(false);
@@ -183,6 +211,7 @@ const CalendarView = () => {
         {response?.[0]?.content && (
           <div
             className="absolute h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
+            onClick={handleContentClick}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -212,6 +241,7 @@ const CalendarView = () => {
               backgroundColor: `${template.bgColor}`,
               marginTop: 'env(safe-area-inset-top)',
             }}
+            onClick={handleContentClick}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}

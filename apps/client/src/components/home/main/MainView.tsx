@@ -24,7 +24,8 @@ import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
 import { tracking } from '@/utils/mixPannel';
 import { getFullStrDate } from '@/utils/getDateFormat';
-// import LottieAnimation from '@/components/ui/LottieAnimation';
+import LottieAnimation from '@/components/ui/LottieAnimation';
+import airplane from '@/../public/assets/airplane.json';
 
 const MainView = () => {
   const { data: session } = useSession();
@@ -237,17 +238,10 @@ const MainView = () => {
         <AlertDialogOverlay>
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
             <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
-              {/*<p className="pb-2 font-p-M14 text-grayscale-700">*/}
-              {/*  구르미가 답장을 쓰고 있어요*/}
-              {/*</p>*/}
-              <Image
-                src="/assets/images/message.png"
-                alt="growmi"
-                width={173}
-                height={134}
-                className="mb-2"
-              />
-              {/*<LottieAnimation src={'airplane'} className="bg-primary-100" />*/}
+              <p className="pb-2 font-p-M14 text-grayscale-700">
+                구르미가 답장을 쓰고 있어요
+              </p>
+              <LottieAnimation src={airplane} className="bg-primary-100" />
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

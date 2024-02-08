@@ -7,12 +7,7 @@ import { Button } from '@/components/ui/shadcn/button';
 import Image from 'next/image';
 import { tracking } from '@/utils/mixPannel';
 
-const Slide = ({ text }: { text: string }) => {
-  return <div className="w-full h-[440px] bg-temp-img">{text}</div>;
-};
-
 const OnboardView = () => {
-  const slideContents = ['img1', 'img2', 'img3'];
   const [isLastSlide, setIsLastSlide] = useState(false);
 
   const onReachEnd = (status: boolean) => {
@@ -20,8 +15,8 @@ const OnboardView = () => {
   };
 
   return (
-    <section className="layout-full h-[calc(85vh-72px)]">
-      <div className="grow flex items-center">
+    <section className="layout-full">
+      <div className="flex items-center">
         <Carousel onReachEnd={onReachEnd} width="312px">
           {[...new Array(4)].map((v, i) => (
             <Image

@@ -33,6 +33,7 @@ const OnboardView = () => {
               alt={`onboarding${i + 1}`}
               width={312}
               height={440}
+              priority
             />
           ))}
         </Carousel>

@@ -9,7 +9,13 @@ export const MobileLandingView = () => {
   return (
     <div className="layout-full">
       <section className="self-start mt-18">
-        <Image src="/assets/app/logo.png" alt="growiary" width={312} height={113} />
+        <Image
+          src="/assets/app/logo.png"
+          alt="growiary"
+          width={312}
+          height={113}
+          priority
+        />
         <h1 className="font-p-M24 text-primary-900 mt-2">AI와 함께하는 회고 다이어리</h1>
         <Image
           src="/assets/images/line.svg"
@@ -17,6 +23,7 @@ export const MobileLandingView = () => {
           width={587}
           height={5}
           className="absolute top-[416px] inset-x-0 w-screen"
+          priority
         />
         <Image
           src="/assets/images/growmi_with_person.png"
@@ -24,6 +31,7 @@ export const MobileLandingView = () => {
           width={128}
           height={128}
           className="absolute top-[336px] right-[20px]"
+          priority
         />
       </section>
       <section className="flex flex-col items-center">

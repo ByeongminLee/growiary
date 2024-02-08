@@ -16,6 +16,7 @@ export const DesktopLandingView = () => {
             height="113"
             alt="logo"
             className="mx-auto"
+            priority
           />
           <p className="font-p-M24 p-4">AI와 함께하는 회고 다이어리</p>
         </div>
@@ -43,18 +44,19 @@ export const DesktopLandingView = () => {
           >
             <div className="w-[200px] h-[150px] mx-auto">
               <Image
-                className="mx-auto"
+                className="mx-auto w-auto h-auto"
                 src={content.img}
                 width={content.width}
                 height={content.height}
                 alt={content.label}
+                priority
               />
             </div>
             <div>
               <p className="text-branding-600 font-bold text-[20px] leading-[24px] tracking-[-1.2px] mb-[11px]">
                 {content.label}
               </p>
-              <p className="font-p-M24">{content.title}</p>
+              <h2 className="font-p-M24">{content.title}</h2>
               <p className="font-p-R18 text-primary-700">{content.description}</p>
             </div>
           </div>

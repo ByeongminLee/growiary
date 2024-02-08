@@ -6,23 +6,27 @@
     font-family: "Nanum Myeongjo";
     font-weight: 400;
     src: url("/fonts/NanumMyeongjo.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Nanum Myeongjo";
     font-weight: 700;
     src: url("/fonts/NanumMyeongjoBold.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Nanum Myeongjo";
     font-weight: 900;
     src: url("/fonts/NanumMyeongjoExtraBold.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Pretendard";
     src: url("/fonts/PretendardVariable.woff2") format("woff2");
+    font-display: swap;
 }
 
 :root {

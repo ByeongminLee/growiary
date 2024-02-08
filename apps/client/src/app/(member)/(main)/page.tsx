@@ -1,7 +1,6 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 import MainView from '@/components/home/main/MainView';
-import { ApiResponse, ProfileResType } from '@/types';
 import { redirect } from 'next/navigation';
 import { getTwoDigitNum } from '@/utils/getDateFormat';
 import MainReplyView from '@/components/home/main/MainReplyView';
@@ -26,14 +25,16 @@ export default async function HomePage() {
     const tomorrow = new Date(todayNoon.getTime() + 60 * 60 * 48 * 1000);
     const startDate = `${todayNoon.getUTCFullYear()}-${getTwoDigitNum(todayNoon.getUTCMonth() + 1)}-${getTwoDigitNum(todayNoon.getUTCDate())}`;
     const endDate = `${tomorrow.getUTCFullYear()}-${getTwoDigitNum(tomorrow.getUTCMonth() + 1)}-${getTwoDigitNum(tomorrow.getUTCDate())}`;
-    const initialProfile = (await getProfile({
-      id: session?.id,
-    })) as ApiResponse<ProfileResType>;
 
-    const initialRecord = await getRecords({
-      id: session?.id,
-      body: { startDate, endDate },
-    });
+    const [initialProfile, initialRecord] = await Promise.all([
+      await getProfile({
+        id: session?.id,
+      }),
+      getRecords({
+        id: session?.id,
+        body: { startDate, endDate },
+      }),
+    ]);
 
     const todayReply =
       'data' in initialRecord &&

@@ -8,7 +8,7 @@ const OneTimeToast = ({ children }: CenteredToastProps) => {
 
   const showToast = () => {
     if (!toastRef.current) return;
-    console.log('showtoast');
+
     toastRef.current.style.display = 'block';
     const timeoutId = setTimeout(() => {
       if (!toastRef.current) return;

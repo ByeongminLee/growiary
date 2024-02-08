@@ -59,6 +59,8 @@ const NickNameSettingView = () => {
       .then(({ status }: Pick<ApiResponse<{ profile: UserProfileDTO }>, 'status'>) => {
         if (status === 200) {
           modalButtonRef.current?.click();
+        } else if (status === 400) {
+          alert('서비스 이용 동의 또는 닉네임 설정을 다시 해주세요.');
         } else {
           alert('닉네임 설정에 실패했습니다. 오류 문의를 넣어주세요.');
         }
@@ -70,7 +72,6 @@ const NickNameSettingView = () => {
     router.push('/');
   };
 
-  // 오류 발생
   useEffect(() => {
     for (let agreement of RequiredAgreements) {
       if (!userProfile.agreeTerms?.[agreement]) {

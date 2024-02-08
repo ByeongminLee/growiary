@@ -20,8 +20,8 @@ import {
   Title,
 } from '@tremor/react';
 import { usePerUser } from '.';
-import { SearchIcon } from '@heroicons/react';
-import { useState } from 'react';
+import { HiOutlineSearch } from 'react-icons/hi';
+import { useEffect, useState } from 'react';
 import { TableHeader } from './TableHeader';
 
 export const PerUser = () => {
@@ -29,7 +29,11 @@ export const PerUser = () => {
   const data = usePerUser();
   const [filteredData, setFilteredData] = useState(data);
 
-  const DataHandler = () => {
+  useEffect(() => {
+    if (data && filteredData.length === 0) setFilteredData(data);
+  }, [data]);
+
+  const dataHandler = () => {
     const result = data.filter(item => {
       return (
         item.userName.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -45,12 +49,16 @@ export const PerUser = () => {
         <Title>검색</Title>
         <Flex className="gap-4">
           <TextInput
-            icon={SearchIcon}
+            icon={() => (
+              <div className="p-2">
+                <HiOutlineSearch className="w-5 h-5 " />
+              </div>
+            )}
             placeholder="Search..."
             value={searchText}
             onValueChange={setSearchText}
           />
-          <Button size="md" className="min-w-20" onClick={() => DataHandler()}>
+          <Button size="md" className="min-w-20" onClick={() => dataHandler()}>
             확인
           </Button>
         </Flex>

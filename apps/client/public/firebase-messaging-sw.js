@@ -1,8 +1,14 @@
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js');
-importScripts('https://growiary.com/config.js');
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp({
+  apiKey: 'AIzaSyA2bhoq3Fwma8phjasgTrSQbvtB5khtxmM',
+  authDomain: 'growiary-app.firebaseapp.com',
+  projectId: 'growiary-app',
+  storageBucket: 'growiary-app.appspot.com',
+  messagingSenderId: '969176378518',
+  appId: '1:969176378518:web:12fa2fa1ffcd35ec0d26b7',
+});
 
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.

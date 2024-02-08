@@ -164,7 +164,7 @@ const CalendarView = () => {
 
   return (
     <div>
-      <section>
+      <section className="mx-2">
         {session?.id && (
           <Calendar
             mode="single"

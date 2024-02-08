@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       const postsData = doc.data();
 
       const postsArray = Object.keys(postsData).map(postId => ({
-        userID: doc.id,
+        userId: doc.id,
         postId,
         feedback: 'NONE',
         ...postsData[postId],

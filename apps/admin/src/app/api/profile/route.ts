@@ -18,9 +18,9 @@ export async function POST(request: Request) {
       const userData = doc.data();
       userData.createdAt = dateConverter(userData.createdAt);
       userData.updatedAt = dateConverter(userData.updatedAt);
-      data.push(userData);
+      userData.userId = doc.id;
 
-      data.push(doc.data());
+      data.push(userData);
     });
   } catch (error) {
     console.error('Error fetching profiles:', error);

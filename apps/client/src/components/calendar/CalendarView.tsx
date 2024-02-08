@@ -115,7 +115,7 @@ const CalendarView = () => {
         return;
       }
       if (target.scrollTop === 0) {
-        target.style.top = '70vh';
+        target.style.top = initArticleYPosRef.current + 'px';
         target.style.overflow = 'hidden';
         if (next) {
           next.style.top = '100vh';
@@ -179,16 +179,10 @@ const CalendarView = () => {
           />
         )}
       </section>
-      <article
-        ref={articleElRef}
-        style={{
-          marginTop: 'env(safe-area-inset-top)',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-        }}
-      >
+      <article ref={articleElRef}>
         {response?.[0]?.content && (
           <div
-            className="absolute top-[70vh] h-[70vh] pt-3 inset-x-0 transition-[top] ease-in-out duration-1000"
+            className="absolute h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -199,8 +193,10 @@ const CalendarView = () => {
             onTouchEnd={handleMouseUp}
             style={{
               marginBottom: 'env(safe-area-inset-bottom)',
-              paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
+              marginTop: 'env(safe-area-inset-top)',
+              paddingTop: '32px',
               backgroundColor: `${template.bgColor}`,
+              top: 'inherit',
             }}
           >
             <p className="mx-9 font-p-R16 text-primary-500 mb-1">
@@ -214,7 +210,7 @@ const CalendarView = () => {
             className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000"
             style={{
               backgroundColor: `${template.bgColor}`,
-              paddingTop: 'env(safe-area-inset-top)',
+              marginTop: 'env(safe-area-inset-top)',
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}

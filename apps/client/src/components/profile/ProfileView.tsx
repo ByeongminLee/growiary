@@ -45,7 +45,7 @@ const ProfileView = () => {
   };
 
   return (
-    <div className="p-6 pt-0 flex flex-col h-full">
+    <div className="p-6 mt-5 flex flex-col h-full">
       {/*<form onSubmit={handleSubmit}>*/}
       <section>
         <div className="mb-1.5 flex justify-start items-center">
@@ -144,7 +144,7 @@ const ProfileView = () => {
           <Button
             type="button"
             variant="ghost"
-            className="w-auto border-0 hover:bg-branding-300 active:bg-branding-300"
+            className="w-auto ml-[-0.875rem] border-0 hover:bg-branding-300 active:bg-branding-300"
             asChild
             onClick={() => tracking('로그아웃')}
           >

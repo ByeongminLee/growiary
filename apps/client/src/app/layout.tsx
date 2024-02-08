@@ -27,7 +27,17 @@ export const metadata: Metadata = {
     title: APP_INFO.NAME,
     // startUpImage: [],
   },
-  keywords: ['growth', 'diary', 'ai'],
+  keywords: [
+    '그루어리',
+    'growiary',
+    '다이어리',
+    '성장',
+    '회고',
+    '답장',
+    'growth',
+    'diary',
+    'ai',
+  ],
   formatDetection: {
     telephone: false,
   },

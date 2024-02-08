@@ -47,10 +47,9 @@
 @layer components {
   /* 레이아웃 */
   .layout-full {
-    @apply w-full h-[calc(80vh-72px)] mt-[72px] px-[24px] flex flex-col justify-between;
-    margin-top: calc(env(safe-area-inset-top) + 72px);
-    color: #F8F6F0;
-    background-color: #35f654,
+    @apply w-full px-[24px] flex flex-col justify-between;
+    height: 85vh;
+    padding-top: 58px;
   }
 
   /* 폰트 관련 */

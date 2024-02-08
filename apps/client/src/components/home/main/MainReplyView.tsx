@@ -50,7 +50,12 @@ const MainReplyView = ({
   return (
     <article
       className="h-full overflow-auto pb-[22px]"
-      style={{ backgroundColor: `${template.bgColor}` }}
+      style={{
+        backgroundColor: `${template.bgColor}`,
+        paddingTop: '64px',
+        marginTop: 'env(safe-area-inset-top)',
+        height: 'calc(100% - env(safe-area-inset-top))',
+      }}
     >
       <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}

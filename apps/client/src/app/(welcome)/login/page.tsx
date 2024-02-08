@@ -1,4 +1,4 @@
-import { LoginView } from '@/components/home/LoginView';
+import { LoginView } from '@/components/home/welcome/LoginView';
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';

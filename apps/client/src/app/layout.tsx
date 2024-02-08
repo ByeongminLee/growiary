@@ -4,6 +4,8 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 import { APP_INFO } from '@/utils/appInfo';
 import RecoilRootProvider from '@/components/RecoilRootProvider';
+import PushMessage from '@/components/PushMessage';
+import ReactQueryProvider from '@/components/ReactQueryProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: APP_INFO.DEFAULT_TITLE,
+    title: APP_INFO.NAME,
     // startUpImage: [],
   },
   keywords: ['growth', 'diary', 'ai'],
@@ -62,7 +64,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <RecoilRootProvider>{children}</RecoilRootProvider>
+          <ReactQueryProvider>
+            <RecoilRootProvider>
+              {children}
+              <PushMessage />
+            </RecoilRootProvider>
+          </ReactQueryProvider>
         </Providers>
       </body>
     </html>

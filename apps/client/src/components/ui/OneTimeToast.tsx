@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface CenteredToastProps {
   children: ReactNode;
@@ -8,7 +8,7 @@ const OneTimeToast = ({ children }: CenteredToastProps) => {
 
   const showToast = () => {
     if (!toastRef.current) return;
-    console.log('showtoast');
+
     toastRef.current.style.display = 'block';
     const timeoutId = setTimeout(() => {
       if (!toastRef.current) return;

@@ -1,12 +1,9 @@
 'use client';
 import { signOut, useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/shadcn/input';
+import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/shadcn/label';
 import Union from '@/components/ui/icon/Union';
 import { Button } from '@/components/ui/shadcn/button';
-import { useUserProfile } from '@/lib/useUserProfile';
-import { UserProfileDTO } from '@growiary/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +17,7 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
 import { tracking } from '@/utils/mixPannel';
+import { useUserName } from '@/lib/useUserName';
 
 const updateUserName = async (id: string, userName: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
@@ -32,39 +30,14 @@ const updateUserName = async (id: string, userName: string) => {
   });
   return await response.json();
 };
-
 const ProfileView = () => {
-  const { data: session, status } = useSession();
-  const [profile, setProfile] = useState<UserProfileDTO | null>(null);
-  const userProfile = useUserProfile();
-  const [isChangeNickname, setIsChangeNickname] = useState(false);
-
-  const handleClickChangeName = async () => {
-    setIsChangeNickname(true);
-  };
+  const { data: session } = useSession();
+  const userName = useUserName();
+  const [nickname, setNickname] = useState('');
 
   useEffect(() => {
-    setProfile(userProfile);
-  }, [session?.id, userProfile]);
-
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   const input = (e.target as HTMLFormElement).username.value;
-  //   if (!session || !input) return;
-  //
-  //   const json: ApiResponse<{ profile: UserProfileDTO }> = await updateUserName(
-  //     session.id,
-  //     input,
-  //   );
-  //
-  //   json.status === 200 &&
-  //     setUserProfile(prev => ({
-  //       ...prev,
-  //       userName: input,
-  //     }));
-  //
-  //   setIsChangeNickname(false);
-  // };
+    setNickname(userName);
+  }, [userName]);
 
   const handleClickLogOut = () => {
     sessionStorage.clear();
@@ -72,21 +45,24 @@ const ProfileView = () => {
   };
 
   return (
-    <div className="p-6 flex flex-col h-full">
+    <div className="p-6 pt-0 flex flex-col h-full">
       {/*<form onSubmit={handleSubmit}>*/}
-      <section className="mt-8">
+      <section>
         <div className="mb-1.5 flex justify-start items-center">
-          {isChangeNickname ? (
-            <Input
-              name="username"
-              disabled={!isChangeNickname}
-              defaultValue={profile?.userName}
-            />
-          ) : (
-            <div className="font-p-M24">
-              <span className="text-branding-600 mr-[5px]">{profile?.userName}</span>님
-            </div>
-          )}
+          {/*{isChangeNickname ? (*/}
+          {/*  <Input*/}
+          {/*    name="username"*/}
+          {/*    disabled={!isChangeNickname}*/}
+          {/*    defaultValue={profile?.userName}*/}
+          {/*  />*/}
+          {/*) : (*/}
+          <div className="font-p-M24">
+            <span className="text-branding-600 mr-[5px]" suppressHydrationWarning>
+              {nickname}
+            </span>
+            님
+          </div>
+          {/*)}*/}
         </div>
         <div className="text-primary-400">{session?.user?.email}</div>
       </section>
@@ -99,7 +75,7 @@ const ProfileView = () => {
                   htmlFor="service"
                   className="font-p-M16 py-3 text-primary-800 cursor-pointer"
                 >
-                  (필수) 서비스 이용약관
+                  서비스 이용약관
                 </Label>
                 <div className="ml-auto md:mr-12">
                   <Union />
@@ -131,7 +107,7 @@ const ProfileView = () => {
                   htmlFor="privacy"
                   className="font-p-M16  py-3 text-primary-800 cursor-pointer"
                 >
-                  (필수) 개인정보 처리방침
+                  개인정보 처리방침
                 </Label>
                 <div className="ml-auto md:mr-12">
                   <Union />

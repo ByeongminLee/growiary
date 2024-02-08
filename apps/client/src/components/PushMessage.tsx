@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { firebaseConfig, vapidKey } from '@/utils/firebase';
+import { getMessaging, onMessage } from 'firebase/messaging';
+import { firebaseConfig } from '@/utils/firebase';
 
 const onMessageFCM = async () => {
   const permission = await Notification.requestPermission();

@@ -6,12 +6,10 @@ import 'swiper/css/pagination';
 import '../../ui/carousel/carousel.css';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
-import { useFullStrDate } from '@/lib/useFullStrDate';
-import { UserProfileDTO } from '@growiary/types';
 import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
@@ -25,26 +23,28 @@ import {
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
 import { tracking } from '@/utils/mixPannel';
+import { getFullStrDate } from '@/utils/getDateFormat';
 // import LottieAnimation from '@/components/ui/LottieAnimation';
 
-interface MainViewProps {
-  userProfile?: UserProfileDTO;
-  maxHeight?: string;
-}
-
-const MainView = ({ maxHeight }: MainViewProps) => {
+const MainView = () => {
   const { data: session } = useSession();
   const record = useRecoilValue(recordState);
-  const [year, month, date, day] = useFullStrDate();
+  const [year, month, date, day] = getFullStrDate();
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
-  const templateRef = useRef(1);
+  const templateRef = useRef('1');
   const toastRef = useRef<HTMLDivElement>(null);
-  const [toastContent, setToastContent] = useState('');
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const [toastContent, setToastContent] = useState('');
+  const [scrollHeight, setScrollHeight] = useState('100%');
   const [hasExperience, setHasExperience] = useState(true);
   const requestApi = useFetch();
   const params = new URLSearchParams();
   const router = useRouter();
+  const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
+
+  const assignRef = (index: string) => (element: HTMLTextAreaElement) => {
+    refsArray.current[index] = element;
+  };
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
@@ -75,8 +75,12 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }));
   };
 
-  const handleFocusInput = (id: number) => {
+  const handleFocusInput = (id: string) => {
     templateRef.current = id;
+  };
+
+  const handleBlurInput = (id: string) => {
+    setScrollHeight('100%');
   };
 
   const handleSubmit = async () => {
@@ -123,6 +127,17 @@ const MainView = ({ maxHeight }: MainViewProps) => {
     }
   }, [hasExperience]);
 
+  useEffect(() => {
+    const refHeight = refsArray.current[templateRef.current].clientHeight;
+    const handleScroll = () => {
+      const sub = document.documentElement.scrollHeight - window.innerHeight;
+      if (sub === 0) return;
+      setScrollHeight(refHeight - Math.abs(sub) + 'px');
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+  });
+
   return (
     <>
       <Swiper
@@ -133,7 +148,6 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         spaceBetween={0}
         modules={[Pagination]}
         style={{
-          height: maxHeight,
           pointerEvents: writeState.content ? 'none' : 'initial',
         }}
         grabCursor
@@ -142,7 +156,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         {Object.values(diaryTemplates).map(template => (
           <SwiperSlide
             key={template.id}
-            className={`px-6 pt-14 slide${template.id}`}
+            className={`px-6 slide${template.id}`}
             style={{
               backgroundColor: template.bgColor,
             }}
@@ -173,11 +187,17 @@ const MainView = ({ maxHeight }: MainViewProps) => {
                 }}
               >
                 <textarea
-                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R17 placeholder:font-primary-600 font-p-R17 block bg-transparent w-full h-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:border-0`}
-                  style={{ color: template.answerColor, pointerEvents: 'initial' }}
+                  ref={assignRef(template.id)}
+                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R18-2 placeholder:text-primary-600 font-p-R18-2 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
+                  style={{
+                    color: template.answerColor,
+                    pointerEvents: 'initial',
+                    height: scrollHeight,
+                  }}
                   placeholder={template.placeholder}
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
+                  onBlur={() => handleBlurInput(template.id)}
                   maxLength={1000}
                   minLength={11}
                   value={writeState.content}
@@ -198,10 +218,7 @@ const MainView = ({ maxHeight }: MainViewProps) => {
         ))}
       </Swiper>
       <Button
-        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50"
-        style={{
-          marginBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
-        }}
+        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
         onClick={handleSubmit}
       >
         그루미에게 답장받기

@@ -1,47 +1,65 @@
 import { authOptions } from '@/utils/authOptions';
 import { getServerSession } from 'next-auth';
 import MainView from '@/components/home/main/MainView';
-import { ApiResponse, ProfileResType, RecordType } from '@/types';
 import { redirect } from 'next/navigation';
-import { requestApi } from '@/utils/requestApi';
-import { getTwoDigitNum, getYMDFromDate } from '@/utils/getDateFormat';
+import { getTwoDigitNum } from '@/utils/getDateFormat';
 import MainReplyView from '@/components/home/main/MainReplyView';
 import { Suspense } from 'react';
+import { getRecords } from '@/utils/requestRecord';
+import { getProfile } from '@/utils/requestProfile';
+import { QueryClient } from '@tanstack/react-query';
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
-  const today = new Date();
-  const tomorrow = new Date(today.getTime() + 60 * 60 * 24 * 1000);
-  const getProfile = async () =>
-    await requestApi('/user', {
-      id: session?.id,
-    });
-  const startDate = `${today.getFullYear()}-${getTwoDigitNum(today.getMonth() + 1)}-${getTwoDigitNum(today.getDate())}`;
-  const endDate = `${tomorrow.getFullYear()}-${getTwoDigitNum(tomorrow.getMonth() + 1)}-${getTwoDigitNum(tomorrow.getDate())}`;
-  const getRecord = async () =>
-    await requestApi('/post/filter', {
-      method: 'POST',
-      id: session?.id,
-      body: {
-        startDate,
-        endDate,
-      },
-    });
-  if (session) {
-    const [profileRes, recordRes] = (await Promise.all([getProfile(), getRecord()])) as [
-      ApiResponse<ProfileResType>,
-      ApiResponse<RecordType[]>,
-    ];
 
-    if ('data' in profileRes && profileRes.data.profile.userName) {
-      if ('data' in recordRes && recordRes.data[0]?.postId) {
+  if (session) {
+    const today = new Date();
+    const todayNoon = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      0,
+      0,
+      0,
+    );
+    const tomorrow = new Date(todayNoon.getTime() + 60 * 60 * 48 * 1000);
+    const startDate = `${todayNoon.getUTCFullYear()}-${getTwoDigitNum(todayNoon.getUTCMonth() + 1)}-${getTwoDigitNum(todayNoon.getUTCDate())}`;
+    const endDate = `${tomorrow.getUTCFullYear()}-${getTwoDigitNum(tomorrow.getUTCMonth() + 1)}-${getTwoDigitNum(tomorrow.getUTCDate())}`;
+
+    const [initialProfile, initialRecord] = await Promise.all([
+      await getProfile({
+        id: session?.id,
+      }),
+      getRecords({
+        id: session?.id,
+        body: { startDate, endDate },
+      }),
+    ]);
+
+    const todayReply =
+      'data' in initialRecord &&
+      initialRecord.data.find(record => new Date(record.createAt) >= todayNoon);
+
+    if ('data' in initialProfile && initialProfile.data.profile.userName) {
+      if (todayReply) {
         // 일기 기록이 있으면 답장 화면
+        const queryClient = new QueryClient();
+
+        await queryClient.prefetchQuery({
+          queryKey: ['profile', { id: session?.id }],
+          queryFn: () => getProfile,
+        });
+
+        await queryClient.prefetchQuery({
+          queryKey: ['todayRecord', { id: session?.id, body: { startDate, endDate } }],
+          queryFn: () => getRecords,
+        });
+
         return (
           <Suspense fallback={<div>Loading Main Answer...</div>}>
-            <MainReplyView
-              userProfile={profileRes.data.profile}
-              replyData={recordRes.data}
-            />
+            {/*<HydrationBoundary state={dehydrate(queryClient)}>*/}
+            <MainReplyView todayReply={todayReply} />
+            {/*</HydrationBoundary>*/}
           </Suspense>
         );
       } else {
@@ -58,6 +76,5 @@ export default async function HomePage() {
     }
   }
 
-  // session.id 없으면 온보딩 화면
   redirect('/welcome');
 }

@@ -6,12 +6,9 @@ import { DayPicker, MonthChangeEventHandler } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/shadcn/button';
-import { getDate, getMonth, getYear } from 'date-fns';
+import { getDate, getMonth } from 'date-fns';
 import { getTwoDigitNum, getYMDFromDate, Weekdays } from '@/utils/getDateFormat';
 import Image from 'next/image';
-import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { recordState } from '@/store';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   repliedDays?: string[];
@@ -30,7 +27,7 @@ function Calendar({
     <DayPicker
       onMonthChange={onMonthChange}
       showOutsideDays={showOutsideDays}
-      className={cn('p-3', className)}
+      className={cn('p-3 pt-0', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'grow space-y-4',
@@ -51,7 +48,7 @@ function Calendar({
         cell: 'grow flex justify-center h-10 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 first:[&:has([aria-selected])]:rounded-full last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-0',
         day: cn(
           buttonVariants({ variant: 'ghost' }),
-          'relative leading-[40px] rounded-full border-0 w-10 p-0 h-10 font-normal aria-selected:opacity-100',
+          'font-p-M16 text-primary-900 relative leading-[40px] rounded-full border-0 w-10 p-0 h-10 font-normal aria-selected:opacity-100',
         ),
         day_range_end: 'day-range-end',
         day_selected:

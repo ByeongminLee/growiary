@@ -1,12 +1,4 @@
-import React, {
-  ForwardedRef,
-  forwardRef,
-  ReactNode,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { ForwardedRef, forwardRef, ReactNode, useImperativeHandle, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ToastProps {

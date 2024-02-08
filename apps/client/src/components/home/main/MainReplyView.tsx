@@ -1,35 +1,31 @@
 'use client';
-import { UserProfileDTO } from '@growiary/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/shadcn/button';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
-import { useFullStrDate } from '@/lib/useFullStrDate';
 import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { useFetch } from '@/lib/useFetch';
 import { tracking } from '@/utils/mixPannel';
 import { useRecoilState } from 'recoil';
 import { recordWriteState } from '@/store';
+import { getFullStrDate } from '@/utils/getDateFormat';
 
 interface MainReplyViewProps {
-  userProfile?: UserProfileDTO;
-  replyData?: RecordType[];
+  todayReply?: RecordType;
   showFeedbackQues?: boolean;
 }
 
 const MainReplyView = ({
-  userProfile,
-  replyData = [],
+  todayReply = {} as RecordType,
   showFeedbackQues = true,
 }: MainReplyViewProps) => {
-  const { data: session, status } = useSession();
-  const [year, month, date, day] = useFullStrDate();
+  const { data: session } = useSession();
+  const [year, month, date, day] = getFullStrDate();
   const requestApi = useFetch();
-  const todayData = replyData[0];
-  const template: DiaryTemplate = todayData && diaryTemplates[todayData.template];
+  const template: DiaryTemplate = todayReply && diaryTemplates[todayReply.template];
   const [recordWrite, setRecordWrite] = useRecoilState(recordWriteState);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,7 +34,7 @@ const MainReplyView = ({
       method: 'POST',
       id: session?.id,
       body: {
-        postId: todayData.postId,
+        postId: todayReply.postId,
         feedback: e.currentTarget.getAttribute('data-feedback'),
       },
     })) as ApiResponse<{ status: ResponseStatus; message: string }>;
@@ -56,16 +52,16 @@ const MainReplyView = ({
       className="h-full overflow-auto pb-[22px]"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
-      <p className="mx-9 mt-16 font-p-R16 text-primary-500 mb-1">
+      <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      {todayData.content && <DiaryContent template={template} response={todayData} />}
-      {todayData.answer && (
+      {todayReply.content && <DiaryContent template={template} response={todayReply} />}
+      {todayReply.answer && (
         <>
-          <DiaryReply template={template} response={todayData} />
+          <DiaryReply response={todayReply} />
 
           {showFeedbackQues &&
-            todayData.feedback === 'NONE' &&
+            todayReply.feedback === 'NONE' &&
             (!recordWrite.isSubmittedFeedback ? (
               <section>
                 <div className="flex flex-col align-center justify-center">

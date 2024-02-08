@@ -1,4 +1,3 @@
-import OnboardView from '@/components/home/welcome/OnboardView';
 import { DesktopLandingView } from '@/components/home/welcome/DesktopLandingView';
 import { MobileLandingView } from '@/components/home/welcome/MobileLandingView';
 

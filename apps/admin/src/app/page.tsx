@@ -17,5 +17,5 @@ export default async function Home() {
   const profiles = await getProfiles();
   const posts = await getPosts();
 
-  return <HomeView profiles={profiles} posts={posts} />;
+  return posts && profiles ? <HomeView profiles={profiles} posts={posts} /> : <>Hello</>;
 }

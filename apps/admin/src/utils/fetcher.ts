@@ -4,9 +4,11 @@ const authorization = process.env.API_AUTHORIZATION_KEY ?? '';
 const fetcher = async ({
   url,
   method,
+  body,
 }: {
-  url: 'profile' | 'post';
+  url: 'profile' | 'post' | 'admin-guard';
   method?: 'GET' | 'POST';
+  body?: any;
 }) => {
   try {
     const res = await fetch(`${URL}/api/${url}`, {
@@ -15,6 +17,7 @@ const fetcher = async ({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authorization}`,
       },
+      body: JSON.stringify(body),
     });
 
     return res.json();

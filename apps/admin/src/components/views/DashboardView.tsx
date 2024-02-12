@@ -16,7 +16,7 @@ import {
   PerUser,
 } from '..';
 
-export const HomeView = ({
+export const DashboardView = ({
   profiles,
   posts,
 }: {

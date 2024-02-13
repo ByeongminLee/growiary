@@ -13,7 +13,7 @@ import {
   AvgPostsCharacter,
   ByDate,
   FeedbackSatisfaction,
-  PerUser,
+  UserTable,
 } from '..';
 import { Navbar } from '../common';
 
@@ -32,6 +32,9 @@ export const DashboardView = ({
   }, [posts]);
 
   useEffect(() => {
+    profiles.sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
     setProfile(profiles);
   }, [profiles]);
 
@@ -72,7 +75,7 @@ export const DashboardView = ({
           <div className="sm:text-left text-center">
             <Metric>유저 정보</Metric>
           </div>
-          <PerUser />
+          <UserTable />
         </div>
       </div>
     </>

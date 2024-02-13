@@ -68,26 +68,31 @@ type UserDataType = {
 
 type RoleType = 'ADMIN' | 'USER' | 'TESTER';
 
-export const PerUser = () => {
+export const UserTable = () => {
   const [searchText, setSearchText] = useState('');
   const data = usePerUser();
   const [filteredData, setFilteredData] = useState(data);
   const { allPage, startIndex, endIndex, paginationHandler } = usePagination({
     dataLength: filteredData.length,
   });
-  const { profiles, update } = useProfileStore();
+  const { update } = useProfileStore();
 
   useEffect(() => {
     if (data) setFilteredData(data);
   }, [data]);
 
   const dataHandler = () => {
-    const result = data.filter(item => {
-      return (
-        item.userName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.userId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
+    const result = data
+      .filter(item => {
+        return (
+          item.userName.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.userId.toLowerCase().includes(searchText.toLowerCase())
+        );
+      })
+      .sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
     setFilteredData(result);
   };
 
@@ -214,12 +219,18 @@ export const PerUser = () => {
               key={item.userId}
               className='even:bg-tremor-background-muted even:dark:bg-dark-tremor-background-muted"'
             >
-              <TableCell className="text-center text-xs">{item.userId}</TableCell>
-              <TableCell className="text-center">{item.userName}</TableCell>
-              <TableCell className="text-center">{item.postCount}</TableCell>
-              <TableCell className="text-center">{item.avgPostsCharacter}</TableCell>
-              <TableCell className="text-center">{item.avgPostTimeOfDay}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center text-xs h-[80px]">
+                {item.userId}
+              </TableCell>
+              <TableCell className="text-center  h-[80px]">{item.userName}</TableCell>
+              <TableCell className="text-center h-[80px]">{item.postCount}</TableCell>
+              <TableCell className="text-center h-[80px]">
+                {item.avgPostsCharacter}
+              </TableCell>
+              <TableCell className="text-center h-[80px]">
+                {item.avgPostTimeOfDay}
+              </TableCell>
+              <TableCell className="text-center h-[80px]">
                 {item && item.feedback ? (
                   <div
                     onClick={() =>
@@ -266,11 +277,18 @@ export const PerUser = () => {
                   '-'
                 )}
               </TableCell>
-              <TableCell className="text-center">{item.createdAt}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center h-[80px]">
+                {isToday(item.createdAt) && (
+                  <Badge size={'xs'} color={'lime'}>
+                    오늘
+                  </Badge>
+                )}
+                <Text>{item.createdAt}</Text>
+              </TableCell>
+              <TableCell className="text-center h-[80px]">
                 <RoleBadge role={item.role} />
               </TableCell>
-              <TableCell className="flex items-center justify-center h-[73px]">
+              <TableCell className="flex items-center justify-center  h-[80px]">
                 <RxHamburgerMenu
                   className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
                   onClick={() => onOpenSettingHandler(item)}
@@ -398,3 +416,9 @@ const RoleBadge = ({ role }: { role: 'ADMIN' | 'USER' | 'TESTER' }) => {
     </Badge>
   );
 };
+
+function isToday(date: string) {
+  const propsDateFormatted = new Date(date).toISOString().slice(0, 10);
+  const todayFormatted = new Date().toISOString().slice(0, 10);
+  return propsDateFormatted === todayFormatted;
+}

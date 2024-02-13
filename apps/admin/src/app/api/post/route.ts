@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         updateAt: dateConverter(postsData[postId].updateAt),
       }));
 
-      data.push(postsArray[0]);
+      data.push(...postsArray);
     });
   } catch (error) {
     console.error('Error fetching posts:', error);

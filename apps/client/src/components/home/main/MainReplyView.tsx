@@ -107,7 +107,10 @@ const MainReplyView = ({
                 </div>
               </section>
             ) : (
-              <p className="text-sub-indigo font-p-R18 text-center mb-14">감사합니다!</p>
+              <p className="text-sub-indigo font-p-R18 text-center mb-14">
+                감사합니다! <br />
+                내일은 저에게 어떤 이야기를 들려줄지 궁금해요
+              </p>
             ))}
         </>
       )}

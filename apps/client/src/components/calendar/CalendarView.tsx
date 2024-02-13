@@ -228,10 +228,7 @@ const CalendarView = () => {
               top: 'inherit',
             }}
           >
-            <p className="mx-9 font-p-R16 text-primary-500 mb-1">
-              {year}년 {month}월 {date}일 {day}
-            </p>
-            <DiaryContent template={template} response={response[0]} />
+            <DiaryContent response={response[0]} />
           </div>
         )}
         {response?.[0]?.answer && (

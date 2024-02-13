@@ -16,6 +16,7 @@ export type ProfileType = {
   userName: string;
   updatedAt: string;
   userId: string;
+  role: 'ADMIN' | 'USER' | 'TESTER';
 };
 
 export type PostStoreType = {
@@ -26,4 +27,5 @@ export type PostStoreType = {
 export type ProfileStoreType = {
   profiles: ProfileType[] | [];
   setProfile: (profiles: ProfileType[]) => void;
+  update: (userId: string, update: any) => void;
 };

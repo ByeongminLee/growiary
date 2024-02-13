@@ -6,7 +6,7 @@ const fetcher = async ({
   method,
   body,
 }: {
-  url: 'profile' | 'post' | 'admin-guard';
+  url: 'profile' | 'post' | 'admin-guard' | 'update-profile';
   method?: 'GET' | 'POST';
   body?: any;
 }) => {
@@ -18,9 +18,8 @@ const fetcher = async ({
         Authorization: `Bearer ${authorization}`,
       },
       body: JSON.stringify(body),
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
-
     return res.json();
   } catch (error) {
     return error;

@@ -17,7 +17,10 @@ async function getPosts() {
 }
 
 async function adminGuard(userId: string) {
-  const result = await fetcher({ url: 'admin-guard', body: { userId: userId } });
+  const result = await fetcher({
+    url: 'admin-guard',
+    body: { userId: userId },
+  });
 
   return result.result;
 }

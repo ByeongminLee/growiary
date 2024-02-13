@@ -1,10 +1,13 @@
 'use client';
 
 import {
+  Badge,
   Button,
+  Callout,
   Card,
   Dialog,
   DialogPanel,
+  Divider,
   DonutChart,
   Flex,
   List,
@@ -33,6 +36,10 @@ import { CgClose } from 'react-icons/cg';
 import { cn } from '@/utils/cn';
 import { usePagination } from './usePagination';
 import { Pagination } from './Pagenation';
+import { RxHamburgerMenu } from 'react-icons/rx';
+import { FaArrowRight } from 'react-icons/fa';
+import fetcher from '@/utils/fetcher';
+import { useProfileStore } from '@/state';
 
 type FeedbackItemType = {
   values: ValuesType[];
@@ -44,6 +51,23 @@ type ValuesType = {
   value: number;
 };
 
+type UserDataType = {
+  userId: string;
+  createdAt: string;
+  userName: string;
+  feedback: {
+    GOOD: number;
+    BAD: number;
+    NONE: number;
+  };
+  postCount: number;
+  avgPostsCharacter: number;
+  avgPostTimeOfDay: number;
+  role: RoleType;
+};
+
+type RoleType = 'ADMIN' | 'USER' | 'TESTER';
+
 export const PerUser = () => {
   const [searchText, setSearchText] = useState('');
   const data = usePerUser();
@@ -51,6 +75,21 @@ export const PerUser = () => {
   const { allPage, startIndex, endIndex, paginationHandler } = usePagination({
     dataLength: filteredData.length,
   });
+  const { profiles, update } = useProfileStore();
+
+  useEffect(() => {
+    if (data) setFilteredData(data);
+  }, [data]);
+
+  const dataHandler = () => {
+    const result = data.filter(item => {
+      return (
+        item.userName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.userId.toLowerCase().includes(searchText.toLowerCase())
+      );
+    });
+    setFilteredData(result);
+  };
 
   const { isOpen, onOpen, onClose } = useModal();
   const [feedbackItem, setFeedbackItem] = useState<FeedbackItemType>({
@@ -70,24 +109,48 @@ export const PerUser = () => {
     ],
     colors: [],
   });
-
-  useEffect(() => {
-    if (data && filteredData.length === 0) setFilteredData(data);
-  }, [data]);
-
-  const dataHandler = () => {
-    const result = data.filter(item => {
-      return (
-        item.userName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.userId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
-    setFilteredData(result);
-  };
-
   const onOpenHandler = (feedbackItem: FeedbackItemType) => {
     setFeedbackItem(feedbackItem);
     onOpen();
+  };
+
+  const {
+    isOpen: settingIsOpen,
+    onOpen: settingOnOpen,
+    onClose: settingOnClose,
+  } = useModal();
+  const [settingData, setSettingData] = useState<UserDataType>();
+  const onOpenSettingHandler = (item: UserDataType) => {
+    setSettingData(item);
+    settingOnOpen();
+  };
+  const settingOnCloseHandler = () => {
+    setUpdateUserValue(undefined);
+    setSettingData(undefined);
+    settingOnClose();
+  };
+  const [updateUserValue, setUpdateUserValue] = useState<{ role: RoleType } | undefined>(
+    undefined,
+  );
+  const updateUserSelectOnChange = (value: any) => {
+    if (value === 'ADMIN' || value === 'USER' || value === 'TESTER') {
+      setUpdateUserValue({ role: value });
+    }
+  };
+  const updateUserData = () => {
+    if (settingData?.role !== updateUserValue) {
+      fetcher({
+        url: 'update-profile',
+        body: {
+          origin: settingData,
+          update: updateUserValue,
+        },
+      });
+    }
+
+    if (settingData?.userId) update(settingData?.userId, updateUserValue);
+
+    settingOnCloseHandler();
   };
 
   return (
@@ -105,6 +168,11 @@ export const PerUser = () => {
               placeholder="Search..."
               value={searchText}
               onValueChange={setSearchText}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  dataHandler();
+                }
+              }}
             />
             <Button size="md" className="min-w-20" onClick={() => dataHandler()}>
               확인
@@ -141,12 +209,12 @@ export const PerUser = () => {
       </Flex> */}
         <Table>
           <TableHeader />
-          {filteredData.slice(startIndex, endIndex).map(item => (
+          {filteredData.slice(startIndex, endIndex).map((item: UserDataType) => (
             <TableRow
               key={item.userId}
               className='even:bg-tremor-background-muted even:dark:bg-dark-tremor-background-muted"'
             >
-              <TableCell className="text-center">{item.userId}</TableCell>
+              <TableCell className="text-center text-xs">{item.userId}</TableCell>
               <TableCell className="text-center">{item.userName}</TableCell>
               <TableCell className="text-center">{item.postCount}</TableCell>
               <TableCell className="text-center">{item.avgPostsCharacter}</TableCell>
@@ -191,7 +259,7 @@ export const PerUser = () => {
                       ]}
                       colors={['blue', 'red', 'violet']}
                       variant="donut"
-                      className="w-10 h-10"
+                      className="w-10 h-10 cursor-pointer"
                     />
                   </div>
                 ) : (
@@ -199,6 +267,15 @@ export const PerUser = () => {
                 )}
               </TableCell>
               <TableCell className="text-center">{item.createdAt}</TableCell>
+              <TableCell className="text-center">
+                <RoleBadge role={item.role} />
+              </TableCell>
+              <TableCell className="flex items-center justify-center h-[73px]">
+                <RxHamburgerMenu
+                  className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+                  onClick={() => onOpenSettingHandler(item)}
+                />
+              </TableCell>
             </TableRow>
           ))}
         </Table>
@@ -210,7 +287,10 @@ export const PerUser = () => {
       {isOpen && feedbackItem && (
         <Modal isOpen={isOpen} onClose={onClose}>
           <div className="flex justify-end mb-2">
-            <CgClose onClick={onClose} className="w-6 h-6 cursor-pointer" />
+            <CgClose
+              onClick={onClose}
+              className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+            />
           </div>
           <h3 className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
             피드백 만족도
@@ -248,6 +328,73 @@ export const PerUser = () => {
           </List>
         </Modal>
       )}
+
+      {settingIsOpen && settingData && (
+        <Modal
+          isOpen={settingIsOpen}
+          onClose={settingOnCloseHandler}
+          className="min-h-[430px] flex flex-col justify-between"
+        >
+          <div>
+            <div className="flex justify-end mb-2">
+              <CgClose
+                onClick={settingOnCloseHandler}
+                className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+              />
+            </div>
+
+            <div className="h-full">
+              <Text>유저아이디 : {settingData.userId}</Text>
+              <Text>유저명 : {settingData.userName}</Text>
+
+              <Select
+                defaultValue={settingData.role}
+                className=" mt-4"
+                onChange={e => updateUserSelectOnChange(e)}
+              >
+                <SelectItem value="ADMIN">ADMIN</SelectItem>
+                <SelectItem value="USER">USER</SelectItem>
+                <SelectItem value="TESTER">TESTER</SelectItem>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            {updateUserValue?.role && (
+              <>
+                <Divider />
+                {settingData?.role === updateUserValue.role ? (
+                  <Callout title="ERROR" color="red" className="mb-4">
+                    변경할 권한이 현재 권한과 같습니다.
+                  </Callout>
+                ) : (
+                  ''
+                )}
+                <div className="flex justify-between px-8 mb-4">
+                  <RoleBadge role={settingData.role} />
+                  <FaArrowRight className="mx-2" />
+                  <RoleBadge role={updateUserValue.role} />
+                </div>
+              </>
+            )}
+            <Button
+              className="w-full"
+              onClick={updateUserData}
+              disabled={settingData?.role === updateUserValue?.role ? true : false}
+            >
+              변경
+            </Button>
+          </div>
+        </Modal>
+      )}
     </>
+  );
+};
+
+const RoleBadge = ({ role }: { role: 'ADMIN' | 'USER' | 'TESTER' }) => {
+  return (
+    <Badge color={role === 'ADMIN' ? 'red' : role === 'TESTER' ? 'orange' : 'blue'}>
+      {role}
+    </Badge>
   );
 };

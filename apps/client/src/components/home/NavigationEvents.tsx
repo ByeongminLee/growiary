@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { recordWriteState } from '@/store';
-import Image from 'next/image';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +18,6 @@ import { Button } from '@/components/ui/shadcn/button';
 
 export function NavigationEvents() {
   const pathname = usePathname();
-  const params = useSearchParams();
   const router = useRouter();
   const [writingState, setWritingState] = useRecoilState(recordWriteState);
   const stopRecordRef = useRef<HTMLButtonElement | null>(null);
@@ -38,27 +36,8 @@ export function NavigationEvents() {
     }
   }, [pathname, writingState.content]);
 
-  // 답변 도착
-  useEffect(() => {
-    const searchParams = new URLSearchParams(params.toString());
-    // 답변도착 && 메인 화면
-    if (pathname === '/' && searchParams.get('replied') === 'true') {
-      router.refresh();
-    }
-  }, [pathname, params, router]);
-
   return (
     <>
-      {/*답변도착 && 다른 화면 */}
-      {pathname !== '/' && params.get('replied') === 'true' && (
-        <Image
-          className="fixed bottom-[24px] left-[5%] z-[999]"
-          src="/assets/growmi/green_letter.svg"
-          alt="replied"
-          width={64}
-          height={64}
-        />
-      )}
       {pathname !== '/' && writingState.content && (
         <AlertDialog>
           <AlertDialogTrigger ref={stopRecordRef} className="hidden">

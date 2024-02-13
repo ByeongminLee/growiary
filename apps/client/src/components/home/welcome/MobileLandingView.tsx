@@ -8,7 +8,7 @@ import { tracking } from '@/utils/mixPannel';
 export const MobileLandingView = () => {
   return (
     <div className="layout-full">
-      <section className="self-start mt-18">
+      <section className="self-start">
         <Image
           src="/assets/app/logo.png"
           alt="growiary"
@@ -17,12 +17,19 @@ export const MobileLandingView = () => {
           priority
         />
         <h1 className="font-p-M24 text-primary-900 mt-2">AI와 함께하는 회고 다이어리</h1>
+      </section>
+      <section className="mt-auto mb-[67px] relative">
         <Image
           src="/assets/images/line.svg"
           alt="line"
           width={587}
           height={5}
-          className="absolute top-[416px] inset-x-0 w-screen"
+          style={{
+            width: '100vw',
+            maxWidth: '100vw',
+            zIndex: -1,
+          }}
+          className="absolute ml-[-24px] inset-x-0 top-[50%]"
           priority
         />
         <Image
@@ -30,7 +37,7 @@ export const MobileLandingView = () => {
           alt="growmi_with_person"
           width={128}
           height={128}
-          className="absolute top-[336px] right-[20px]"
+          className="ml-auto"
           priority
         />
       </section>

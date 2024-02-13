@@ -18,11 +18,13 @@
 .mainCarousel.swiper {
     width: 100vw;
     height: calc(100% + env(safe-area-inset-top) + var(--safe-margin));
-    margin-top: calc(0px - env(safe-area-inset-top) - var(--safe-margin));
     padding-bottom: 0;
+}
+
+.mainCarousel .swiper-wrapper {
+    padding-top: 20px;
 }
 
 .mainCarousel .swiper-slide {
     width: calc(100% - 14px);
-    padding-top: calc(env(safe-area-inset-top) + var(--safe-margin));
 }

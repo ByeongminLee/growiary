@@ -10,6 +10,8 @@ export const TableHeader = () => {
       <TableHeaderCell className="text-center">평균 작성 시간대</TableHeaderCell>
       <TableHeaderCell className="text-center">만족도</TableHeaderCell>
       <TableHeaderCell className="text-center">가입일</TableHeaderCell>
+      <TableHeaderCell className="text-center">권한</TableHeaderCell>
+      <TableHeaderCell className="text-center">세팅</TableHeaderCell>
     </TableHead>
   );
 };

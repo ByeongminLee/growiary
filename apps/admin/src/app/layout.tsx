@@ -12,8 +12,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="relative">
       <body>{children}</body>
+      <footer className="h-[30px] flex justify-center">
+        <a href="https://growiary.com/" target="_black" rel="noopener noreferrer">
+          <p className="text-xs text-gray-600 hover:text-blue-700">ⓒ Growiary</p>
+        </a>
+      </footer>
     </html>
   );
 }

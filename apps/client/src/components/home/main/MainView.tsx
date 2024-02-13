@@ -23,16 +23,18 @@ import {
 import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
 import { tracking } from '@/utils/mixPannel';
-import { getFullStrDate } from '@/utils/getDateFormat';
+import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
+import { useMutation } from '@tanstack/react-query';
+import { getRecords } from '@/utils/requestRecord';
 
 const MainView = () => {
   const { data: session } = useSession();
   const record = useRecoilValue(recordState);
   const [year, month, date, day] = getFullStrDate();
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
-  const templateRef = useRef('1');
+  const templateRef = useRef('0');
   const toastRef = useRef<HTMLDivElement>(null);
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
   const [toastContent, setToastContent] = useState('');
@@ -42,7 +44,26 @@ const MainView = () => {
   const params = new URLSearchParams();
   const router = useRouter();
   const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
-
+  const [repliedCount, setRepliedCount] = useState(-1);
+  const mutation = useMutation({
+    mutationKey: ['records'],
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: string;
+      body: { startDate: string; endDate: string };
+    }) =>
+      getRecords({
+        id,
+        body,
+      }),
+    onSuccess: result => {
+      setRepliedCount(
+        result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
+      );
+    },
+  });
   const assignRef = (index: string) => (element: HTMLTextAreaElement) => {
     refsArray.current[index] = element;
   };
@@ -62,7 +83,11 @@ const MainView = () => {
     const value = (e.currentTarget as HTMLTextAreaElement).value;
 
     if (value.length === 1000) {
-      showToast('아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
+      showToast(
+        repliedCount > 0
+          ? '아쉽지만 1000자 이하의 메시지만 작성할 수 있어요'
+          : '아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요',
+      );
       setWriteState(prev => ({
         ...prev,
         content: value,
@@ -86,19 +111,36 @@ const MainView = () => {
 
   const handleSubmit = async () => {
     if (writeState.content.length <= 10) {
-      showToast('그루미에게 답장을 받기 위해서는 10자 이상의 메시지가 필요해요');
+      showToast('10자 이상의 메시지만 작성할 수 있어요');
       return;
     }
 
-    if (record[`${year}-${month}-${date}`]?.length) {
-      showToast('그루미의 답장은 하루에 한 번만 가능해요');
+    const response: ApiResponse<RecordType> | undefined = await requestApi('/post', {
+      method: 'POST',
+      id: session?.id,
+      body: {
+        content: writeState.content,
+        template: templateRef.current.toString(),
+      },
+    });
+
+    if (response && 'data' in response) {
+      setWriteState(prev => ({ ...prev, content: '' }));
+      // tracking('그루미에게 답장받기 클릭');
+      router.push(`/calendar`);
+    } else {
+      alert('문제 발생');
+    }
+  };
+
+  const handleSubmitAI = async () => {
+    if (writeState.content.length <= 10) {
+      showToast('그루미에게 답장을 받기 위해서는 10자 이상의 메시지가 필요해요');
       return;
     }
 
     replyPopupRef.current?.click();
     setWriteState(prev => ({ ...prev, content: '', isWaiting: true }));
-    params.set('replied', 'waiting');
-    history.pushState(null, '', `?${params}`);
 
     const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
@@ -112,9 +154,8 @@ const MainView = () => {
     if (response && 'data' in response) {
       params.set('replied', 'true');
       setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
-      history.pushState(null, '', `?${params}`);
       tracking('그루미에게 답장받기 클릭');
-      router.refresh();
+      router.push(`/calendar?${params}`);
     } else {
       alert('문제 발생');
     }
@@ -138,6 +179,19 @@ const MainView = () => {
     };
     window.addEventListener('scroll', handleScroll);
   });
+
+  useEffect(() => {
+    if (!session?.id) return;
+    (async () => {
+      await mutation.mutateAsync({
+        id: session.id,
+        body: {
+          startDate: `${year}-${month}-${date}`,
+          endDate: `${getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24 * 1000))}`,
+        },
+      });
+    })();
+  }, [session?.id]);
 
   return (
     <>
@@ -218,12 +272,22 @@ const MainView = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <Button
-        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
-        onClick={handleSubmit}
-      >
-        그루미에게 답장받기
-      </Button>
+      {repliedCount > 0 && (
+        <Button
+          className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
+          onClick={handleSubmit}
+        >
+          일기 작성하기
+        </Button>
+      )}
+      {repliedCount === 0 && (
+        <Button
+          className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
+          onClick={handleSubmitAI}
+        >
+          그루미에게 답장받기
+        </Button>
+      )}
       <Toast ref={toastRef}>{toastContent}</Toast>
       {!hasExperience && (
         <OneTimeToast>

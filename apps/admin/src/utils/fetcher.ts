@@ -18,6 +18,7 @@ const fetcher = async ({
         Authorization: `Bearer ${authorization}`,
       },
       body: JSON.stringify(body),
+      next: { revalidate: 3600 },
     });
 
     return res.json();

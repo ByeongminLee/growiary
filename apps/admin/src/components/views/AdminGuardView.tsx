@@ -7,7 +7,7 @@ import { signOut } from 'next-auth/react';
 export const AdminGuardView = () => {
   const { push } = useRouter();
 
-  const handler = () => {
+  const logoutHandler = () => {
     sessionStorage.clear();
     signOut({ callbackUrl: '/' });
     push('/login');
@@ -29,7 +29,7 @@ export const AdminGuardView = () => {
 
           <button
             className="mt-4 w-full whitespace-nowrap rounded-tremor-default bg-tremor-brand px-4 py-2 text-center text-tremor-default font-medium text-tremor-brand-inverted shadow-tremor-input hover:bg-tremor-brand-emphasis dark:bg-dark-tremor-brand dark:text-dark-tremor-brand-inverted dark:shadow-dark-tremor-input dark:hover:bg-dark-tremor-brand-emphasis"
-            onClick={handler}
+            onClick={logoutHandler}
           >
             로그인으로 돌아가기
           </button>

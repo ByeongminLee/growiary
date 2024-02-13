@@ -20,6 +20,10 @@ export async function POST(request: Request) {
       userData.updatedAt = dateConverter(userData.updatedAt);
       userData.userId = doc.id;
 
+      if (!userData.role) {
+        userData.role = 'USER';
+      }
+
       data.push(userData);
     });
   } catch (error) {

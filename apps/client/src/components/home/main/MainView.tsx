@@ -106,6 +106,7 @@ const MainView = () => {
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
+        prompt: diaryTemplates[templateRef.current].question,
       },
     });
 

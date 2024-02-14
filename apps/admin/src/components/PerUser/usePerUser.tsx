@@ -21,6 +21,18 @@ export const usePerUser = () => {
   useEffect(() => {
     const newData = profiles.map(profile => {
       const userPosts = posts.filter(post => post.userId === profile.userId);
+
+      posts.map(t => {
+        // if (t.userId === 'WBHDIECZ3gt3vrIpbsws')
+        if (t.postId === '9aca5349-1b87-4099-8bfe-e048d7ef5234')
+          console.log('test', t.postId);
+      });
+
+      // posts.filter(post => {
+      //   if (post.userId === profile.userId) console.log(post.userId, post);
+      //   return post.userId === profile.userId;
+      // });
+
       const feedbackCount = {
         GOOD: 0,
         BAD: 0,

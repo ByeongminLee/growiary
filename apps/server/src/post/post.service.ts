@@ -51,7 +51,6 @@ export class PostService {
    * @returns 필터링된 user posts
    */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
-    console.log('test');
     const { startDate, endDate } = filterFindPostDTO;
     const { userId } = this.request.user;
     const userPostRef = firestore().collection('posts').doc(userId);
@@ -67,7 +66,12 @@ export class PostService {
       const createAtDate = dateConverter(post.createAt);
       const updateAtDate = dateConverter(post.updateAt);
 
-      if (createAtDate >= new Date(startDate) && createAtDate < new Date(endDate)) {
+      const startDateUTC = new Date(startDate);
+      startDateUTC.setHours(startDateUTC.getHours() - 9);
+      const endDateUTC = new Date(endDate);
+      endDateUTC.setHours(endDateUTC.getHours() - 9);
+
+      if (createAtDate >= startDateUTC && createAtDate < endDateUTC) {
         filteredPosts.push({
           postId: postId,
           feedback: 'NONE',
@@ -124,7 +128,10 @@ export class PostService {
 
     const postId = uuidv4();
 
-    const aiAnswer = await this.openAiService.requestGrowiaryAI(createPostDTO.content);
+    const aiAnswer = await this.openAiService.requestGrowiaryAI(
+      createPostDTO.content,
+      createPostDTO.template,
+    );
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 

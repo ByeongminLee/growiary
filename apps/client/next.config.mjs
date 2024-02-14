@@ -8,7 +8,7 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
-  transpilePackages: ['@growiary/types'],
+  transpilePackages: ['@growiary/types', '@growiary/prompt'],
 };
 
 export default process.env.NODE_ENV === 'development' ? nextConfig : withPwa(nextConfig);

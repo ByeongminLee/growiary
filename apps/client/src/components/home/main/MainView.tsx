@@ -106,6 +106,7 @@ const MainView = () => {
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
+        prompt: diaryTemplates[templateRef.current].question,
       },
     });
 
@@ -239,7 +240,7 @@ const MainView = () => {
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
             <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
               <p className="pb-2 font-p-M14 text-grayscale-700">
-                구르미가 답장을 쓰고 있어요
+                그루미가 답장을 쓰고 있어요
               </p>
               <LottieAnimation src={airplane} className="bg-primary-100" />
             </div>

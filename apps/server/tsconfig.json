@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@growiary/types/*": ["src/*"],
+      "@growiary/prompt/*": ["src/*"],
     },
   },
 }

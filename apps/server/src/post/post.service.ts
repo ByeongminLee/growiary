@@ -128,7 +128,10 @@ export class PostService {
 
     const postId = uuidv4();
 
-    const aiAnswer = await this.openAiService.requestGrowiaryAI(createPostDTO.content);
+    const aiAnswer = await this.openAiService.requestGrowiaryAI(
+      createPostDTO.content,
+      createPostDTO.template,
+    );
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 

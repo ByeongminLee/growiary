@@ -305,7 +305,7 @@ const MainView = () => {
               <p className="pb-2 font-p-M14 text-grayscale-700">
                 그루미가 답장을 쓰고 있어요
               </p>
-              <LottieAnimation src={airplane} className="bg-primary-100" />
+              <LottieAnimation src={airplane} />
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

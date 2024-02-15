@@ -18,9 +18,11 @@ import { useRecoilState } from 'recoil';
 import { recordState } from '@/store';
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import { getRecords } from '@/utils/requestRecord';
+import { useSearchParams } from 'next/navigation';
 
 const CalendarView = () => {
   const { data: session } = useSession();
+  const params = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -28,7 +30,7 @@ const CalendarView = () => {
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
-  const template = diaryTemplates[response?.[0]?.template || '1'];
+  const template = diaryTemplates[response?.[0]?.template || '0'];
   const [year, month, date, day] = getFullStrDate(selectedDate);
   const queryClient = new QueryClient();
   const mutation = useMutation({
@@ -59,6 +61,11 @@ const CalendarView = () => {
         setRecords(collectedData);
         setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
 
+        // 답변도착
+        const searchParams = new URLSearchParams(params.toString());
+        if (searchParams.get('replied') === 'true') {
+          (articleElRef.current?.firstElementChild as HTMLDivElement)?.click();
+        }
         return {
           ...old,
           ...collectedData,
@@ -208,9 +215,9 @@ const CalendarView = () => {
         )}
       </section>
       <article ref={articleElRef}>
-        {response?.[0]?.content && (
+        {response?.length && (
           <div
-            className="absolute h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
+            className="absolute h-full inset-x-0 transition-[top] ease-in-out duration-1000"
             onClick={handleContentClick}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -224,34 +231,65 @@ const CalendarView = () => {
               marginBottom: 'env(safe-area-inset-bottom)',
               marginTop: 'env(safe-area-inset-top)',
               paddingTop: '32px',
-              backgroundColor: `${template.bgColor}`,
+              backgroundColor: `purple`,
               top: 'inherit',
             }}
           >
-            <DiaryContent response={response[0]} />
+            {response?.map(res => (
+              <div key={res.postId}>
+                {template.question}
+                {res.answer}
+                {res.content}
+                {res.createAt}
+              </div>
+            ))}
           </div>
         )}
-        {response?.[0]?.answer && (
-          <div
-            className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000"
-            style={{
-              backgroundColor: `${template.bgColor}`,
-              marginTop: 'env(safe-area-inset-top)',
-            }}
-            onClick={handleContentClick}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseOut={handleMouseUp}
-            onTouchStart={handleMouseDown}
-            onTouchMove={handleMouseMove}
-            onTouchCancel={handleMouseUp}
-            onTouchEnd={handleMouseUp}
-          >
-            <div className="border-t border-t-primary-500"></div>
-            <DiaryReply response={response[0]} />
-          </div>
-        )}
+
+        {/*{response?.[0]?.content && (*/}
+        {/*  <div*/}
+        {/*    className="absolute h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"*/}
+        {/*    onClick={handleContentClick}*/}
+        {/*    onMouseDown={handleMouseDown}*/}
+        {/*    onMouseMove={handleMouseMove}*/}
+        {/*    onMouseUp={handleMouseUp}*/}
+        {/*    onMouseOut={handleMouseUp}*/}
+        {/*    onTouchStart={handleMouseDown}*/}
+        {/*    onTouchMove={handleMouseMove}*/}
+        {/*    onTouchCancel={handleMouseUp}*/}
+        {/*    onTouchEnd={handleMouseUp}*/}
+        {/*    style={{*/}
+        {/*      marginBottom: 'env(safe-area-inset-bottom)',*/}
+        {/*      marginTop: 'env(safe-area-inset-top)',*/}
+        {/*      paddingTop: '32px',*/}
+        {/*      backgroundColor: `${template.bgColor}`,*/}
+        {/*      top: 'inherit',*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    <DiaryContent response={response[0]} />*/}
+        {/*  </div>*/}
+        {/*)}*/}
+        {/*{response?.[0]?.answer && (*/}
+        {/*  <div*/}
+        {/*    className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000"*/}
+        {/*    style={{*/}
+        {/*      backgroundColor: `${template.bgColor}`,*/}
+        {/*      marginTop: 'env(safe-area-inset-top)',*/}
+        {/*    }}*/}
+        {/*    onClick={handleContentClick}*/}
+        {/*    onMouseDown={handleMouseDown}*/}
+        {/*    onMouseMove={handleMouseMove}*/}
+        {/*    onMouseUp={handleMouseUp}*/}
+        {/*    onMouseOut={handleMouseUp}*/}
+        {/*    onTouchStart={handleMouseDown}*/}
+        {/*    onTouchMove={handleMouseMove}*/}
+        {/*    onTouchCancel={handleMouseUp}*/}
+        {/*    onTouchEnd={handleMouseUp}*/}
+        {/*  >*/}
+        {/*    <div className="border-t border-t-primary-500"></div>*/}
+        {/*    <DiaryReply response={response[0]} />*/}
+        {/*  </div>*/}
+        {/*)}*/}
       </article>
     </div>
   );

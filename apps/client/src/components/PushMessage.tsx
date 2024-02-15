@@ -43,7 +43,7 @@ const onMessageFCM = async () => {
 const PushMessage = () => {
   useEffect(() => {
     if (window.isSecureContext) {
-      navigator.serviceWorker.register('/firebase-messaging-sw.js').then(() => {
+      navigator?.serviceWorker?.register('/firebase-messaging-sw.js').then(() => {
         onMessageFCM();
       });
     }

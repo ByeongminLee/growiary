@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
 import { ApiResponse, RecordType } from '@/types';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { recordState, recordWriteState } from '@/store';
+import { useRecoilState } from 'recoil';
+import { recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
 import {
   AlertDialog,
@@ -31,7 +31,6 @@ import { getRecords } from '@/utils/requestRecord';
 
 const MainView = () => {
   const { data: session } = useSession();
-  const record = useRecoilValue(recordState);
   const [year, month, date, day] = getFullStrDate();
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const templateRef = useRef('0');
@@ -109,8 +108,22 @@ const MainView = () => {
     setScrollHeight('100%');
   };
 
+  const moveToDiaryRecord = (postId: string, to?: 'AI') => {
+    if (to) {
+      setWriteState(prev => ({ ...prev, content: '' }));
+      tracking('일기 작성하기 클릭');
+    } else {
+      setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
+      tracking('그루미에게 답장받기 클릭');
+      params.set('replied', 'true');
+    }
+
+    params.set('id', postId);
+    router.push(`/calendar?${params}`);
+  };
+
   const handleSubmit = async () => {
-    if (writeState.content.length <= 10) {
+    if (writeState.content.length < 10) {
       showToast('10자 이상의 메시지만 작성할 수 있어요');
       return;
     }
@@ -125,9 +138,7 @@ const MainView = () => {
     });
 
     if (response && 'data' in response) {
-      setWriteState(prev => ({ ...prev, content: '' }));
-      // tracking('그루미에게 답장받기 클릭');
-      router.push(`/calendar`);
+      moveToDiaryRecord(response.data.postId);
     } else {
       alert('문제 발생');
     }
@@ -152,10 +163,7 @@ const MainView = () => {
     });
 
     if (response && 'data' in response) {
-      params.set('replied', 'true');
-      setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
-      tracking('그루미에게 답장받기 클릭');
-      router.push(`/calendar?${params}`);
+      moveToDiaryRecord(response.data.postId, 'AI');
     } else {
       alert('문제 발생');
     }
@@ -249,7 +257,11 @@ const MainView = () => {
                     pointerEvents: 'initial',
                     height: scrollHeight,
                   }}
-                  placeholder={template.placeholder}
+                  placeholder={
+                    template.id === '0' && repliedCount === 0
+                      ? '일기 작성 횟수는 자유롭지만, 그루미는 하루에 한 번만 답장을 드릴 수 있어요.'
+                      : template.placeholder
+                  }
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
                   onBlur={() => handleBlurInput(template.id)}

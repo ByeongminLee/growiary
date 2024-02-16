@@ -1,7 +1,12 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { PostService } from './post.service';
-import { CreatePostDTO, FeedbackType, FilterFindPostDTO } from '@growiary/types';
+import {
+  CreatePostDTO,
+  FilterFindPostDTO,
+  PostEditDTO,
+  PostFeedbackDTO,
+} from '@growiary/types';
 
 @UseGuards(AuthGuard)
 @Controller('post')
@@ -29,8 +34,12 @@ export class PostController {
   }
 
   @Post('feedback')
-  postFeedback(@Body() request: { postId: string; feedback: FeedbackType }) {
-    const { postId, feedback } = request;
-    return this.postService.postFeedback(postId, feedback);
+  postFeedback(@Body() postFeedbackDto: PostFeedbackDTO) {
+    return this.postService.postFeedback(postFeedbackDto);
+  }
+
+  @Post('edit')
+  postEdit(@Body() postEditDTO: PostEditDTO) {
+    return this.postService.postEdit(postEditDTO);
   }
 }

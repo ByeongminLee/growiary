@@ -3,21 +3,29 @@ import { UserProfileDTO } from '@growiary/types';
 import { CollectedRecordType } from '@/types';
 
 export type UserProfileStateType = {
-  key: string;
+  key: 'userProfileState';
   default: UserProfileDTO;
 };
 
 export type RecordStateType = {
-  key: string;
+  key: 'recordState';
   default: CollectedRecordType;
 };
 
 export type RecordWriteStateType = {
-  key: string;
+  key: 'recordWriteState';
   default: {
     content: string;
-    isWaiting: boolean;
     isSubmittedFeedback: boolean;
+    state: 'SAVE' | 'WAIT' | 'NONE';
+  };
+};
+
+export type InitExperienceType = {
+  key: 'initExperience';
+  default: {
+    initUser: boolean;
+    initSubmit: boolean;
   };
 };
 
@@ -35,6 +43,23 @@ const sessionStorageEffect =
       isReset
         ? sessionStorage.removeItem(key)
         : sessionStorage.setItem(key, JSON.stringify(newValue));
+    });
+  };
+
+const localStorageEffect =
+  <T>(key: string): AtomEffect<T> =>
+  ({ setSelf, onSet }) => {
+    if (typeof window !== 'undefined') {
+      const savedValue = localStorage.getItem(key);
+      if (savedValue != null) {
+        setSelf(JSON.parse(savedValue));
+      }
+    }
+
+    onSet((newValue, _, isReset) => {
+      isReset
+        ? localStorage.removeItem(key)
+        : localStorage.setItem(key, JSON.stringify(newValue));
     });
   };
 
@@ -61,7 +86,16 @@ export const recordWriteState = atom(<RecordWriteStateType>{
   key: 'recordWriteState',
   default: {
     content: '',
-    isWaiting: false,
     isSubmittedFeedback: false,
+    state: 'NONE',
   },
+});
+
+export const initExperienceState = atom(<InitExperienceType>{
+  key: 'initExperience',
+  default: {
+    initUser: true,
+    initSubmit: true,
+  },
+  effects: [localStorageEffect('initExperience')],
 });

@@ -15,11 +15,12 @@ import {
   getYMDFromDate,
 } from '@/utils/getDateFormat';
 import { useRecoilState } from 'recoil';
-import { recordState } from '@/store';
+import { initExperienceState, recordState, recordWriteState } from '@/store';
 import { QueryClient, useMutation } from '@tanstack/react-query';
 import { getRecords } from '@/utils/requestRecord';
 import { useSearchParams } from 'next/navigation';
 import DiaryRecord from '@/components/calendar/DiaryRecord';
+import OneTimeToast from '@/components/ui/OneTimeToast';
 
 const CalendarView = () => {
   const { data: session } = useSession();
@@ -29,6 +30,8 @@ const CalendarView = () => {
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [records, setRecords] = useRecoilState(recordState);
+  const [writeState, setWriteState] = useRecoilState(recordWriteState);
+  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
@@ -66,16 +69,16 @@ const CalendarView = () => {
 
         if (searchParams.has('id')) {
           setSelectedRecord(
-            records[`${year}-${month}-${date}`].find(
+            collectedData[`${year}-${month}-${date}`].find(
               v => v.postId === searchParams.get('id'),
             ),
           );
         }
 
         // 답변도착
-        if (searchParams.get('replied') === 'true') {
-          (articleElRef.current?.firstElementChild as HTMLDivElement)?.click();
-        }
+        // if (searchParams.get('replied') === 'true') {
+        //   (articleElRef.current?.firstElementChild as HTMLDivElement)?.click();
+        // }
         return {
           ...old,
           ...collectedData,
@@ -212,6 +215,27 @@ const CalendarView = () => {
     })();
   }, [session?.id]);
 
+  useEffect(() => {
+    let initExperienceTimeoutId: NodeJS.Timeout;
+    let writeStateTimeoutId: NodeJS.Timeout;
+
+    if (initExperience.initSubmit) {
+      initExperienceTimeoutId = setTimeout(() => {
+        setInitExperience(prev => ({ ...prev, initSubmit: false }));
+      }, 3000);
+    }
+
+    if (writeState.state === 'SAVE') {
+      writeStateTimeoutId = setTimeout(() => {
+        setWriteState(prev => ({ ...prev, state: 'NONE' }));
+      }, 3000);
+    }
+    return () => {
+      initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
+      writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
+    };
+  }, [writeState.state, setWriteState, initExperience.initSubmit, setInitExperience]);
+
   return (
     <div>
       <section className="mx-2">
@@ -252,7 +276,7 @@ const CalendarView = () => {
             <p className="pb-4 px-6 font-p-R16 text-grayscale-600">
               {parseInt(date, 10)}일 {day}
             </p>
-            {response.map((res, i) => (
+            {response.map(res => (
               <div
                 key={res.postId}
                 className="py-4 px-6 font-p-M16"
@@ -320,6 +344,21 @@ const CalendarView = () => {
             onClose={() => setSelectedRecord(undefined)}
           />
         </div>
+      )}
+      {selectedRecord && writeState.state === 'SAVE' && (
+        <OneTimeToast>
+          <div className="flex flex-col items-center justify-center">
+            {selectedRecord.answer && initExperience.initSubmit ? (
+              <p>
+                그루미와의 첫 대화 축하드려요
+                <br />
+                그루어리와 함께 매일 성장해요!
+              </p>
+            ) : (
+              <p>일기가 저장되었어요</p>
+            )}
+          </div>
+        </OneTimeToast>
       )}
     </div>
   );

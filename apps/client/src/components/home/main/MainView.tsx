@@ -12,7 +12,7 @@ import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
 import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState } from 'recoil';
-import { recordWriteState } from '@/store';
+import { initExperienceState, recordWriteState } from '@/store';
 import { useFetch } from '@/lib/useFetch';
 import {
   AlertDialog,
@@ -38,7 +38,7 @@ const MainView = () => {
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
   const [toastContent, setToastContent] = useState('');
   const [scrollHeight, setScrollHeight] = useState('100%');
-  const [hasExperience, setHasExperience] = useState(true);
+  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const requestApi = useFetch();
   const params = new URLSearchParams();
   const router = useRouter();
@@ -110,14 +110,13 @@ const MainView = () => {
 
   const moveToDiaryRecord = (postId: string, to?: 'AI') => {
     if (to) {
-      setWriteState(prev => ({ ...prev, content: '' }));
-      tracking('일기 작성하기 클릭');
-    } else {
-      setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
       tracking('그루미에게 답장받기 클릭');
-      params.set('replied', 'true');
+      // params.set('replied', 'true');
+    } else {
+      tracking('일기 작성하기 클릭');
     }
 
+    setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));
     params.set('id', postId);
     router.push(`/calendar?${params}`);
   };
@@ -151,7 +150,7 @@ const MainView = () => {
     }
 
     replyPopupRef.current?.click();
-    setWriteState(prev => ({ ...prev, content: '', isWaiting: true }));
+    setWriteState(prev => ({ ...prev, content: '', state: 'WAIT' }));
 
     const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
       method: 'POST',
@@ -170,12 +169,18 @@ const MainView = () => {
   };
 
   useEffect(() => {
-    const isExperiencedUser = window.localStorage.getItem('hasExperience');
-    if (!isExperiencedUser) {
-      setHasExperience(false);
-      window.localStorage.setItem('hasExperience', 'true');
+    if (initExperience.initUser) {
+      const timeoutId = setTimeout(() => {
+        setInitExperience(prev => ({
+          ...prev,
+          initUser: false,
+        }));
+      }, 2000);
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
-  }, [hasExperience]);
+  }, [initExperience.initUser, setInitExperience]);
 
   useEffect(() => {
     const refHeight = refsArray.current[templateRef.current].clientHeight;
@@ -301,7 +306,7 @@ const MainView = () => {
         </Button>
       )}
       <Toast ref={toastRef}>{toastContent}</Toast>
-      {!hasExperience && (
+      {initExperience.initUser && (
         <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>

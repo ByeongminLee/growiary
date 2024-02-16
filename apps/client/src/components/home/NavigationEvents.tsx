@@ -22,7 +22,7 @@ export function NavigationEvents() {
   const [writingState, setWritingState] = useRecoilState(recordWriteState);
   const stopRecordRef = useRef<HTMLButtonElement | null>(null);
   const handleStopWriting = () => {
-    setWritingState(prev => ({ ...prev, content: '', isWaiting: false }));
+    setWritingState(prev => ({ ...prev, content: '', state: 'NONE' }));
   };
 
   const handleStayWriting = () => {

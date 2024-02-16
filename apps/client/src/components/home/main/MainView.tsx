@@ -256,11 +256,12 @@ const MainView = () => {
               >
                 <textarea
                   ref={assignRef(template.id)}
-                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R18-2 placeholder:text-primary-600 font-p-R18-2 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
+                  className={`diary-text p-2 placeholder:font-p-R18-2 placeholder:text-primary-600 font-p-R18-2 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
                   style={{
                     color: template.answerColor,
                     pointerEvents: 'initial',
                     height: scrollHeight,
+                    caretColor: template.caretColor,
                   }}
                   placeholder={
                     template.id === '0' && repliedCount === 0

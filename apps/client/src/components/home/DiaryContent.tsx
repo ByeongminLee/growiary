@@ -1,13 +1,13 @@
 import { DiaryTemplate, RecordType } from '@/types';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
-import { getFullStrDate } from '@/utils/getDateFormat';
+import { getDateFromServer, getFullStrDate } from '@/utils/getDateFormat';
 import Image from 'next/image';
 
 type DiaryContentProps = {
   response: RecordType;
 };
 const DiaryContent = ({ response }: DiaryContentProps) => {
-  const [year, month, date, day] = getFullStrDate();
+  const [year, month, date, day] = getFullStrDate(getDateFromServer(response.createAt));
   const template: DiaryTemplate = response && diaryTemplates[response.template];
 
   return (

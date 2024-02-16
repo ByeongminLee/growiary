@@ -1,5 +1,6 @@
 import config from '../../tailwind.config';
 import { DiaryTemplate } from '@/types';
+// @ts-ignore
 import { PROMPT_TEMPLATE } from '@growiary/prompt';
 
 const colors = config?.theme?.extend?.colors as {

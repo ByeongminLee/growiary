@@ -2,8 +2,10 @@ import { ReactNode, useEffect, useRef } from 'react';
 
 interface CenteredToastProps {
   children: ReactNode;
+  timeout?: number;
+  afterFn?: () => void;
 }
-const OneTimeToast = ({ children }: CenteredToastProps) => {
+const OneTimeToast = ({ children, afterFn, timeout = 3000 }: CenteredToastProps) => {
   const toastRef = useRef<HTMLDivElement | null>(null);
 
   const showToast = () => {
@@ -13,8 +15,9 @@ const OneTimeToast = ({ children }: CenteredToastProps) => {
     const timeoutId = setTimeout(() => {
       if (!toastRef.current) return;
       toastRef.current.style.display = 'none';
+      afterFn && afterFn();
       clearTimeout(timeoutId);
-    }, 3000);
+    }, timeout);
   };
 
   useEffect(() => {

@@ -277,7 +277,7 @@ const CalendarView = () => {
             <p className="pb-4 px-6 font-p-R16 text-grayscale-600">
               {parseInt(date, 10)}일 {day}
             </p>
-            {response.map(res => (
+            {records[`${year}-${month}-${date}`].map(res => (
               <div
                 key={res.postId}
                 className="py-4 px-6 font-p-M16"

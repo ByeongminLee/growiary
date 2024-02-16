@@ -10,24 +10,21 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
-import { ApiResponse, RecordType } from '@/types';
 import { useRecoilState } from 'recoil';
 import { initExperienceState, recordWriteState } from '@/store';
-import { useFetch } from '@/lib/useFetch';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
-import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-import { tracking } from '@/utils/mixPannel';
 import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
-import { useMutation } from '@tanstack/react-query';
-import { getRecords } from '@/utils/requestRecord';
+import { useCreateRecord } from '@/lib/useCreateRecord';
+import { useGetRecord } from '@/lib/useGetRecords';
+import { ApiSuccess, RecordType } from '@/types';
 
 const MainView = () => {
   const { data: session } = useSession();
@@ -39,30 +36,20 @@ const MainView = () => {
   const [toastContent, setToastContent] = useState('');
   const [scrollHeight, setScrollHeight] = useState('100%');
   const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
-  const requestApi = useFetch();
-  const params = new URLSearchParams();
-  const router = useRouter();
   const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
   const [repliedCount, setRepliedCount] = useState(-1);
-  const mutation = useMutation({
-    mutationKey: ['records'],
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: string;
-      body: { startDate: string; endDate: string };
-    }) =>
-      getRecords({
-        id,
-        body,
-      }),
-    onSuccess: result => {
-      setRepliedCount(
-        result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
-      );
-    },
+  const { mutation: createRecordMutation } = useCreateRecord();
+
+  const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
+    setRepliedCount(
+      result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
+    );
+  };
+
+  const { mutation: getRecordsMutation } = useGetRecord({
+    onSuccessCb: onSuccessGetRecordsMutation,
   });
+
   const assignRef = (index: string) => (element: HTMLTextAreaElement) => {
     refsArray.current[index] = element;
   };
@@ -87,11 +74,6 @@ const MainView = () => {
           ? '아쉽지만 1000자 이하의 메시지만 작성할 수 있어요'
           : '아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요',
       );
-      setWriteState(prev => ({
-        ...prev,
-        content: value,
-      }));
-      return;
     }
 
     setWriteState(prev => ({
@@ -104,72 +86,37 @@ const MainView = () => {
     templateRef.current = id;
   };
 
-  const handleBlurInput = (id: string) => {
+  const handleBlurInput = () => {
     setScrollHeight('100%');
   };
 
-  const moveToDiaryRecord = (postId: string, to?: 'AI') => {
-    if (to) {
-      tracking('그루미에게 답장받기 클릭');
-      // params.set('replied', 'true');
-    } else {
-      tracking('일기 작성하기 클릭');
-    }
-
-    setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));
-    params.set('id', postId);
-    router.push(`/calendar?${params}`);
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (to?: 'AI') => {
     if (writeState.content.length < 10) {
-      showToast('10자 이상의 메시지만 작성할 수 있어요');
+      showToast(
+        to
+          ? '답장을 받기 위해서는 10자 이상의 메시지가 필요해요'
+          : '10자 이상의 메시지만 작성할 수 있어요',
+      );
       return;
     }
 
-    const response: ApiResponse<RecordType> | undefined = await requestApi('/post', {
-      method: 'POST',
-      id: session?.id,
+    if (to) {
+      replyPopupRef.current?.click();
+      setWriteState(prev => ({ ...prev, content: '', state: 'WAIT' }));
+    }
+
+    await createRecordMutation.mutateAsync({
+      to,
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
       },
     });
-
-    if (response && 'data' in response) {
-      moveToDiaryRecord(response.data.postId);
-    } else {
-      alert('문제 발생');
-    }
   };
 
-  const handleSubmitAI = async () => {
-    if (writeState.content.length <= 10) {
-      showToast('그루미에게 답장을 받기 위해서는 10자 이상의 메시지가 필요해요');
-      return;
-    }
-
-    replyPopupRef.current?.click();
-    setWriteState(prev => ({ ...prev, content: '', state: 'WAIT' }));
-
-    const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
-      method: 'POST',
-      id: session?.id,
-      body: {
-        content: writeState.content,
-        template: templateRef.current.toString(),
-      },
-    });
-
-    if (response && 'data' in response) {
-      moveToDiaryRecord(response.data.postId, 'AI');
-    } else {
-      alert('문제 발생');
-    }
-  };
-
-  useEffect(() => {
-    if (initExperience.initUser) {
+  useEffect(
+    function checkIsInitUser() {
+      if (!initExperience.initUser) return;
       const timeoutId = setTimeout(() => {
         setInitExperience(prev => ({
           ...prev,
@@ -179,10 +126,11 @@ const MainView = () => {
       return () => {
         clearTimeout(timeoutId);
       };
-    }
-  }, [initExperience.initUser, setInitExperience]);
+    },
+    [initExperience.initUser, setInitExperience],
+  );
 
-  useEffect(() => {
+  useEffect(function setTextareaHeight() {
     const refHeight = refsArray.current[templateRef.current].clientHeight;
     const handleScroll = () => {
       const sub = document.documentElement.scrollHeight - window.innerHeight;
@@ -191,20 +139,22 @@ const MainView = () => {
       window.scrollTo(0, 0);
     };
     window.addEventListener('scroll', handleScroll);
-  });
+  }, []);
 
-  useEffect(() => {
-    if (!session?.id) return;
-    (async () => {
-      await mutation.mutateAsync({
-        id: session.id,
-        body: {
-          startDate: `${year}-${month}-${date}`,
-          endDate: `${getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24 * 1000))}`,
-        },
-      });
-    })();
-  }, [session?.id]);
+  useEffect(
+    function getInitRecords() {
+      if (!session?.id) return;
+      (async () => {
+        await getRecordsMutation.mutateAsync({
+          body: {
+            startDate: `${year}-${month}-${date}`,
+            endDate: `${getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24 * 1000))}`,
+          },
+        });
+      })();
+    },
+    [session?.id],
+  );
 
   return (
     <>
@@ -270,7 +220,7 @@ const MainView = () => {
                   }
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
-                  onBlur={() => handleBlurInput(template.id)}
+                  onBlur={handleBlurInput}
                   maxLength={1000}
                   minLength={11}
                   value={writeState.content}
@@ -293,7 +243,7 @@ const MainView = () => {
       {repliedCount > 0 && (
         <Button
           className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
-          onClick={handleSubmit}
+          onClick={() => handleSubmit()}
         >
           일기 작성하기
         </Button>
@@ -301,7 +251,7 @@ const MainView = () => {
       {repliedCount === 0 && (
         <Button
           className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
-          onClick={handleSubmitAI}
+          onClick={() => handleSubmit('AI')}
         >
           그루미에게 답장받기
         </Button>

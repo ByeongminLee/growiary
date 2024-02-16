@@ -50,28 +50,20 @@ export function NavigationEvents() {
                   일기를 그만쓸까요? <br /> 지금까지 입력한 내용이 사라져요
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-0"
-                    style={{ flex: 1 }}
-                    asChild
+                  <AlertDialogCancel
+                    className="flex-1 border-0"
+                    onClick={handleStayWriting}
                   >
-                    <AlertDialogCancel onClick={handleStayWriting}>
-                      아니오
-                    </AlertDialogCancel>
-                  </Button>
+                    아니오
+                  </AlertDialogCancel>
                   <Button
                     type="button"
                     variant="secondary"
-                    className="grow-2"
+                    compoundVariants="danger"
                     style={{ flex: 2 }}
                     asChild
                   >
-                    <AlertDialogAction
-                      className="bg-danger-600 text-primary-300"
-                      onClick={handleStopWriting}
-                    >
+                    <AlertDialogAction onClick={handleStopWriting}>
                       네, 그만 쓸래요
                     </AlertDialogAction>
                   </Button>

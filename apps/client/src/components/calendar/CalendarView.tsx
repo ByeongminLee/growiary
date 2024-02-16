@@ -21,6 +21,7 @@ import { getRecords } from '@/utils/requestRecord';
 import { useSearchParams } from 'next/navigation';
 import DiaryRecord from '@/components/calendar/DiaryRecord';
 import OneTimeToast from '@/components/ui/OneTimeToast';
+import Image from 'next/image';
 
 const CalendarView = () => {
   const { data: session } = useSession();
@@ -285,9 +286,21 @@ const CalendarView = () => {
                   color: diaryTemplates[res.template].questionColor,
                 }}
               >
-                <span className="cursor-pointer" onClick={e => handleClickRecord(e, res)}>
-                  {diaryTemplates[res.template].question}
-                </span>
+                <div className="flex items-center">
+                  <p className="cursor-pointer" onClick={e => handleClickRecord(e, res)}>
+                    {diaryTemplates[res.template].question}
+                  </p>
+                  {res.answer && (
+                    <Image
+                      src="/assets/growmi/bubble.png"
+                      alt="growmi"
+                      className="ml-1 h-[24px]"
+                      width={24}
+                      height={24}
+                      priority
+                    />
+                  )}
+                </div>
               </div>
             ))}
           </div>

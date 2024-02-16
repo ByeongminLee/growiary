@@ -29,15 +29,16 @@ import { ApiSuccess, RecordType } from '@/types';
 const MainView = () => {
   const { data: session } = useSession();
   const [year, month, date, day] = getFullStrDate();
-  const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const templateRef = useRef('0');
   const toastRef = useRef<HTMLDivElement>(null);
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const [writeState, setWriteState] = useRecoilState(recordWriteState);
+  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const [toastContent, setToastContent] = useState('');
   const [scrollHeight, setScrollHeight] = useState('100%');
-  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
-  const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
   const [repliedCount, setRepliedCount] = useState(-1);
+  const [checkInitUser, setCheckInitUser] = useState(false);
+  const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
   const { mutation: createRecordMutation } = useCreateRecord();
 
   const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
@@ -56,9 +57,12 @@ const MainView = () => {
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
+
     const target = toastRef.current;
+
     target.style.display = 'block';
     setToastContent(content);
+
     const timeoutId = setTimeout(() => {
       target.style.display = 'none';
       clearTimeout(timeoutId);
@@ -116,18 +120,23 @@ const MainView = () => {
 
   useEffect(
     function checkIsInitUser() {
+      setCheckInitUser(initExperience.initUser);
+
       if (!initExperience.initUser) return;
+
       const timeoutId = setTimeout(() => {
         setInitExperience(prev => ({
           ...prev,
           initUser: false,
         }));
-      }, 2000);
+        setCheckInitUser(false);
+      }, 4000);
+
       return () => {
         clearTimeout(timeoutId);
       };
     },
-    [initExperience.initUser, setInitExperience],
+    [initExperience.initUser, setInitExperience, setCheckInitUser],
   );
 
   useEffect(function setTextareaHeight() {
@@ -257,7 +266,7 @@ const MainView = () => {
         </Button>
       )}
       <Toast ref={toastRef}>{toastContent}</Toast>
-      {initExperience.initUser && (
+      {checkInitUser && (
         <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>
@@ -266,7 +275,9 @@ const MainView = () => {
         </OneTimeToast>
       )}
       <AlertDialog>
-        <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
+        <AlertDialogTrigger className="hidden" ref={replyPopupRef}>
+          그루미 답장중 팝업
+        </AlertDialogTrigger>
         <AlertDialogOverlay>
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
             <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">

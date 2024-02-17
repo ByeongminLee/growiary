@@ -15,11 +15,12 @@ import {
 } from '@/utils/getDateFormat';
 import Image from 'next/image';
 import { useGetRecords } from '@/lib/useGetRecords';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const CalendarView = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const params = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -154,13 +155,20 @@ const CalendarView = () => {
     function setInitRecordsPosY() {
       if (articleElRef.current) {
         initArticleYPosRef.current =
-          articleElRef.current?.previousElementSibling?.getBoundingClientRect().bottom ||
+          articleElRef.current.previousElementSibling?.getBoundingClientRect().bottom ||
           0;
         articleElRef.current.style.top = initArticleYPosRef.current + 'px';
         document.documentElement.style.touchAction = 'none';
+
+        // 디테일 뷰 > 캘린더 이동 시 목록 화면 보여주기
+        if (params.has('date')) {
+          const [year, month, date] = params.get('date')!.split('-');
+          setSelectedDate(new Date(+year, +month - 1, +date, 0, 0, 0));
+          // (articleElRef.current?.firstElementChild as HTMLElement).click();
+        }
       }
     },
-    [session?.id],
+    [session?.id, params],
   );
 
   useEffect(

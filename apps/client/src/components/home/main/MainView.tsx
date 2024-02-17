@@ -229,7 +229,7 @@ const MainView = () => {
                   onFocus={() => handleFocusInput(template.id)}
                   onBlur={handleBlurInput}
                   maxLength={1000}
-                  minLength={11}
+                  minLength={10}
                   value={writeState.content}
                 ></textarea>
                 <div className={`text-right ${writeState.content.length ? 'block' : ''}`}>

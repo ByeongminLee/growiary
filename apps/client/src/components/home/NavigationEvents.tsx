@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { Button } from '@/components/ui/shadcn/button';
 
+const history: string[] = [];
 export function NavigationEvents() {
   const pathname = usePathname();
   const router = useRouter();
@@ -26,19 +27,32 @@ export function NavigationEvents() {
   };
 
   const handleStayWriting = () => {
-    router.replace('/');
+    history.pop();
+    const writingPage = history.pop();
+    // 커서 마지막 위치 이동 위함
+    writingState.state === 'EDIT' && setWritingState(prev => ({ ...prev, content: '' }));
+    writingPage && router.replace(writingPage);
   };
 
   // 페이지 떠나기
   useEffect(() => {
-    if (pathname !== '/' && writingState.content) {
+    history.push(pathname);
+    if (writingState.state === 'NONE') return;
+
+    if (
+      writingState.state !== 'EDIT'
+        ? pathname !== '/' && writingState.content
+        : !pathname.includes('edit')
+    ) {
       stopRecordRef.current?.click();
     }
-  }, [pathname, writingState.content]);
+  }, [pathname]);
 
   return (
     <>
-      {pathname !== '/' && writingState.content && (
+      {(writingState.state !== 'EDIT'
+        ? pathname !== '/' && writingState.content
+        : !pathname.includes('edit')) && (
         <AlertDialog>
           <AlertDialogTrigger ref={stopRecordRef} className="hidden">
             일기 작성 중단 팝업

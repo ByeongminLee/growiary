@@ -76,46 +76,42 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
     await mutation.mutateAsync({ status: 'DELETED' });
   };
 
+  const handleMoveToEditPage = async () => {
+    setWriteState(prev => ({ ...prev, state: 'EDIT' }));
+    router.push(`/calendar/${date}/${postId}/edit`);
+  };
+
   useEffect(() => {
     setRecords(storedRecords);
   }, [storedRecords]);
 
-  useEffect(
-    function ToggleToast() {
-      let initExperienceTimeoutId: NodeJS.Timeout;
-      let writeStateTimeoutId: NodeJS.Timeout;
+  useEffect(function ToggleToast() {
+    let initExperienceTimeoutId: NodeJS.Timeout;
+    let writeStateTimeoutId: NodeJS.Timeout;
 
-      if (writeState.state === 'SAVE') {
-        setToastContent(
-          todayReply?.answer && initExperience.initSubmit
-            ? '그루미와의 첫 대화 축하드려요 그루어리와 함께 매일 성장해요!'
-            : '일기가 저장되었어요',
-        );
+    if (writeState.state === 'SAVE') {
+      setToastContent(
+        todayReply?.answer && initExperience.initSubmit
+          ? '그루미와의 첫 대화 축하드려요 그루어리와 함께 매일 성장해요!'
+          : '일기가 저장되었어요',
+      );
 
-        writeStateTimeoutId = setTimeout(() => {
-          setWriteState(prev => ({ ...prev, state: 'NONE' }));
-        }, 3000);
-      }
+      writeStateTimeoutId = setTimeout(() => {
+        setWriteState(prev => ({ ...prev, state: 'NONE' }));
+      }, 3000);
+    }
 
-      if (initExperience.initSubmit) {
-        initExperienceTimeoutId = setTimeout(() => {
-          setInitExperience(prev => ({ ...prev, initSubmit: false }));
-        }, 3000);
-      }
+    if (initExperience.initSubmit) {
+      initExperienceTimeoutId = setTimeout(() => {
+        setInitExperience(prev => ({ ...prev, initSubmit: false }));
+      }, 3000);
+    }
 
-      return () => {
-        initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
-        writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
-      };
-    },
-    [
-      writeState.state,
-      setWriteState,
-      todayReply,
-      initExperience.initSubmit,
-      setInitExperience,
-    ],
-  );
+    return () => {
+      initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
+      writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
+    };
+  }, []);
 
   return (
     <article
@@ -226,9 +222,7 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
                   style={{ flex: 2 }}
                   asChild
                 >
-                  <AlertDialogAction
-                  // onClick={handleStopWriting}
-                  >
+                  <AlertDialogAction onClick={handleMoveToEditPage}>
                     네, 수정할게요
                   </AlertDialogAction>
                 </Button>

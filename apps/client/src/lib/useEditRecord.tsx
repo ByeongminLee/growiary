@@ -5,7 +5,7 @@ import { PostEditDTO } from '@growiary/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
 import { useRouter } from 'next/navigation';
 import { useSetRecoilState } from 'recoil';
-import { recordState } from '@/store';
+import { recordState, recordWriteState } from '@/store';
 
 type UseEditRecordProps = {
   onSuccessCb: () => void;
@@ -18,6 +18,7 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const setRecords = useSetRecoilState(recordState);
+  const setWriteState = useSetRecoilState(recordWriteState);
 
   const mutation = useMutation({
     mutationKey: ['editRecord'],
@@ -39,28 +40,31 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
       }
       return response.json();
     },
-    onSuccess: (result, { status }) => {
-      if (status === 'DELETED') {
-        const key = getDateFromServer(date);
-        const searchParams = new URLSearchParams();
+    onSuccess: (result, { content, status }) => {
+      const key = getDateFromServer(date);
+      const searchParams = new URLSearchParams();
 
-        searchParams.set('date', date);
-        onSuccessCb();
-        const timeoutId = setTimeout(() => {
-          queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-            const newData = {
-              ...old,
-              [key]: old[key].filter(v => v.postId !== postId),
-            };
+      searchParams.set('date', date);
+      onSuccessCb();
 
-            setRecords(newData);
-
-            return newData;
-          });
-          router.push(`/calendar?${searchParams.toString()}`);
-          clearTimeout(timeoutId);
-        }, 1500);
-      }
+      const timeoutId = setTimeout(() => {
+        queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
+          const newData = {
+            ...old,
+            [key]:
+              status === 'DELETED'
+                ? old[key].filter(v => v.postId !== postId)
+                : old[key].map(v =>
+                    v.postId !== postId ? v : { ...v, content: content! },
+                  ),
+          };
+          setRecords(newData);
+          return newData;
+        });
+        setWriteState(prev => ({ ...prev, content: '', state: 'NONE' }));
+        router.push(`/calendar?${searchParams.toString()}`);
+        clearTimeout(timeoutId);
+      }, 1500);
     },
   });
 

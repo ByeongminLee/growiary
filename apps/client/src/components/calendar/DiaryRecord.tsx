@@ -2,7 +2,7 @@
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
-import { DiaryTemplate, RecordType } from '@/types';
+import { CollectedRecordType, RecordType } from '@/types';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/shadcn/button';
@@ -16,59 +16,47 @@ import {
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
-import React, { useRef, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
-import { PostEditDTO } from '@growiary/types';
+import { useEffect, useRef, useState } from 'react';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-import { useSetRecoilState } from 'recoil';
-import { recordState } from '@/store';
+import { useEditRecord } from '@/lib/useEditRecord';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { initExperienceState, recordState, recordWriteState } from '@/store';
 import { getDateFromServer } from '@/utils/getDateFormat';
+import { useRouter } from 'next/navigation';
 
 interface MainReplyViewProps {
-  todayReply: RecordType;
-  onClose: () => void;
+  date: RecordType['createAt'];
+  postId: RecordType['postId'];
 }
 
-const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
-  const { data: session } = useSession();
-  const template: DiaryTemplate = todayReply && diaryTemplates[todayReply.template];
+const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
+  const router = useRouter();
+  const [records, setRecords] = useState<CollectedRecordType | null>(null);
+  const storedRecords = useRecoilValue(recordState);
+  const todayReply = records && records[date]?.find(v => v.postId === postId);
+  const template = diaryTemplates[todayReply?.template || '0'];
   const [showMenu, setShowMenu] = useState(false);
   const [toastContent, setToastContent] = useState('');
   const removeModalRef = useRef<HTMLButtonElement | null>(null);
   const modifyModalRef = useRef<HTMLButtonElement | null>(null);
-  const setRecords = useSetRecoilState(recordState);
-  const date = getDateFromServer(todayReply.createAt);
-  const mutation = useMutation({
-    mutationKey: ['editRecord'],
-    mutationFn: async ({ content, status }: Omit<PostEditDTO, 'postId'>) => {
-      const bodyObj = {
-        postId: todayReply.postId,
-      };
+  const [writeState, setWriteState] = useRecoilState(recordWriteState);
+  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/edit`, {
-        method: 'POST',
-        headers: {
-          Authorization: session?.id || '',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify(status ? { ...bodyObj, status } : { ...bodyObj, content }),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    },
-    onSuccess: (result, { content, status }) => {
-      if (status === 'DELETED') {
-        setRecords(prev => ({
-          ...prev,
-          [date]: prev[date].filter(v => v.postId !== todayReply.postId),
-        }));
-        setToastContent('일기가 삭제되었어요');
-      }
-    },
+  const onSuccessEditRecord = () => {
+    setToastContent('일기가 삭제되었어요');
+  };
+
+  const { mutation } = useEditRecord({
+    postId,
+    date,
+    onSuccessCb: onSuccessEditRecord,
   });
+
+  const handleClickPrevPage = () => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('date', getDateFromServer(date));
+    router.push(`/calendar?${searchParams.toString()}`);
+  };
 
   const handleClickRemoveModal = () => {
     setShowMenu(false);
@@ -88,9 +76,46 @@ const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
     await mutation.mutateAsync({ status: 'DELETED' });
   };
 
-  const afterRemoveFn = () => {
-    onClose();
-  };
+  useEffect(() => {
+    setRecords(storedRecords);
+  }, [storedRecords]);
+
+  useEffect(
+    function ToggleToast() {
+      let initExperienceTimeoutId: NodeJS.Timeout;
+      let writeStateTimeoutId: NodeJS.Timeout;
+
+      if (writeState.state === 'SAVE') {
+        setToastContent(
+          todayReply?.answer && initExperience.initSubmit
+            ? '그루미와의 첫 대화 축하드려요 그루어리와 함께 매일 성장해요!'
+            : '일기가 저장되었어요',
+        );
+
+        writeStateTimeoutId = setTimeout(() => {
+          setWriteState(prev => ({ ...prev, state: 'NONE' }));
+        }, 3000);
+      }
+
+      if (initExperience.initSubmit) {
+        initExperienceTimeoutId = setTimeout(() => {
+          setInitExperience(prev => ({ ...prev, initSubmit: false }));
+        }, 3000);
+      }
+
+      return () => {
+        initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
+        writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
+      };
+    },
+    [
+      writeState.state,
+      setWriteState,
+      todayReply,
+      initExperience.initSubmit,
+      setInitExperience,
+    ],
+  );
 
   return (
     <article
@@ -103,7 +128,10 @@ const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
       }}
     >
       <div className="relative flex items-center justify-between mx-4">
-        <ChevronLeft className="p-4 h-12 w-12 cursor-pointer" onClick={onClose} />
+        <ChevronLeft
+          className="p-4 h-12 w-12 cursor-pointer"
+          onClick={handleClickPrevPage}
+        />
         <Image
           src="/assets/icons/hamburger.png"
           alt="menu"
@@ -141,8 +169,8 @@ const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
           </div>
         )}
       </div>
-      {todayReply.content && <DiaryContent response={todayReply} />}
-      {todayReply.answer && <DiaryReply response={todayReply} />}
+      {todayReply?.content && <DiaryContent response={todayReply} />}
+      {todayReply?.answer && <DiaryReply response={todayReply} />}
 
       <AlertDialog>
         <AlertDialogTrigger ref={removeModalRef} className="hidden">
@@ -181,7 +209,7 @@ const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
           <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
             <div className="flex flex-col items-center gap-3">
               <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
-                {todayReply.answer ? (
+                {todayReply?.answer ? (
                   <p>
                     일기를 수정할까요? <br />
                     그루미의 답장 내용은 일기를 수정해도 바뀌지 않아요.
@@ -210,7 +238,7 @@ const DiaryRecord = ({ todayReply, onClose }: MainReplyViewProps) => {
         </AlertDialogOverlay>
       </AlertDialog>
       {toastContent && (
-        <OneTimeToast timeout={1500} afterFn={afterRemoveFn}>
+        <OneTimeToast timeout={1500}>
           <div className="flex flex-col items-center justify-center">
             <p>{toastContent}</p>
           </div>

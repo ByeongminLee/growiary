@@ -1,11 +1,13 @@
 import { useSession } from 'next-auth/react';
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRecords } from '@/utils/requestRecord';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
+import { useSetRecoilState } from 'recoil';
+import { recordState } from '@/store';
 
 type UseGetRecordProps = {
-  onSuccessCb: (value: ApiSuccess<RecordType[]>) => void;
+  onSuccessCb?: (value: ApiSuccess<RecordType[]>) => void;
 };
 
 type UseGetRecordBodyType = {
@@ -14,7 +16,8 @@ type UseGetRecordBodyType = {
 
 export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
   const { data: session } = useSession();
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
+  const setRecords = useSetRecoilState(recordState);
 
   const mutation = useMutation({
     mutationKey: ['records'],
@@ -35,13 +38,14 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
           },
           {} as CollectedRecordType,
         );
+        setRecords(collectedData);
 
         return {
           ...old,
           ...collectedData,
         };
       });
-      onSuccessCb(result);
+      onSuccessCb && onSuccessCb(result);
     },
   });
 

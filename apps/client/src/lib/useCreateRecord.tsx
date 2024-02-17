@@ -1,12 +1,12 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSetRecoilState } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
 import { tracking } from '@/utils/mixPannel';
 import { useRouter } from 'next/navigation';
-import { ApiSuccess, RecordType } from '@/types';
+import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
 
 type UseCreateRecordBodyType = {
@@ -19,9 +19,10 @@ type UseCreateRecordBodyType = {
 export const useCreateRecord = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const params = new URLSearchParams();
   const setWriteState = useSetRecoilState(recordWriteState);
-  const setRecordState = useSetRecoilState(recordState);
+  const queryClient = useQueryClient();
+  const setRecords = useSetRecoilState(recordState);
+
   const mutation = useMutation({
     mutationKey: ['createRecord'],
     mutationFn: async ({
@@ -41,26 +42,27 @@ export const useCreateRecord = () => {
       );
       return response.json();
     },
-    onSuccess: (result, { to }) => {
-      const date = getDateFromServer(result.data.createAt);
-      moveToDiaryRecord(result.data.postId, to);
-      setRecordState(prev => ({ ...prev, [date]: [...(prev[date] || []), result.data] }));
+    onSuccess: ({ data }, { to }) => {
+      const date = getDateFromServer(data.createAt);
+
+      to ? tracking('그루미에게 답장받기 클릭') : tracking('일기 작성하기 클릭');
+      setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));
+      queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
+        const newData = {
+          ...old,
+          [date]: [...(old[date] || []), data],
+        };
+
+        setRecords(newData);
+
+        return newData;
+      });
+      router.push(`/calendar/${date}/${data.postId}`);
     },
     onError: () => {
       alert('문제 발생');
     },
   });
-
-  const moveToDiaryRecord = (postId: string, to?: 'AI') => {
-    if (to) {
-      tracking('그루미에게 답장받기 클릭');
-    } else {
-      tracking('일기 작성하기 클릭');
-    }
-    setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));
-    params.set('id', postId);
-    router.push(`/calendar?${params}`);
-  };
 
   return { mutation };
 };

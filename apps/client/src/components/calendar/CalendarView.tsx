@@ -13,26 +13,21 @@ import {
   getTwoDigitNum,
   getYMDFromDate,
 } from '@/utils/getDateFormat';
-import { useRecoilState } from 'recoil';
-import { initExperienceState, recordWriteState } from '@/store';
-import DiaryRecord from '@/components/calendar/DiaryRecord';
-import OneTimeToast from '@/components/ui/OneTimeToast';
 import Image from 'next/image';
 import { useGetRecords } from '@/lib/useGetRecords';
+import { useRouter } from 'next/navigation';
 
 const CalendarView = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedRecord, setSelectedRecord] = useState<RecordType>();
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [records, setRecords] = useState<CollectedRecordType>({});
-  const [writeState, setWriteState] = useRecoilState(recordWriteState);
-  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
-  const [, , date, day] = getFullStrDate(selectedDate);
+  const [year, month, date, day] = getFullStrDate(selectedDate);
 
   const onSuccessGetRecords = () => {
     const data = queryClient.getQueryData<CollectedRecordType>(['records']) || {};
@@ -152,7 +147,7 @@ const CalendarView = () => {
 
   const handleClickRecord = (e: React.MouseEvent, res: RecordType) => {
     e.stopPropagation();
-    setSelectedRecord(res);
+    router.push(`/calendar/${year}-${month}-${date}/${res.postId}`);
   };
 
   useEffect(
@@ -179,30 +174,6 @@ const CalendarView = () => {
       })();
     },
     [session?.id],
-  );
-
-  useEffect(
-    function ToggleToast() {
-      let initExperienceTimeoutId: NodeJS.Timeout;
-      let writeStateTimeoutId: NodeJS.Timeout;
-
-      if (initExperience.initSubmit) {
-        initExperienceTimeoutId = setTimeout(() => {
-          setInitExperience(prev => ({ ...prev, initSubmit: false }));
-        }, 3000);
-      }
-
-      if (writeState.state === 'SAVE') {
-        writeStateTimeoutId = setTimeout(() => {
-          setWriteState(prev => ({ ...prev, state: 'NONE' }));
-        }, 3000);
-      }
-      return () => {
-        initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
-        writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
-      };
-    },
-    [writeState.state, setWriteState, initExperience.initSubmit, setInitExperience],
   );
 
   return (
@@ -318,29 +289,6 @@ const CalendarView = () => {
           </div>
         )}
       </article>
-      {selectedRecord && (
-        <div className="absolute h-full inset-x-0 inset-y-0 bg-grayscale-800">
-          <DiaryRecord
-            todayReply={selectedRecord}
-            onClose={() => setSelectedRecord(undefined)}
-          />
-        </div>
-      )}
-      {selectedRecord && writeState.state === 'SAVE' && (
-        <OneTimeToast>
-          <div className="flex flex-col items-center justify-center">
-            {selectedRecord.answer && initExperience.initSubmit ? (
-              <p>
-                그루미와의 첫 대화 축하드려요
-                <br />
-                그루어리와 함께 매일 성장해요!
-              </p>
-            ) : (
-              <p>일기가 저장되었어요</p>
-            )}
-          </div>
-        </OneTimeToast>
-      )}
     </div>
   );
 };

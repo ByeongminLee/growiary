@@ -23,7 +23,7 @@ import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
 import { useCreateRecord } from '@/lib/useCreateRecord';
-import { useGetRecord } from '@/lib/useGetRecords';
+import { useGetRecords } from '@/lib/useGetRecords';
 import { ApiSuccess, RecordType } from '@/types';
 
 const MainView = () => {
@@ -47,7 +47,7 @@ const MainView = () => {
     );
   };
 
-  const { mutation: getRecordsMutation } = useGetRecord({
+  const { mutation: getRecordsMutation } = useGetRecords({
     onSuccessCb: onSuccessGetRecordsMutation,
   });
 

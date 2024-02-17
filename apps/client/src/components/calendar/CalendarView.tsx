@@ -8,84 +8,40 @@ import DiaryReply from '@/components/home/DiaryReply';
 import { CollectedRecordType, RecordType } from '@/types';
 import { useSession } from 'next-auth/react';
 import {
-  getDateFromServer,
   getFirstAndLastDateFromSpecificDate,
   getFullStrDate,
   getTwoDigitNum,
   getYMDFromDate,
 } from '@/utils/getDateFormat';
 import { useRecoilState } from 'recoil';
-import { initExperienceState, recordState, recordWriteState } from '@/store';
-import { QueryClient, useMutation } from '@tanstack/react-query';
-import { getRecords } from '@/utils/requestRecord';
-import { useSearchParams } from 'next/navigation';
+import { initExperienceState, recordWriteState } from '@/store';
 import DiaryRecord from '@/components/calendar/DiaryRecord';
 import OneTimeToast from '@/components/ui/OneTimeToast';
 import Image from 'next/image';
+import { useGetRecords } from '@/lib/useGetRecords';
 
 const CalendarView = () => {
   const { data: session } = useSession();
-  const params = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedRecord, setSelectedRecord] = useState<RecordType>();
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [records, setRecords] = useRecoilState(recordState);
+  const [records, setRecords] = useState<CollectedRecordType>({});
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
-  const [year, month, date, day] = getFullStrDate(selectedDate);
-  const queryClient = new QueryClient();
-  const mutation = useMutation({
-    mutationKey: ['records'],
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: string;
-      body: { startDate: string; endDate: string };
-    }) =>
-      getRecords({
-        id,
-        body,
-      }),
-    onSuccess: result => {
-      queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-        const collectedData = [...(result.data || [])].reduce(
-          (f: CollectedRecordType, v: RecordType) => {
-            const key = getDateFromServer(v.createAt);
-            return {
-              ...f,
-              [key]: [...(f[key] || []), v],
-            };
-          },
-          {} as CollectedRecordType,
-        );
-        setRecords(collectedData);
-        setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
+  const [, , date, day] = getFullStrDate(selectedDate);
 
-        const searchParams = new URLSearchParams(params.toString());
+  const onSuccessGetRecords = () => {
+    const data = queryClient.getQueryData<CollectedRecordType>(['records']) || {};
+    setRecords(data);
+    setResponse(data[getYMDFromDate(selectedDate)]);
+  };
 
-        if (searchParams.has('id')) {
-          setSelectedRecord(
-            collectedData[`${year}-${month}-${date}`].find(
-              v => v.postId === searchParams.get('id'),
-            ),
-          );
-        }
-
-        // 답변도착
-        // if (searchParams.get('replied') === 'true') {
-        //   (articleElRef.current?.firstElementChild as HTMLDivElement)?.click();
-        // }
-        return {
-          ...old,
-          ...collectedData,
-        };
-      });
-    },
+  const { mutation, queryClient } = useGetRecords({
+    onSuccessCb: onSuccessGetRecords,
   });
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
@@ -185,8 +141,11 @@ const CalendarView = () => {
   };
   const handleMonthChange = async (month: Date) => {
     const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(month);
+
+    setSelectedDate(
+      new Date(month.getFullYear(), month.getMonth(), selectedDate.getDate(), 0, 0, 0),
+    );
     await mutation.mutateAsync({
-      id: session!.id,
       body: { startDate: firstDate, endDate: lastDate },
     });
   };
@@ -196,46 +155,55 @@ const CalendarView = () => {
     setSelectedRecord(res);
   };
 
-  useEffect(() => {
-    if (articleElRef.current) {
-      initArticleYPosRef.current =
-        articleElRef.current?.previousElementSibling?.getBoundingClientRect().bottom || 0;
-      articleElRef.current.style.top = initArticleYPosRef.current + 'px';
-      document.documentElement.style.touchAction = 'none';
-    }
-  }, [session?.id]);
+  useEffect(
+    function setInitRecordsPosY() {
+      if (articleElRef.current) {
+        initArticleYPosRef.current =
+          articleElRef.current?.previousElementSibling?.getBoundingClientRect().bottom ||
+          0;
+        articleElRef.current.style.top = initArticleYPosRef.current + 'px';
+        document.documentElement.style.touchAction = 'none';
+      }
+    },
+    [session?.id],
+  );
 
-  useEffect(() => {
-    if (!session?.id) return;
-    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
-    (async () => {
-      await mutation.mutateAsync({
-        id: session.id,
-        body: { startDate: firstDate, endDate: lastDate },
-      });
-    })();
-  }, [session?.id]);
+  useEffect(
+    function getInitRecords() {
+      if (!session?.id) return;
+      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
+      (async () => {
+        await mutation.mutateAsync({
+          body: { startDate: firstDate, endDate: lastDate },
+        });
+      })();
+    },
+    [session?.id],
+  );
 
-  useEffect(() => {
-    let initExperienceTimeoutId: NodeJS.Timeout;
-    let writeStateTimeoutId: NodeJS.Timeout;
+  useEffect(
+    function ToggleToast() {
+      let initExperienceTimeoutId: NodeJS.Timeout;
+      let writeStateTimeoutId: NodeJS.Timeout;
 
-    if (initExperience.initSubmit) {
-      initExperienceTimeoutId = setTimeout(() => {
-        setInitExperience(prev => ({ ...prev, initSubmit: false }));
-      }, 3000);
-    }
+      if (initExperience.initSubmit) {
+        initExperienceTimeoutId = setTimeout(() => {
+          setInitExperience(prev => ({ ...prev, initSubmit: false }));
+        }, 3000);
+      }
 
-    if (writeState.state === 'SAVE') {
-      writeStateTimeoutId = setTimeout(() => {
-        setWriteState(prev => ({ ...prev, state: 'NONE' }));
-      }, 3000);
-    }
-    return () => {
-      initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
-      writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
-    };
-  }, [writeState.state, setWriteState, initExperience.initSubmit, setInitExperience]);
+      if (writeState.state === 'SAVE') {
+        writeStateTimeoutId = setTimeout(() => {
+          setWriteState(prev => ({ ...prev, state: 'NONE' }));
+        }, 3000);
+      }
+      return () => {
+        initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
+        writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
+      };
+    },
+    [writeState.state, setWriteState, initExperience.initSubmit, setInitExperience],
+  );
 
   return (
     <div>
@@ -277,7 +245,7 @@ const CalendarView = () => {
             <p className="pb-4 px-6 font-p-R16 text-grayscale-600">
               {parseInt(date, 10)}일 {day}
             </p>
-            {records[`${year}-${month}-${date}`].map(res => (
+            {response.map(res => (
               <div
                 key={res.postId}
                 className="py-4 px-6 font-p-M16"

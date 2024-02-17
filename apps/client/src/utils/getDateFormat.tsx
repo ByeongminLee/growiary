@@ -50,7 +50,7 @@ export const getFullStrDate = (
 
   if (typeof givenDate === 'string') {
     const [year, month, date] = givenDate.split(sep || '-').map(v => +v);
-    const day = Weekdays[new Date(year, month, date, 0, 0, 0).getDay()];
+    const day = Weekdays[new Date(year, month - 1, date, 0, 0, 0).getDay()];
 
     return [year.toString(), month.toString(), date.toString(), day];
   }

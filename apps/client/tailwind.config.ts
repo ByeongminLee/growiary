@@ -58,7 +58,7 @@ const config: Config = {
           green: '#9AC8C8',
           yellow: '#FFCC35',
           deepRed: '#8E1818',
-          brown: '#676144',
+          brown: '#CDC6A8',
           babyPink: '#FDD5D3',
           turquoise: '#346F7F',
         },

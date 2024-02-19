@@ -21,6 +21,8 @@ const DiaryRecordListView = ({ date: createAt }: MainReplyRecordViewProps) => {
 
   const handleClickPrevPage = () => {
     const searchParams = new URLSearchParams();
+
+    (articleElRef.current as HTMLElement).style.transform = 'translateY(70%)';
     searchParams.set('date', createAt);
     router.push(`/calendar?${searchParams.toString()}`);
   };
@@ -34,7 +36,10 @@ const DiaryRecordListView = ({ date: createAt }: MainReplyRecordViewProps) => {
   }, [storedRecords, createAt]);
 
   return (
-    <section ref={articleElRef} className="mt-[-4px]">
+    <section
+      ref={articleElRef}
+      className="mt-[-4px] h-full transition-[transform] ease-in-out duration-2000"
+    >
       <ChevronLeft
         className="mx-4 p-4 h-12 w-12 bg-grayscale-100 cursor-pointer"
         onClick={handleClickPrevPage}

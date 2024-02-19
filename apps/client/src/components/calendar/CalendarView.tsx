@@ -16,6 +16,7 @@ import {
 import Image from 'next/image';
 import { useGetRecords } from '@/lib/useGetRecords';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
 
 const CalendarView = () => {
   const { data: session } = useSession();
@@ -25,6 +26,7 @@ const CalendarView = () => {
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [records, setRecords] = useState<CollectedRecordType>({});
+  const [moveState, setMoveState] = useState<'UP' | 'DOWN' | 'NONE'>('NONE');
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
@@ -55,8 +57,10 @@ const CalendarView = () => {
     const target = e.currentTarget as HTMLElement;
     const { top, height } = target.getBoundingClientRect();
     const next = target.nextElementSibling as HTMLElement;
-    // up
+
     if (movedY > 0) {
+      setMoveState('UP');
+
       if (top > 0 && top < window.innerHeight) {
         target.style.top = '0px';
         target.style.overflow = 'scroll';
@@ -72,8 +76,9 @@ const CalendarView = () => {
         (next as HTMLElement).style.overflow = 'scroll';
         target.scrollTo(0, 0);
       }
-      // down
     } else {
+      setMoveState('DOWN');
+
       const prev = target.previousElementSibling;
       if (target.scrollTop === 0 && prev) {
         (prev as HTMLElement).style.top = '0px';
@@ -90,6 +95,7 @@ const CalendarView = () => {
       if (target.scrollTop === 0) {
         target.style.top = initArticleYPosRef.current + 'px';
         target.style.overflow = 'hidden';
+
         if (next) {
           next.style.top = '100vh';
           next.style.overflow = 'hidden';
@@ -106,19 +112,24 @@ const CalendarView = () => {
       : parseInt(target.style.top, 10);
     const prev = target.previousElementSibling;
     const next = target.nextElementSibling as HTMLElement;
-    // up
+
     if (top > 0 && top < window.innerHeight) {
+      setMoveState('UP');
+
       target.style.top = '0px';
       target.style.overflow = 'scroll';
+
       if (next) {
         (next as HTMLElement).style.top = height + 'px';
       }
       return;
     }
-    // down
     if (top === 0) {
+      setMoveState('DOWN');
+
       target.style.top = prev ? '70vh' : initArticleYPosRef.current + 'px';
       target.style.overflow = 'hidden';
+
       if (next) {
         next.style.top = '100vh';
         next.style.overflow = 'hidden';
@@ -153,7 +164,10 @@ const CalendarView = () => {
 
   const handleClickRecord = (e: React.MouseEvent, res: RecordType) => {
     e.stopPropagation();
-    router.push(`/calendar/${year}-${month}-${date}/${res.postId}`);
+
+    if (moveState === 'UP') {
+      router.push(`/calendar/${year}-${month}-${date}/${res.postId}`);
+    }
   };
 
   useEffect(
@@ -228,10 +242,18 @@ const CalendarView = () => {
             style={{
               marginBottom: 'env(safe-area-inset-bottom)',
               marginTop: 'env(safe-area-inset-top)',
-              paddingTop: '32px',
+              paddingTop: moveState === 'DOWN' ? 0 : '32px',
               top: 'inherit',
             }}
           >
+            <ChevronLeft
+              className="mx-4 p-4 h-12 w-12 bg-grayscale-100 cursor-pointer transition-[opacity] ease-in-out duration-1000"
+              onClick={handleContentClick}
+              style={{
+                visibility: moveState === 'UP' ? 'visible' : 'hidden',
+                opacity: moveState === 'UP' ? 1 : 0,
+              }}
+            />
             <p className="pb-4 px-6 font-p-R16 text-grayscale-600">
               {parseInt(date, 10)}일 {day}
             </p>
@@ -245,7 +267,14 @@ const CalendarView = () => {
                 }}
               >
                 <div className="flex items-center">
-                  <p className="cursor-pointer" onClick={e => handleClickRecord(e, res)}>
+                  <p
+                    className={
+                      moveState === 'UP'
+                        ? 'cursor-pointer pointer-events-auto'
+                        : 'pointer-events-none'
+                    }
+                    onClick={e => handleClickRecord(e, res)}
+                  >
                     {diaryTemplates[res.template].question}
                   </p>
                   {res.answer && (

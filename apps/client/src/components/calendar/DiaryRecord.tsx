@@ -23,6 +23,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { initExperienceState, recordState, recordWriteState } from '@/store';
 import { getDateFromServer } from '@/utils/getDateFormat';
 import { useRouter } from 'next/navigation';
+import fireworks from '@/../public/assets/fireworks.json';
+import LottieAnimation from '@/components/ui/LottieAnimation';
 
 interface MainReplyViewProps {
   date: RecordType['createAt'];
@@ -35,8 +37,10 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
   const storedRecords = useRecoilValue(recordState);
   const todayReply = records && records[date]?.find(v => v.postId === postId);
   const template = diaryTemplates[todayReply?.template || '0'];
+  const [isLoadedLottie, setIsLoadedLottie] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [toastContent, setToastContent] = useState('');
+  const [initAiAnswer, setInitAiAnswer] = useState(false);
   const removeModalRef = useRef<HTMLButtonElement | null>(null);
   const modifyModalRef = useRef<HTMLButtonElement | null>(null);
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
@@ -102,6 +106,7 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
     }
 
     if (initExperience.initSubmit) {
+      setInitAiAnswer(true);
       initExperienceTimeoutId = setTimeout(() => {
         setInitExperience(prev => ({ ...prev, initSubmit: false }));
       }, 3000);
@@ -231,7 +236,7 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-      {toastContent && (
+      {toastContent && (initAiAnswer ? isLoadedLottie : true) && (
         <OneTimeToast timeout={1500} afterFn={() => setToastContent('')}>
           <div className="flex flex-col items-center justify-center">
             {toastContent.split('\n').map((el: string, idx: number) => (
@@ -242,6 +247,17 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
             ))}
           </div>
         </OneTimeToast>
+      )}
+      {initAiAnswer && (
+        <LottieAnimation
+          src={fireworks}
+          width="100%"
+          height="100%"
+          className="absolute top-[100px]"
+          options={{ loop: false }}
+          speed={2}
+          afterLoaded={() => setIsLoadedLottie(true)}
+        />
       )}
     </article>
   );

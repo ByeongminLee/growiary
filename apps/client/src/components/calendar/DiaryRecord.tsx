@@ -92,7 +92,7 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
     if (writeState.state === 'SAVE') {
       setToastContent(
         todayReply?.answer && initExperience.initSubmit
-          ? '그루미와의 첫 대화 축하드려요 그루어리와 함께 매일 성장해요!'
+          ? '그루미와의 첫 대화 축하드려요\n그루어리와 함께 매일 성장해요!'
           : '일기가 저장되었어요',
       );
 
@@ -234,7 +234,14 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
       {toastContent && (
         <OneTimeToast timeout={1500}>
           <div className="flex flex-col items-center justify-center">
-            <p>{toastContent}</p>
+            <p>
+              {toastContent.split('\n').map((el: string, idx: number) => (
+                <p key={idx}>
+                  {el}
+                  <br />
+                </p>
+              ))}
+            </p>
           </div>
         </OneTimeToast>
       )}

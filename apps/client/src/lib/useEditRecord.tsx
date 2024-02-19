@@ -4,7 +4,7 @@ import { CollectedRecordType, RecordType } from '@/types';
 import { PostEditDTO } from '@growiary/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
 import { useRouter } from 'next/navigation';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
 
 type UseEditRecordProps = {
@@ -17,7 +17,7 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const setRecords = useSetRecoilState(recordState);
+  const [records, setRecords] = useRecoilState(recordState);
   const setWriteState = useSetRecoilState(recordWriteState);
 
   const mutation = useMutation({
@@ -49,6 +49,9 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
 
       const timeoutId = setTimeout(() => {
         queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
+          if (!old) {
+            old = records;
+          }
           const newData = {
             ...old,
             [key]:
@@ -61,7 +64,7 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
           setRecords(newData);
           return newData;
         });
-        setWriteState(prev => ({ ...prev, content: '', state: 'NONE' }));
+        setWriteState(prev => ({ ...prev, content: '', tempContent: '', state: 'NONE' }));
         router.push(`/calendar?${searchParams.toString()}`);
         clearTimeout(timeoutId);
       }, 1500);

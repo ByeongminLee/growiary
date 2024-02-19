@@ -16,6 +16,7 @@ export type RecordWriteStateType = {
   key: 'recordWriteState';
   default: {
     content: string;
+    tempContent?: string;
     isSubmittedFeedback: boolean;
     state: 'SAVE' | 'EDIT' | 'WAIT' | 'NONE';
   };

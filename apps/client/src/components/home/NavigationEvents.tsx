@@ -30,14 +30,14 @@ export function NavigationEvents() {
     history.pop();
     const writingPage = history.pop();
     // 커서 마지막 위치 이동 위함
-    writingState.state === 'EDIT' && setWritingState(prev => ({ ...prev, content: '' }));
+    writingState.state === 'EDIT' &&
+      setWritingState(prev => ({ ...prev, content: '', tempContent: prev.content }));
     writingPage && router.replace(writingPage);
   };
 
   // 페이지 떠나기
   useEffect(() => {
     history.push(pathname);
-    if (writingState.state === 'NONE') return;
 
     if (
       writingState.state !== 'EDIT'

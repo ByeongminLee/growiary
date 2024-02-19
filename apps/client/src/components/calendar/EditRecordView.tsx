@@ -41,9 +41,12 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
     const targetRecord = storedRecord[createAt]?.find(v => v.postId === postId);
     if (targetRecord) {
       setRecord(targetRecord);
-      setWriteState(prev => ({ ...prev, content: targetRecord.content }));
+      setWriteState(prev => ({
+        ...prev,
+        content: prev.tempContent || targetRecord.content,
+      }));
     }
-  }, [storedRecord, createAt, postId, setRecord, setWriteState]);
+  }, []);
 
   useEffect(function setTextareaHeight() {
     const refHeight = textareaRef.current?.clientHeight;

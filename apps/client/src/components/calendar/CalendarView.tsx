@@ -133,7 +133,12 @@ const CalendarView = () => {
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay) => {
     setSelectedDate(selectedDay);
-    setResponse(records[getYMDFromDate(selectedDay)]);
+    const selectedDate = getYMDFromDate(selectedDay);
+    const searchParams = new URLSearchParams();
+    searchParams.set('date', selectedDate);
+    setResponse(records[selectedDate]);
+    if (selectedDate === params.get('date')) return;
+    history.replaceState(null, '', '/calendar?' + searchParams.toString());
   };
   const handleMonthChange = async (month: Date) => {
     const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(month);
@@ -174,7 +179,15 @@ const CalendarView = () => {
   useEffect(
     function getInitRecords() {
       if (!session?.id) return;
-      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
+      let paramDate;
+      if (params.has(date)) {
+        const [year, month, date] = params.get('date')!.split('-');
+        paramDate = new Date(+year, +month - 1, +date, 0, 0, 0);
+        setSelectedDate(paramDate);
+      }
+      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(
+        paramDate || selectedDate,
+      );
       (async () => {
         await mutation.mutateAsync({
           body: { startDate: firstDate, endDate: lastDate },

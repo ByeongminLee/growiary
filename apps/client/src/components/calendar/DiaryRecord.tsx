@@ -232,16 +232,14 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
         </AlertDialogOverlay>
       </AlertDialog>
       {toastContent && (
-        <OneTimeToast timeout={1500}>
+        <OneTimeToast timeout={1500} afterFn={() => setToastContent('')}>
           <div className="flex flex-col items-center justify-center">
-            <p>
-              {toastContent.split('\n').map((el: string, idx: number) => (
-                <p key={idx}>
-                  {el}
-                  <br />
-                </p>
-              ))}
-            </p>
+            {toastContent.split('\n').map((el: string, idx: number) => (
+              <p key={idx}>
+                {el}
+                <br />
+              </p>
+            ))}
           </div>
         </OneTimeToast>
       )}

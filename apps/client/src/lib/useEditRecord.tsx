@@ -42,9 +42,6 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
     },
     onSuccess: (result, { content, status }) => {
       const key = getDateFromServer(date);
-      const searchParams = new URLSearchParams();
-
-      searchParams.set('date', date);
       onSuccessCb();
 
       const timeoutId = setTimeout(() => {
@@ -65,7 +62,7 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
           return newData;
         });
         setWriteState(prev => ({ ...prev, content: '', tempContent: '', state: 'NONE' }));
-        router.push(`/calendar?${searchParams.toString()}`);
+        router.push(`/calendar/${key}`);
         clearTimeout(timeoutId);
       }, 1500);
     },

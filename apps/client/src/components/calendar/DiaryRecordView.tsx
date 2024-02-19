@@ -31,7 +31,7 @@ interface MainReplyViewProps {
   postId: RecordType['postId'];
 }
 
-const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
+const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
   const router = useRouter();
   const [records, setRecords] = useState<CollectedRecordType | null>(null);
   const storedRecords = useRecoilValue(recordState);
@@ -263,4 +263,4 @@ const DiaryRecord = ({ date, postId }: MainReplyViewProps) => {
   );
 };
 
-export default DiaryRecord;
+export default DiaryRecordView;

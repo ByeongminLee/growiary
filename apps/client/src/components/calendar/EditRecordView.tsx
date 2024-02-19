@@ -99,11 +99,11 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
   };
 
   return (
-    <>
+    <div className="h-full" style={{ backgroundColor: `${template.bgColor}` }}>
       <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      <section className="px-9 pb-8 h-full flex flex-col">
+      <section className="px-9 pb-8 h-full">
         <div className="flex items-center mb-4">
           <h2
             style={{ color: `${template.questionColor}` }}
@@ -161,7 +161,7 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
           </div>
         </OneTimeToast>
       )}
-    </>
+    </div>
   );
 };
 

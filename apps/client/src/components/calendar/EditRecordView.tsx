@@ -78,7 +78,9 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
         document.documentElement.clientHeight -
           window.visualViewport.height -
           totalBottomArea;
-      sub && setScrollHeight(textarea.clientHeight - sub + 'px');
+      document.documentElement.clientHeight !== window.visualViewport?.height &&
+        sub &&
+        setScrollHeight(textarea.clientHeight - sub + 'px');
       clearTimeout(timeoutId);
     }, 200);
   };

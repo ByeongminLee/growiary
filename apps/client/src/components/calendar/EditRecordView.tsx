@@ -14,6 +14,9 @@ type EditRecordViewProps = {
   postId: RecordType['postId'];
   date: RecordType['createAt'];
 };
+
+const bottomArea = 80;
+
 const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
   const storedRecord = useRecoilValue(recordState);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -37,7 +40,7 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
   });
 
   useEffect(() => {
-    textareaRef.current?.focus();
+    // textareaRef.current?.focus();
     const targetRecord = storedRecord[createAt]?.find(v => v.postId === postId);
     if (targetRecord) {
       setRecord(targetRecord);
@@ -46,17 +49,6 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
         content: prev.tempContent || targetRecord.content,
       }));
     }
-  }, []);
-
-  useEffect(function setTextareaHeight() {
-    const refHeight = textareaRef.current?.clientHeight;
-    const handleScroll = () => {
-      const sub = document.documentElement.scrollHeight - window.innerHeight;
-      if (sub === 0 || !refHeight) return;
-      setScrollHeight(refHeight - Math.abs(sub) + 'px');
-      window.scrollTo(0, 0);
-    };
-    window.addEventListener('scroll', handleScroll);
   }, []);
 
   const showToast = (content: string) => {
@@ -73,6 +65,23 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
     }, 3000);
   };
 
+  const handleFocusInput = () => {
+    const timeoutId = setTimeout(() => {
+      const textarea = textareaRef.current as HTMLTextAreaElement;
+      const totalBottomArea =
+        parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue('--safe-margin'),
+          10,
+        ) + bottomArea;
+      const sub =
+        window.visualViewport &&
+        document.documentElement.clientHeight -
+          window.visualViewport.height -
+          totalBottomArea;
+      sub && setScrollHeight(textarea.clientHeight - sub + 'px');
+      clearTimeout(timeoutId);
+    }, 200);
+  };
   const handleBlurInput = () => {
     setScrollHeight('100%');
   };
@@ -99,11 +108,17 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
   };
 
   return (
-    <div className="h-full" style={{ backgroundColor: `${template.bgColor}` }}>
+    <div
+      className="flex flex-col h-full"
+      style={{ backgroundColor: `${template.bgColor}` }}
+    >
       <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>
-      <section className="px-9 pb-8 h-full">
+      <section
+        className="flex-1 flex flex-col px-9 pb-8"
+        style={{ marginBottom: bottomArea + 12 + 'px' }}
+      >
         <div className="flex items-center mb-4">
           <h2
             style={{ color: `${template.questionColor}` }}
@@ -112,12 +127,7 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
             {template.question}
           </h2>
         </div>
-        <div
-          className="h-full"
-          style={{
-            marginBottom: 'calc(env(safe-area-inset-bottom) + 48px + 124px)',
-          }}
-        >
+        <div className="flex-1">
           <textarea
             ref={textareaRef}
             style={{
@@ -131,9 +141,9 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
             maxLength={1000}
             minLength={10}
             value={writeState?.content}
+            onFocus={handleFocusInput}
             onBlur={handleBlurInput}
             onChange={handleChangeContent}
-            autoFocus
           ></textarea>
           <div className={`text-right ${writeState.content.length ? 'block' : ''}`}>
             <span className="inline-block bg-opacity-70 font-p-R16 p-1 text-primary-500">

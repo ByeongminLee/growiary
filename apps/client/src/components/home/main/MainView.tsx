@@ -26,6 +26,8 @@ import { useCreateRecord } from '@/lib/useCreateRecord';
 import { useGetRecords } from '@/lib/useGetRecords';
 import { ApiSuccess, RecordType } from '@/types';
 
+const bottomArea = 80;
+
 const MainView = () => {
   const { data: session } = useSession();
   const [year, month, date, day] = getFullStrDate();
@@ -139,10 +141,18 @@ const MainView = () => {
 
   useEffect(function setTextareaHeight() {
     const refHeight = refsArray.current[templateRef.current].clientHeight;
+    const totalBottomArea =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--safe-margin'),
+        10,
+      ) + bottomArea;
     const handleScroll = () => {
-      const sub = document.documentElement.scrollHeight - window.innerHeight;
-      if (sub === 0) return;
-      setScrollHeight(refHeight - Math.abs(sub) + 'px');
+      const sub =
+        window.visualViewport &&
+        document.documentElement.clientHeight -
+          window.visualViewport.height -
+          totalBottomArea;
+      sub && setScrollHeight(refHeight - Math.abs(sub) + 'px');
       window.scrollTo(0, 0);
     };
     window.addEventListener('scroll', handleScroll);

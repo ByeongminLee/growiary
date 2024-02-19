@@ -165,11 +165,9 @@ const CalendarView = () => {
         articleElRef.current.style.top = initArticleYPosRef.current + 'px';
         document.documentElement.style.touchAction = 'none';
 
-        // 디테일 뷰 > 캘린더 이동 시 목록 화면 보여주기
         if (params.has('date')) {
           const [year, month, date] = params.get('date')!.split('-');
           setSelectedDate(new Date(+year, +month - 1, +date, 0, 0, 0));
-          // (articleElRef.current?.firstElementChild as HTMLElement).click();
         }
       }
     },

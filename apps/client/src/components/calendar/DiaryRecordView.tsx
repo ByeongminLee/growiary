@@ -57,9 +57,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
   });
 
   const handleClickPrevPage = () => {
-    const searchParams = new URLSearchParams();
-    searchParams.set('date', getDateFromServer(date));
-    router.push(`/calendar?${searchParams.toString()}`);
+    router.push(`/calendar/${getDateFromServer(date)}`);
   };
 
   const handleClickRemoveModal = () => {

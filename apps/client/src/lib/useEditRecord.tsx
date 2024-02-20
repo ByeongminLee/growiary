@@ -58,7 +58,12 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
                     v.postId !== postId ? v : { ...v, content: content! },
                   ),
           };
+
+          if (!newData[key]?.[0]?.postId) {
+            delete newData[key];
+          }
           setRecords(newData);
+
           return newData;
         });
         setWriteState(prev => ({ ...prev, content: '', tempContent: '', state: 'NONE' }));

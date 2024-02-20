@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useEditRecord } from '@/lib/useEditRecord';
 import OneTimeToast from '@/components/ui/OneTimeToast';
+import { X } from 'lucide-react';
+import Link from 'next/link';
 
 type EditRecordViewProps = {
   postId: RecordType['postId'];
@@ -114,6 +116,9 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
       className="flex flex-col h-full"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
+      <Link href={`/calendar/${createAt}/${postId}`}>
+        <X className="mt-[-4px] mx-4 p-4 h-12 w-12 cursor-pointer" />
+      </Link>
       <p className="mx-9 font-p-R16 text-primary-500 mb-1">
         {year}년 {month}월 {date}일 {day}
       </p>

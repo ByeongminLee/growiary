@@ -25,6 +25,7 @@ import { getDateFromServer } from '@/utils/getDateFormat';
 import { useRouter } from 'next/navigation';
 import fireworks from '@/../public/assets/fireworks.json';
 import LottieAnimation from '@/components/ui/LottieAnimation';
+import Link from 'next/link';
 
 interface MainReplyViewProps {
   date: RecordType['createAt'];
@@ -56,10 +57,6 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
     date,
     onSuccessCb: onSuccessEditRecord,
   });
-
-  const handleClickPrevPage = () => {
-    router.push(`/calendar/${getDateFromServer(date)}`);
-  };
 
   const handleClickRemoveModal = () => {
     setShowMenu(false);
@@ -132,10 +129,9 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
       }}
     >
       <div className="relative flex items-center justify-between mx-4 z-10">
-        <ChevronLeft
-          className="p-4 h-12 w-12 cursor-pointer"
-          onClick={handleClickPrevPage}
-        />
+        <Link href={`/calendar/${date}`}>
+          <ChevronLeft className="p-4 h-12 w-12 cursor-pointer" />
+        </Link>
         <Image
           src="/assets/icons/hamburger.png"
           alt="menu"

@@ -25,7 +25,13 @@ export class PostService {
   private async getUserPostRef() {
     const { userId } = this.request.user;
     const userPostRef = firestore().collection('posts').doc(userId);
-    return { userId, userPostRef };
+    const userPostDoc = await userPostRef.get();
+
+    if (userPostDoc.exists) {
+      return { isPosts: true, userId, userPostRef };
+    }
+
+    return { isPosts: false, userId, userPostRef };
   }
 
   /**
@@ -71,14 +77,16 @@ export class PostService {
    */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
     const { startDate, endDate } = filterFindPostDTO;
-    const { userPostRef } = await this.getUserPostRef();
+    const { isPosts, userPostRef } = await this.getUserPostRef();
+
+    if (!isPosts) {
+      return { status: 200, data: [] };
+    }
 
     const userPostsDoc = await userPostRef.get();
     const userPostsData = userPostsDoc.data();
 
-    const filteredPosts = [];
-
-    Object.keys(userPostsData)
+    const filteredPosts = Object.keys(userPostsData)
       .filter(postId => userPostsData[postId].status !== 'DELETED')
       .map(postId => {
         const post = userPostsData[postId];
@@ -92,7 +100,7 @@ export class PostService {
         endDateUTC.setHours(endDateUTC.getHours() - 9);
 
         if (createAtDate >= startDateUTC && createAtDate < endDateUTC) {
-          filteredPosts.push({
+          return {
             postId: postId,
             feedback: 'NONE',
             status: userPostsData[postId].hasOwnProperty('status')
@@ -101,9 +109,15 @@ export class PostService {
             ...post,
             createAt: createAtDate,
             updateAt: updateAtDate,
-          });
+          };
         }
-      });
+        return null;
+      })
+      .filter(post => post !== null);
+
+    if (filteredPosts.length === 0) {
+      return { status: 200, data: [] };
+    }
 
     return { status: 200, data: filteredPosts };
   }

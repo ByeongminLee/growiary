@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { recordWriteState } from '@/store';
-import Image from 'next/image';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,49 +16,43 @@ import {
 } from '@/components/ui/shadcn/alert-dialog';
 import { Button } from '@/components/ui/shadcn/button';
 
+const history: string[] = [];
 export function NavigationEvents() {
   const pathname = usePathname();
-  const params = useSearchParams();
   const router = useRouter();
   const [writingState, setWritingState] = useRecoilState(recordWriteState);
   const stopRecordRef = useRef<HTMLButtonElement | null>(null);
   const handleStopWriting = () => {
-    setWritingState(prev => ({ ...prev, content: '', isWaiting: false }));
+    setWritingState(prev => ({ ...prev, content: '', state: 'NONE' }));
   };
 
   const handleStayWriting = () => {
-    router.replace('/');
+    history.pop();
+    const writingPage = history.pop();
+    // 커서 마지막 위치 이동 위함
+    writingState.state === 'EDIT' &&
+      setWritingState(prev => ({ ...prev, content: '', tempContent: prev.content }));
+    writingPage && router.replace(writingPage);
   };
 
   // 페이지 떠나기
   useEffect(() => {
-    if (pathname !== '/' && writingState.content) {
+    history.push(pathname);
+
+    if (
+      writingState.state !== 'EDIT'
+        ? pathname !== '/' && writingState.content
+        : !pathname.includes('edit')
+    ) {
       stopRecordRef.current?.click();
     }
-  }, [pathname, writingState.content]);
-
-  // 답변 도착
-  useEffect(() => {
-    const searchParams = new URLSearchParams(params.toString());
-    // 답변도착 && 메인 화면
-    if (pathname === '/' && searchParams.get('replied') === 'true') {
-      router.refresh();
-    }
-  }, [pathname, params, router]);
+  }, [pathname]);
 
   return (
     <>
-      {/*답변도착 && 다른 화면 */}
-      {pathname !== '/' && params.get('replied') === 'true' && (
-        <Image
-          className="fixed bottom-[24px] left-[5%] z-[999]"
-          src="/assets/growmi/green_letter.svg"
-          alt="replied"
-          width={64}
-          height={64}
-        />
-      )}
-      {pathname !== '/' && writingState.content && (
+      {(writingState.state !== 'EDIT'
+        ? pathname !== '/' && writingState.content
+        : !pathname.includes('edit')) && (
         <AlertDialog>
           <AlertDialogTrigger ref={stopRecordRef} className="hidden">
             일기 작성 중단 팝업
@@ -71,28 +64,20 @@ export function NavigationEvents() {
                   일기를 그만쓸까요? <br /> 지금까지 입력한 내용이 사라져요
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-0"
-                    style={{ flex: 1 }}
-                    asChild
+                  <AlertDialogCancel
+                    className="flex-1 border-0"
+                    onClick={handleStayWriting}
                   >
-                    <AlertDialogCancel onClick={handleStayWriting}>
-                      아니오
-                    </AlertDialogCancel>
-                  </Button>
+                    아니오
+                  </AlertDialogCancel>
                   <Button
                     type="button"
                     variant="secondary"
-                    className="grow-2"
+                    compoundVariants="danger"
                     style={{ flex: 2 }}
                     asChild
                   >
-                    <AlertDialogAction
-                      className="bg-danger-600 text-primary-300"
-                      onClick={handleStopWriting}
-                    >
+                    <AlertDialogAction onClick={handleStopWriting}>
                       네, 그만 쓸래요
                     </AlertDialogAction>
                   </Button>

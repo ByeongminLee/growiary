@@ -13,8 +13,16 @@ export type Post = {
   title: string;
   content: string;
   template: string;
-  createAt: string;
-  updateAt: string;
+  createAt: string | Date;
+  updateAt: string | Date;
+  feedback?: FeedbackType;
+  answer?: string;
+  ai?: {
+    id: string;
+    created: string;
+    usage: string;
+  };
+  status?: PostStatus;
 };
 
 export type FilterFindPostDTO = {
@@ -23,3 +31,14 @@ export type FilterFindPostDTO = {
 };
 
 export type FeedbackType = 'GOOD' | 'BAD' | 'NONE';
+export type PostStatus = 'ACTIVE' | 'DELETED';
+
+export type PostFeedbackDTO = {
+  postId: string;
+  feedback: FeedbackType;
+};
+export type PostEditDTO = {
+  postId: string;
+  content?: string;
+  status?: PostStatus;
+};

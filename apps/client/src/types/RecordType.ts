@@ -5,6 +5,7 @@ export type DiaryTemplate = {
   question: string;
   questionColor: string;
   placeholder: string;
+  caretColor: string;
   answerColor: string;
   charSrc: string;
 };

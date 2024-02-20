@@ -1,6 +1,6 @@
 'use client';
 import { Calendar } from '@/components/ui/shadcn/calendar';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import DiaryContent from '@/components/home/DiaryContent';
@@ -8,63 +8,38 @@ import DiaryReply from '@/components/home/DiaryReply';
 import { CollectedRecordType, RecordType } from '@/types';
 import { useSession } from 'next-auth/react';
 import {
-  getDateFromServer,
   getFirstAndLastDateFromSpecificDate,
   getFullStrDate,
   getTwoDigitNum,
   getYMDFromDate,
 } from '@/utils/getDateFormat';
-import { useRecoilState } from 'recoil';
-import { recordState } from '@/store';
-import { QueryClient, useMutation } from '@tanstack/react-query';
-import { getRecords } from '@/utils/requestRecord';
+import Image from 'next/image';
+import { useGetRecords } from '@/lib/useGetRecords';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
 
 const CalendarView = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+  const params = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [records, setRecords] = useRecoilState(recordState);
+  const [records, setRecords] = useState<CollectedRecordType>({});
+  const [moveState, setMoveState] = useState<'UP' | 'DOWN' | 'NONE'>('NONE');
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
-  const template = diaryTemplates[response?.[0]?.template || '1'];
   const [year, month, date, day] = getFullStrDate(selectedDate);
-  const queryClient = new QueryClient();
-  const mutation = useMutation({
-    mutationKey: ['records'],
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: string;
-      body: { startDate: string; endDate: string };
-    }) =>
-      getRecords({
-        id,
-        body,
-      }),
-    onSuccess: result => {
-      queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-        const collectedData = [...(result.data || [])].reduce(
-          (f: CollectedRecordType, v: RecordType) => {
-            const key = getDateFromServer(v.createAt);
-            return {
-              ...f,
-              [key]: [...(f[key] || []), v],
-            };
-          },
-          {} as CollectedRecordType,
-        );
-        setRecords(collectedData);
-        setResponse(collectedData?.[`${year}-${month}-${date}`] || []);
 
-        return {
-          ...old,
-          ...collectedData,
-        };
-      });
-    },
+  const onSuccessGetRecords = () => {
+    const data = queryClient.getQueryData<CollectedRecordType>(['records']) || {};
+    setRecords(data);
+    setResponse(data[getYMDFromDate(selectedDate)]);
+  };
+
+  const { mutation, queryClient } = useGetRecords({
+    onSuccessCb: onSuccessGetRecords,
   });
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
@@ -82,8 +57,10 @@ const CalendarView = () => {
     const target = e.currentTarget as HTMLElement;
     const { top, height } = target.getBoundingClientRect();
     const next = target.nextElementSibling as HTMLElement;
-    // up
+
     if (movedY > 0) {
+      setMoveState('UP');
+
       if (top > 0 && top < window.innerHeight) {
         target.style.top = '0px';
         target.style.overflow = 'scroll';
@@ -99,8 +76,9 @@ const CalendarView = () => {
         (next as HTMLElement).style.overflow = 'scroll';
         target.scrollTo(0, 0);
       }
-      // down
     } else {
+      setMoveState('DOWN');
+
       const prev = target.previousElementSibling;
       if (target.scrollTop === 0 && prev) {
         (prev as HTMLElement).style.top = '0px';
@@ -117,6 +95,7 @@ const CalendarView = () => {
       if (target.scrollTop === 0) {
         target.style.top = initArticleYPosRef.current + 'px';
         target.style.overflow = 'hidden';
+
         if (next) {
           next.style.top = '100vh';
           next.style.overflow = 'hidden';
@@ -133,19 +112,24 @@ const CalendarView = () => {
       : parseInt(target.style.top, 10);
     const prev = target.previousElementSibling;
     const next = target.nextElementSibling as HTMLElement;
-    // up
+
     if (top > 0 && top < window.innerHeight) {
+      setMoveState('UP');
+
       target.style.top = '0px';
       target.style.overflow = 'scroll';
+
       if (next) {
         (next as HTMLElement).style.top = height + 'px';
       }
       return;
     }
-    // down
     if (top === 0) {
+      setMoveState('DOWN');
+
       target.style.top = prev ? '70vh' : initArticleYPosRef.current + 'px';
       target.style.overflow = 'hidden';
+
       if (next) {
         next.style.top = '100vh';
         next.style.overflow = 'hidden';
@@ -160,35 +144,70 @@ const CalendarView = () => {
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay) => {
     setSelectedDate(selectedDay);
-    setResponse(records[getYMDFromDate(selectedDay)]);
+    const selectedDate = getYMDFromDate(selectedDay);
+    const searchParams = new URLSearchParams();
+    searchParams.set('date', selectedDate);
+    setResponse(records[selectedDate]);
+    if (selectedDate === params.get('date')) return;
+    history.replaceState(null, '', '/calendar?' + searchParams.toString());
   };
   const handleMonthChange = async (month: Date) => {
     const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(month);
+
+    setSelectedDate(
+      new Date(month.getFullYear(), month.getMonth(), selectedDate.getDate(), 0, 0, 0),
+    );
     await mutation.mutateAsync({
-      id: session!.id,
       body: { startDate: firstDate, endDate: lastDate },
     });
   };
 
-  useEffect(() => {
-    if (articleElRef.current) {
-      initArticleYPosRef.current =
-        articleElRef.current?.previousElementSibling?.getBoundingClientRect().bottom || 0;
-      articleElRef.current.style.top = initArticleYPosRef.current + 'px';
-      document.documentElement.style.touchAction = 'none';
-    }
-  }, [session?.id]);
+  const handleClickRecord = (e: React.MouseEvent, res: RecordType) => {
+    e.stopPropagation();
 
-  useEffect(() => {
-    if (!session?.id) return;
-    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(selectedDate);
-    (async () => {
-      await mutation.mutateAsync({
-        id: session.id,
-        body: { startDate: firstDate, endDate: lastDate },
-      });
-    })();
-  }, [session?.id]);
+    if (moveState === 'UP') {
+      router.push(`/calendar/${year}-${month}-${date}/${res.postId}`);
+    }
+  };
+
+  useEffect(
+    function setInitRecordsPosY() {
+      if (articleElRef.current) {
+        initArticleYPosRef.current =
+          articleElRef.current.previousElementSibling?.getBoundingClientRect().bottom ||
+          0;
+        articleElRef.current.style.top = initArticleYPosRef.current + 'px';
+        document.documentElement.style.touchAction = 'none';
+
+        if (params.has('date')) {
+          const [year, month, date] = params.get('date')!.split('-');
+          setSelectedDate(new Date(+year, +month - 1, +date, 0, 0, 0));
+        }
+      }
+    },
+    [session?.id, params],
+  );
+
+  useEffect(
+    function getInitRecords() {
+      if (!session?.id) return;
+      let paramDate;
+      if (params.has(date)) {
+        const [year, month, date] = params.get('date')!.split('-');
+        paramDate = new Date(+year, +month - 1, +date, 0, 0, 0);
+        setSelectedDate(paramDate);
+      }
+      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(
+        paramDate || selectedDate,
+      );
+      (async () => {
+        await mutation.mutateAsync({
+          body: { startDate: firstDate, endDate: lastDate },
+        });
+      })();
+    },
+    [session?.id],
+  );
 
   return (
     <div>
@@ -208,7 +227,72 @@ const CalendarView = () => {
         )}
       </section>
       <article ref={articleElRef}>
-        {response?.[0]?.content && (
+        {response && response.length > 1 && (
+          <div
+            className="absolute h-full inset-x-0 transition-[top] ease-in-out duration-1000 bg-grayscale-100"
+            onClick={handleContentClick}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseOut={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchMove={handleMouseMove}
+            onTouchCancel={handleMouseUp}
+            onTouchEnd={handleMouseUp}
+            style={{
+              marginBottom: 'env(safe-area-inset-bottom)',
+              marginTop: 'env(safe-area-inset-top)',
+              paddingTop: moveState === 'DOWN' ? 0 : '32px',
+              top: 'inherit',
+            }}
+          >
+            <ChevronLeft
+              className="mx-4 p-4 h-12 w-12 bg-grayscale-100 cursor-pointer transition-[opacity] ease-in-out duration-1000"
+              onClick={handleContentClick}
+              style={{
+                visibility: moveState === 'UP' ? 'visible' : 'hidden',
+                opacity: moveState === 'UP' ? 1 : 0,
+              }}
+            />
+            <p className="pb-4 px-6 font-p-R16 text-grayscale-600">
+              {parseInt(date, 10)}일 {day}
+            </p>
+            {response.map(res => (
+              <div
+                key={res.postId}
+                className="py-4 px-6 font-p-M16"
+                style={{
+                  backgroundColor: diaryTemplates[res.template].bgColor,
+                  color: diaryTemplates[res.template].questionColor,
+                }}
+              >
+                <div className="flex items-center">
+                  <p
+                    className={
+                      moveState === 'UP'
+                        ? 'cursor-pointer pointer-events-auto'
+                        : 'pointer-events-none'
+                    }
+                    onClick={e => handleClickRecord(e, res)}
+                  >
+                    {diaryTemplates[res.template].question}
+                  </p>
+                  {res.answer && (
+                    <Image
+                      src="/assets/growmi/bubble.png"
+                      alt="growmi"
+                      className="ml-1 h-[24px]"
+                      width={24}
+                      height={24}
+                      priority
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {response?.length === 1 && response[0].content && (
           <div
             className="absolute h-[70vh] inset-x-0 transition-[top] ease-in-out duration-1000"
             onClick={handleContentClick}
@@ -224,21 +308,18 @@ const CalendarView = () => {
               marginBottom: 'env(safe-area-inset-bottom)',
               marginTop: 'env(safe-area-inset-top)',
               paddingTop: '32px',
-              backgroundColor: `${template.bgColor}`,
+              backgroundColor: `${diaryTemplates[response[0].template].bgColor}`,
               top: 'inherit',
             }}
           >
-            <p className="mx-9 font-p-R16 text-primary-500 mb-1">
-              {year}년 {month}월 {date}일 {day}
-            </p>
-            <DiaryContent template={template} response={response[0]} />
+            <DiaryContent response={response[0]} />
           </div>
         )}
-        {response?.[0]?.answer && (
+        {response?.length === 1 && response?.[0]?.answer && (
           <div
             className="absolute w-full h-[100%] top-[100vh] transition-[top] ease-in-out duration-1000"
             style={{
-              backgroundColor: `${template.bgColor}`,
+              backgroundColor: `${diaryTemplates[response[0].template].bgColor}`,
               marginTop: 'env(safe-area-inset-top)',
             }}
             onClick={handleContentClick}

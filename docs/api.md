@@ -221,3 +221,42 @@
   "message": "Feedback added successfully"
 }
 ```
+
+<br/>
+
+<img src="https://img.shields.io/badge/%7F%20%20POST%20%7F-/post/edit-e1e1e1?labelColor=219BFD&style=flat-square" height="25"/>
+
+> post정보 수정
+
+- request
+
+  `@body`
+
+  ```typescript
+  {
+    postId: string;
+    content?: string;
+    status?: 'ACTIVE'|'DELETED'
+  }
+  ```
+
+- response
+
+```
+{
+    "status": 200,
+    "message": "content updated successfully",
+    "STATUS": "DELETED",
+    "data": {
+        "template": "7",
+        "answer": "AI 답장",
+        "ai": {
+            ...
+        },
+        "updateAt": "2024-02-16T04:47:10.440Z",
+        "content": "포스트 수정",
+        "createAt": "2024-02-16T04:47:10.440Z",
+        "feedback": "GOOD"
+    }
+}
+```

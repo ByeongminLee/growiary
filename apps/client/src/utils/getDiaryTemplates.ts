@@ -1,5 +1,6 @@
 import config from '../../tailwind.config';
 import { DiaryTemplate } from '@/types';
+// @ts-ignore
 import { PROMPT_TEMPLATE } from '@growiary/prompt';
 
 const colors = config?.theme?.extend?.colors as {
@@ -15,7 +16,8 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[0].question,
     questionColor: colors?.primary?.[900],
     placeholder: PROMPT_TEMPLATE[0].placeholder,
-    answerColor: colors?.grayscale?.['800'],
+    caretColor: colors?.branding?.[900],
+    answerColor: colors?.grayscale?.[800],
     charSrc: '/assets/growmi/green_letter.svg',
   },
   '1': {
@@ -25,7 +27,8 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[1].question,
     questionColor: colors?.sub?.indigo,
     placeholder: PROMPT_TEMPLATE[1].placeholder,
-    answerColor: colors?.primary?.['500'],
+    caretColor: colors?.branding?.[900],
+    answerColor: colors?.primary?.[500],
     charSrc: '/assets/growmi/pink.svg',
   },
   '2': {
@@ -35,16 +38,18 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[2].question,
     questionColor: colors?.sub?.indigo,
     placeholder: PROMPT_TEMPLATE[2].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.indigo,
     charSrc: '/assets/growmi/pink_ribbon.svg',
   },
   '3': {
     id: '3',
     dateColor: colors?.primary?.[400],
-    bgColor: colors?.grayscale?.['100'],
+    bgColor: colors?.grayscale?.[100],
     question: PROMPT_TEMPLATE[3].question,
     questionColor: colors?.sub?.blue,
     placeholder: PROMPT_TEMPLATE[3].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.blue,
     charSrc: '/assets/growmi/green_issue.svg',
   },
@@ -55,6 +60,7 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[4].question,
     questionColor: colors?.sub?.deepRed,
     placeholder: PROMPT_TEMPLATE[4].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.deepRed,
     charSrc: '/assets/growmi/clap.svg',
   },
@@ -63,9 +69,10 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     dateColor: colors?.primary?.[600],
     bgColor: colors?.sub?.green,
     question: PROMPT_TEMPLATE[5].question,
-    questionColor: colors?.priary?.['900'],
+    questionColor: colors?.priary?.[900],
     placeholder: PROMPT_TEMPLATE[5].placeholder,
-    answerColor: colors?.grayscale?.['900'],
+    caretColor: colors?.branding?.[900],
+    answerColor: colors?.grayscale?.[900],
     charSrc: '/assets/growmi/sun.svg',
   },
   '6': {
@@ -73,9 +80,10 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     dateColor: colors?.primary?.[600],
     bgColor: colors?.sub?.yellow,
     question: PROMPT_TEMPLATE[6].question,
-    questionColor: colors?.branding?.['800'],
+    questionColor: colors?.branding?.[800],
     placeholder: PROMPT_TEMPLATE[6].placeholder,
-    answerColor: colors?.branding?.['800'],
+    caretColor: colors?.branding?.[900],
+    answerColor: colors?.branding?.[800],
     charSrc: '/assets/growmi/wings.svg',
   },
   '7': {
@@ -85,6 +93,7 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[7].question,
     questionColor: colors?.sub?.blue,
     placeholder: PROMPT_TEMPLATE[7].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.blue,
     charSrc: '/assets/growmi/blue.svg',
   },
@@ -95,6 +104,7 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[8].question,
     questionColor: colors?.sub?.lightGreen,
     placeholder: PROMPT_TEMPLATE[8].placeholder,
+    caretColor: colors?.brading?.[500],
     answerColor: colors?.sub?.lightGreen,
     charSrc: '/assets/growmi/sprout.svg',
   },
@@ -105,6 +115,7 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[9].question,
     questionColor: colors?.sub?.indigo,
     placeholder: PROMPT_TEMPLATE[9].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.indigo,
     charSrc: '/assets/growmi/worry.svg',
   },
@@ -115,6 +126,7 @@ export const diaryTemplates: { [key: string]: DiaryTemplate } = {
     question: PROMPT_TEMPLATE[10].question,
     questionColor: colors?.sub?.turquoise,
     placeholder: PROMPT_TEMPLATE[10].placeholder,
+    caretColor: colors?.branding?.[900],
     answerColor: colors?.sub?.turquoise,
     charSrc: '/assets/growmi/curious.svg',
   },

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProfile } from '@/utils/requestProfile';
 import { useRecoilState } from 'recoil';
 import { userProfileState } from '@/store';
+import { useEffect } from 'react';
 
 export const useUserName = () => {
   const { data: session } = useSession();
@@ -15,6 +16,12 @@ export const useUserName = () => {
     enabled: !!session?.id && !userProfile.userName,
   });
 
+  useEffect(() => {
+    if (isSuccess) {
+      setUserProfile(prev => ({ ...prev, userName: data.data.profile.userName }));
+    }
+  }, [isSuccess]);
+
   if (userProfile.userName) {
     return userProfile.userName;
   }
@@ -23,9 +30,5 @@ export const useUserName = () => {
     return '프로필을 가져오는데 실패했습니다';
   }
 
-  if (isSuccess) {
-    setUserProfile(prev => ({ ...prev, userName: data.data.profile.userName }));
-    return data.data.profile.userName;
-  }
   return '';
 };

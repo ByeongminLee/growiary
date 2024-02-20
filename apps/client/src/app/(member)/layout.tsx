@@ -1,15 +1,14 @@
-'use client';
 import Tab from '@/components/home/Tab';
 import { NavigationEvents } from '@/components/home/NavigationEvents';
 import { Suspense } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <div className="h-screen">
       <main
         className="fixed inset-x-0 inset-y-0 bg-grayscale-100"
         style={{
-          marginBottom: '48px',
+          marginBottom: 'calc(env(safe-area-inset-bottom) + 48px)',
         }}
       >
         {children}

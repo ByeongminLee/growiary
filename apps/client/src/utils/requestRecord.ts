@@ -1,4 +1,4 @@
-import { RecordType } from '@/types';
+import { ApiSuccess, RecordType } from '@/types';
 
 type FetchRecordProps = {
   id: string;
@@ -10,7 +10,7 @@ type FetchRecordProps = {
 export const getRecords = async ({
   id = '',
   body,
-}: FetchRecordProps): Promise<{ data: RecordType[] }> => {
+}: FetchRecordProps): Promise<ApiSuccess<RecordType[]>> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/filter`, {
     method: 'POST',
     headers: {
@@ -19,8 +19,5 @@ export const getRecords = async ({
     },
     body: JSON.stringify(body),
   });
-  if (!response.ok) {
-    // throw new Error('Network response was not ok');
-  }
   return response.json();
 };

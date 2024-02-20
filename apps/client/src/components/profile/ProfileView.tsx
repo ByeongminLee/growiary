@@ -158,15 +158,16 @@ const ProfileView = () => {
                   로그아웃 하시겠어요?
                 </AlertDialogHeader>
                 <AlertDialogFooter className="grow flex flex-row gap-2 w-full">
-                  <Button type="button" variant="secondary" className="grow my-0" asChild>
-                    <AlertDialogCancel>아니오</AlertDialogCancel>
-                  </Button>
-                  <Button type="button" variant="secondary" className="grow" asChild>
-                    <AlertDialogAction
-                      className="bg-danger-600 text-primary-300"
-                      onClick={handleClickLogOut}
-                    >
-                      확인했어요
+                  <AlertDialogCancel className="border-0">아니오</AlertDialogCancel>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    compoundVariants="danger"
+                    className="grow"
+                    asChild
+                  >
+                    <AlertDialogAction onClick={handleClickLogOut}>
+                      로그아웃
                     </AlertDialogAction>
                   </Button>
                 </AlertDialogFooter>

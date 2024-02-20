@@ -3,45 +3,55 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import '../../ui/carousel/carousel.css';
+import '@/components/ui/carousel/carousel.css';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import Image from 'next/image';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
-import { ApiResponse, RecordType } from '@/types';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { recordState, recordWriteState } from '@/store';
-import { useFetch } from '@/lib/useFetch';
+import { useRecoilState } from 'recoil';
+import { initExperienceState, recordWriteState } from '@/store';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
-import { useRouter } from 'next/navigation';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-import { tracking } from '@/utils/mixPannel';
-import { getFullStrDate } from '@/utils/getDateFormat';
+import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
+import { useCreateRecord } from '@/lib/useCreateRecord';
+import { useGetRecords } from '@/lib/useGetRecords';
+import { ApiSuccess, RecordType } from '@/types';
+
+const bottomArea = 80;
 
 const MainView = () => {
   const { data: session } = useSession();
-  const record = useRecoilValue(recordState);
   const [year, month, date, day] = getFullStrDate();
-  const [writeState, setWriteState] = useRecoilState(recordWriteState);
-  const templateRef = useRef('1');
+  const templateRef = useRef('0');
   const toastRef = useRef<HTMLDivElement>(null);
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const [writeState, setWriteState] = useRecoilState(recordWriteState);
+  const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const [toastContent, setToastContent] = useState('');
   const [scrollHeight, setScrollHeight] = useState('100%');
-  const [hasExperience, setHasExperience] = useState(true);
-  const requestApi = useFetch();
-  const params = new URLSearchParams();
-  const router = useRouter();
+  const [repliedCount, setRepliedCount] = useState(-1);
+  const [checkInitUser, setCheckInitUser] = useState(false);
   const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
+  const { mutation: createRecordMutation } = useCreateRecord();
+
+  const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
+    setRepliedCount(
+      result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
+    );
+  };
+
+  const { mutation: getRecordsMutation } = useGetRecords({
+    onSuccessCb: onSuccessGetRecordsMutation,
+  });
 
   const assignRef = (index: string) => (element: HTMLTextAreaElement) => {
     refsArray.current[index] = element;
@@ -49,9 +59,12 @@ const MainView = () => {
 
   const showToast = (content: string) => {
     if (!toastRef.current) return;
+
     const target = toastRef.current;
+
     target.style.display = 'block';
     setToastContent(content);
+
     const timeoutId = setTimeout(() => {
       target.style.display = 'none';
       clearTimeout(timeoutId);
@@ -62,12 +75,11 @@ const MainView = () => {
     const value = (e.currentTarget as HTMLTextAreaElement).value;
 
     if (value.length === 1000) {
-      showToast('아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요');
-      setWriteState(prev => ({
-        ...prev,
-        content: value,
-      }));
-      return;
+      showToast(
+        repliedCount > 0
+          ? '아쉽지만 1000자 이하의 메시지만 작성할 수 있어요'
+          : '아쉽지만 1000자 이하의 메시지만 그루미에게 전달할 수 있어요',
+      );
     }
 
     setWriteState(prev => ({
@@ -80,64 +92,88 @@ const MainView = () => {
     templateRef.current = id;
   };
 
-  const handleBlurInput = (id: string) => {
+  const handleBlurInput = () => {
     setScrollHeight('100%');
   };
 
-  const handleSubmit = async () => {
-    if (writeState.content.length <= 10) {
-      showToast('그루미에게 답장을 받기 위해서는 10자 이상의 메시지가 필요해요');
+  const handleSubmit = async (to?: 'AI') => {
+    if (writeState.content.length < 10) {
+      showToast(
+        to
+          ? '답장을 받기 위해서는 10자 이상의 메시지가 필요해요'
+          : '10자 이상의 메시지만 작성할 수 있어요',
+      );
       return;
     }
 
-    if (record[`${year}-${month}-${date}`]?.length) {
-      showToast('그루미의 답장은 하루에 한 번만 가능해요');
-      return;
+    if (to) {
+      replyPopupRef.current?.click();
+      setWriteState(prev => ({ ...prev, content: '', state: 'WAIT' }));
     }
 
-    replyPopupRef.current?.click();
-    setWriteState(prev => ({ ...prev, content: '', isWaiting: true }));
-    params.set('replied', 'waiting');
-    history.pushState(null, '', `?${params}`);
-
-    const response: ApiResponse<RecordType> | undefined = await requestApi('/post/ai', {
-      method: 'POST',
-      id: session?.id,
+    await createRecordMutation.mutateAsync({
+      to,
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
       },
     });
-
-    if (response && 'data' in response) {
-      params.set('replied', 'true');
-      setWriteState(prev => ({ ...prev, content: '', isWaiting: false }));
-      history.pushState(null, '', `?${params}`);
-      tracking('그루미에게 답장받기 클릭');
-      router.refresh();
-    } else {
-      alert('문제 발생');
-    }
   };
 
-  useEffect(() => {
-    const isExperiencedUser = window.localStorage.getItem('hasExperience');
-    if (!isExperiencedUser) {
-      setHasExperience(false);
-      window.localStorage.setItem('hasExperience', 'true');
-    }
-  }, [hasExperience]);
+  useEffect(
+    function checkIsInitUser() {
+      setCheckInitUser(initExperience.initUser);
 
-  useEffect(() => {
+      if (!initExperience.initUser) return;
+
+      const timeoutId = setTimeout(() => {
+        setInitExperience(prev => ({
+          ...prev,
+          initUser: false,
+        }));
+        setCheckInitUser(false);
+      }, 4000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    },
+    [initExperience.initUser, setInitExperience, setCheckInitUser],
+  );
+
+  useEffect(function setTextareaHeight() {
     const refHeight = refsArray.current[templateRef.current].clientHeight;
+    const totalBottomArea =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--safe-margin'),
+        10,
+      ) + bottomArea;
     const handleScroll = () => {
-      const sub = document.documentElement.scrollHeight - window.innerHeight;
-      if (sub === 0) return;
-      setScrollHeight(refHeight - Math.abs(sub) + 'px');
+      const sub =
+        window.visualViewport &&
+        document.documentElement.clientHeight -
+          window.visualViewport.height -
+          totalBottomArea;
+      sub && setScrollHeight(refHeight - Math.abs(sub) + 'px');
       window.scrollTo(0, 0);
     };
     window.addEventListener('scroll', handleScroll);
-  });
+  }, []);
+
+  useEffect(
+    function getInitRecords() {
+      if (!session?.id) return;
+      (async () => {
+        await getRecordsMutation.mutateAsync({
+          body: {
+            startDate: `${year}-${month}-${date}`,
+            endDate: `${getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24 * 1000))}`,
+          },
+        });
+      })();
+    },
+    [session?.id],
+  );
 
   return (
     <>
@@ -189,18 +225,23 @@ const MainView = () => {
               >
                 <textarea
                   ref={assignRef(template.id)}
-                  className={`diary-text caret-branding-600 p-2 placeholder:font-p-R18-2 placeholder:text-primary-600 font-p-R18-2 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
+                  className={`diary-text p-2 placeholder:font-p-R18-2 placeholder:text-primary-600 font-p-R18-2 block bg-transparent w-full mb-1 resize-none focus-visible:border-0 focus-visible:outline-0 focus:outline-0 focus:outline-none focus:border-0`}
                   style={{
                     color: template.answerColor,
                     pointerEvents: 'initial',
                     height: scrollHeight,
+                    caretColor: template.caretColor,
                   }}
-                  placeholder={template.placeholder}
+                  placeholder={
+                    template.id === '0' && repliedCount === 0
+                      ? '일기 작성 횟수는 자유롭지만, 그루미는 하루에 한 번만 답장을 드릴 수 있어요.'
+                      : template.placeholder
+                  }
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
-                  onBlur={() => handleBlurInput(template.id)}
+                  onBlur={handleBlurInput}
                   maxLength={1000}
-                  minLength={11}
+                  minLength={10}
                   value={writeState.content}
                 ></textarea>
                 <div className={`text-right ${writeState.content.length ? 'block' : ''}`}>
@@ -218,14 +259,24 @@ const MainView = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <Button
-        className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
-        onClick={handleSubmit}
-      >
-        그루미에게 답장받기
-      </Button>
+      {repliedCount > 0 && (
+        <Button
+          className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
+          onClick={() => handleSubmit()}
+        >
+          일기 작성하기
+        </Button>
+      )}
+      {repliedCount === 0 && (
+        <Button
+          className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
+          onClick={() => handleSubmit('AI')}
+        >
+          그루미에게 답장받기
+        </Button>
+      )}
       <Toast ref={toastRef}>{toastContent}</Toast>
-      {!hasExperience && (
+      {checkInitUser && (
         <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>
@@ -234,14 +285,16 @@ const MainView = () => {
         </OneTimeToast>
       )}
       <AlertDialog>
-        <AlertDialogTrigger ref={replyPopupRef}>구르미 답장중 팝업</AlertDialogTrigger>
+        <AlertDialogTrigger className="hidden" ref={replyPopupRef}>
+          그루미 답장중 팝업
+        </AlertDialogTrigger>
         <AlertDialogOverlay>
           <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
             <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
               <p className="pb-2 font-p-M14 text-grayscale-700">
                 그루미가 답장을 쓰고 있어요
               </p>
-              <LottieAnimation src={airplane} />
+              <LottieAnimation src={airplane} width="100px" height="100px" />
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

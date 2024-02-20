@@ -100,7 +100,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
 
       writeStateTimeoutId = setTimeout(() => {
         setWriteState(prev => ({ ...prev, state: 'NONE' }));
-      }, 3000);
+      }, 1600);
     }
 
     if (initExperience.initSubmit) {

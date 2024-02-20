@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRecords } from '@/utils/requestRecord';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { recordState } from '@/store';
 
 type UseGetRecordProps = {
@@ -28,7 +28,6 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
       }),
     onSuccess: (result, { body: { startDate, endDate } }) => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-        const isCalendar = +endDate.slice(-2) - +startDate.slice(-2) > 2;
         const collectedData = [...(result.data || [])].reduce(
           (f: CollectedRecordType, v: RecordType) => {
             const key = getDateFromServer(v.createAt);
@@ -37,7 +36,7 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
               [key]: [...(f[key] || []), v],
             };
           },
-          isCalendar ? ({} as CollectedRecordType) : records,
+          {},
         );
         setRecords(collectedData);
 

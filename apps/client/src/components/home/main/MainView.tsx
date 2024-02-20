@@ -44,7 +44,9 @@ const MainView = () => {
   const { mutation: createRecordMutation } = useCreateRecord();
 
   const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
-    setRepliedCount(result.data.length);
+    setRepliedCount(
+      result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
+    );
   };
 
   const { mutation: getRecordsMutation } = useGetRecords({

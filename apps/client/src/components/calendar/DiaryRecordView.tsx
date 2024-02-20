@@ -41,6 +41,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const [toastContent, setToastContent] = useState('');
   const [initAiAnswer, setInitAiAnswer] = useState(false);
+  const [isSave, setIsSave] = useState(false);
   const removeModalRef = useRef<HTMLButtonElement | null>(null);
   const modifyModalRef = useRef<HTMLButtonElement | null>(null);
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
@@ -93,6 +94,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
       let writeStateTimeoutId: NodeJS.Timeout;
 
       if (writeState.state === 'SAVE') {
+        setIsSave(true);
         setToastContent(
           todayReply?.answer && initExperience.initSubmit
             ? '그루미와의 첫 대화 축하드려요\n그루어리와 함께 매일 성장해요!'
@@ -141,6 +143,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
           height={24}
           className="p-4 h-12 w-12 cursor-pointer"
           onClick={toggleMenu}
+          priority
         />
         {showMenu && (
           <div className="absolute top-full right-0 flex flex-col items-center w-[120px] bg-primary-100 border border-primary-900 rounded-lg">
@@ -155,6 +158,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
                 width={16}
                 height={16}
                 className="mr-2"
+                priority
               />
               삭제
             </Button>
@@ -165,6 +169,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
                 width={16}
                 height={16}
                 className="mr-2"
+                priority
               />
               수정
             </Button>
@@ -249,7 +254,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
           </div>
         </OneTimeToast>
       )}
-      {initAiAnswer && (
+      {initAiAnswer && isSave && (
         <LottieAnimation
           src={fireworks}
           width="100%"

@@ -94,7 +94,7 @@ const NickNameSettingView = () => {
         <div>
           <Input
             type="text"
-            placeholder="반가운 오월"
+            placeholder="반가운오월"
             value={userProfile.userName}
             onChange={handleChange}
             maxLength={8}

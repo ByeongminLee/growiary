@@ -29,12 +29,9 @@ export const LottieAnimation = ({
     if (lottieRef.current?.animationLoaded) {
       afterLoaded && afterLoaded();
     }
-    width &&
-      ((targetRef.current.firstElementChild! as HTMLElement).style.width =
-        width || '100px');
+    width && ((targetRef.current.firstElementChild! as HTMLElement).style.width = width);
     height &&
-      ((targetRef.current.firstElementChild! as HTMLElement).style.height =
-        height || '100px');
+      ((targetRef.current.firstElementChild! as HTMLElement).style.height = height);
 
     return () => {};
   }, [width, height, lottieRef.current?.animationLoaded, speed, afterLoaded]);

@@ -87,34 +87,37 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
     setRecords(storedRecords);
   }, [storedRecords]);
 
-  useEffect(function ToggleToast() {
-    let initExperienceTimeoutId: NodeJS.Timeout;
-    let writeStateTimeoutId: NodeJS.Timeout;
+  useEffect(
+    function ToggleToast() {
+      let initExperienceTimeoutId: NodeJS.Timeout;
+      let writeStateTimeoutId: NodeJS.Timeout;
 
-    if (writeState.state === 'SAVE') {
-      setToastContent(
-        todayReply?.answer && initExperience.initSubmit
-          ? '그루미와의 첫 대화 축하드려요\n그루어리와 함께 매일 성장해요!'
-          : '일기가 저장되었어요',
-      );
+      if (writeState.state === 'SAVE') {
+        setToastContent(
+          todayReply?.answer && initExperience.initSubmit
+            ? '그루미와의 첫 대화 축하드려요\n그루어리와 함께 매일 성장해요!'
+            : '일기가 저장되었어요',
+        );
 
-      writeStateTimeoutId = setTimeout(() => {
-        setWriteState(prev => ({ ...prev, state: 'NONE' }));
-      }, 1600);
-    }
+        writeStateTimeoutId = setTimeout(() => {
+          setWriteState(prev => ({ ...prev, state: 'NONE' }));
+        }, 1600);
+      }
 
-    if (initExperience.initSubmit) {
-      setInitAiAnswer(true);
-      initExperienceTimeoutId = setTimeout(() => {
-        setInitExperience(prev => ({ ...prev, initSubmit: false }));
-      }, 3000);
-    }
+      if (initExperience.initSubmit) {
+        setInitAiAnswer(true);
+        initExperienceTimeoutId = setTimeout(() => {
+          setInitExperience(prev => ({ ...prev, initSubmit: false }));
+        }, 3000);
+      }
 
-    return () => {
-      initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
-      writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
-    };
-  }, []);
+      return () => {
+        initExperienceTimeoutId && clearTimeout(initExperienceTimeoutId);
+        writeStateTimeoutId && clearTimeout(writeStateTimeoutId);
+      };
+    },
+    [todayReply?.answer],
+  );
 
   return (
     <article
@@ -126,7 +129,7 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
         height: 'calc(100% - env(safe-area-inset-top))',
       }}
     >
-      <div className="relative flex items-center justify-between mx-4">
+      <div className="relative flex items-center justify-between mx-4 z-10">
         <ChevronLeft
           className="p-4 h-12 w-12 cursor-pointer"
           onClick={handleClickPrevPage}

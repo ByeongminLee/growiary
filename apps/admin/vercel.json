@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./apps/admin/**",
+      "use": "@vercel/node"
+    }
+  ],
+  "ignoring": {
+    "paths": ["./apps/client/**", "./apps/server/**"]
+  }
+}

@@ -2,6 +2,8 @@ export type CreatePostDTO = {
   title?: string;
   content: string;
   template?: string;
+  date?: string | Date;
+  offset?: string | number;
 };
 
 export type FindPostDTO = {

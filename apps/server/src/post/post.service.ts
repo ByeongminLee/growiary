@@ -19,6 +19,38 @@ export class PostService {
   ) {}
 
   /**
+   * date에 offset을 더하거나 뺀다.
+   * @param date 날짜
+   * @param offset offset
+   * @returns offset이 적용된 날짜
+   */
+  private async dateOffset({
+    date,
+    offset,
+  }: {
+    date?: string | Date;
+    offset?: string | number;
+  }): Promise<Date | null> {
+    if (!date) {
+      return new Date();
+    }
+
+    let dateObj: Date;
+    if (typeof date === 'string') {
+      dateObj = new Date(date);
+    } else {
+      dateObj = date;
+    }
+
+    if (offset) {
+      const offsetMinutes = typeof offset === 'string' ? parseInt(offset) : offset;
+      dateObj.setMinutes(dateObj.getMinutes() + offsetMinutes);
+    }
+
+    return dateObj;
+  }
+
+  /**
    * 유저 post를 검색 및 firebase reference를 반환
    * @returns 검색된 post 및 firebase reference
    */
@@ -132,12 +164,17 @@ export class PostService {
 
     const postId = uuidv4();
 
+    const date = this.dateOffset({
+      date: createPostDTO.date,
+      offset: createPostDTO.offset,
+    });
+
     const data = {
       [postId]: {
         ...createPostDTO,
         feedback: 'NONE',
-        createAt: new Date(),
-        updateAt: new Date(),
+        createAt: date,
+        updateAt: date,
       },
     };
 
@@ -168,6 +205,11 @@ export class PostService {
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 
+    const date = await this.dateOffset({
+      date: createPostDTO.date,
+      offset: createPostDTO.offset,
+    });
+
     const data = {
       [postId]: {
         ...createPostDTO,
@@ -178,8 +220,8 @@ export class PostService {
           usage,
         },
         feedback: 'NONE',
-        createAt: new Date(),
-        updateAt: new Date(),
+        createAt: date,
+        updateAt: date,
       },
     };
 

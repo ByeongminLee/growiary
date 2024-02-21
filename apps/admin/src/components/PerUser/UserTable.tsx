@@ -5,23 +5,15 @@ import {
   Button,
   Callout,
   Card,
-  Dialog,
-  DialogPanel,
   Divider,
   DonutChart,
   Flex,
   List,
   ListItem,
-  Metric,
   Select,
   SelectItem,
-  Tab,
-  TabGroup,
-  TabList,
   Table,
   TableCell,
-  TableHead,
-  TableHeaderCell,
   TableRow,
   Text,
   TextInput,
@@ -41,6 +33,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import { LuFileText } from 'react-icons/lu';
 import { useInfoModal } from './useInfoModal';
 import { FeedbackItemType, UserDataType } from '@/types';
+import { useWritingsModal } from './useWritingsModal';
 
 export const UserTable = () => {
   const [searchText, setSearchText] = useState('');
@@ -102,6 +95,9 @@ export const UserTable = () => {
     settingOnCloseHandler,
   } = useInfoModal();
 
+  const { writingsData, writingIsOpen, onOpenWritingsHandler, writingsOnCloseHandler } =
+    useWritingsModal();
+
   return (
     <>
       <Card className="mt-4">
@@ -128,34 +124,7 @@ export const UserTable = () => {
             </Button>
           </Flex>
         </div>
-        {/* <Flex flexDirection="col" className="gap-4">
-        <Flex>
-          <TextInput
-            icon={SearchIcon}
-            placeholder="Search..."
-            value={searchText}
-            onValueChange={setSearchText}
-          />
-        </Flex>
-        <Flex justifyContent="between">
-          <Flex justifyContent="start">
-            <Select>
-              <SelectItem value={'createAt'}>가입일</SelectItem>
-              <SelectItem value={'postCount'}>작성한 일기수</SelectItem>
-              <SelectItem value={'avgChar'}>평균글자수</SelectItem>
-            </Select>
-            <TabGroup>
-              <TabList variant="solid">
-                <Tab value={0}>내림차순</Tab>
-                <Tab value={1}>오름차순</Tab>
-              </TabList>
-            </TabGroup>
-          </Flex>
-          <Button size="md" className="min-w-20">
-            확인
-          </Button>
-        </Flex>
-      </Flex> */}
+
         <Table>
           <TableHeader />
           {filteredData.slice(startIndex, endIndex).map((item: UserDataType) => (
@@ -223,7 +192,10 @@ export const UserTable = () => {
               </TableCell>
               <TableCell className="text-center h-[80px]">
                 {/* 작성글 */}
-                <LuFileText className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2" />
+                <LuFileText
+                  className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+                  onClick={() => onOpenWritingsHandler(item)}
+                />
               </TableCell>
               <TableCell className="text-center h-[80px]">
                 {isToday(item.createdAt) && (
@@ -353,6 +325,74 @@ export const UserTable = () => {
           </div>
         </Modal>
       )}
+
+      {writingIsOpen && writingsData && (
+        <Modal
+          isOpen={writingIsOpen}
+          onClose={writingsOnCloseHandler}
+          className="min-h-[430px] w-full flex flex-col justify-between"
+        >
+          <div>
+            <div className="flex justify-end mb-2">
+              <CgClose
+                onClick={writingsOnCloseHandler}
+                className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+              />
+            </div>
+            <div className="overflow-y-auto max-h-[500px] flex flex-col gap-4">
+              {writingsData.length > 0 ? (
+                <>
+                  {writingsData.map(item => {
+                    return (
+                      <div key={item.postId} className="flex flex-col gap-3">
+                        <div>
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            Post ID
+                          </label>
+                          <Text>{item.postId}</Text>
+                        </div>
+                        <div>
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            작성 글
+                          </label>
+                          <p dangerouslySetInnerHTML={{ __html: item.content }} />
+                        </div>
+                        <div>
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            답변 글
+                          </label>
+                          <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                        </div>
+
+                        <div className="flex gap-2">
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            작성일
+                          </label>
+                          <Text>{dateKoFormat(item.createAt)}</Text>
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            수정일
+                          </label>
+                          <Text>{dateKoFormat(item.updateAt)}</Text>
+                        </div>
+
+                        <div>
+                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                            만족도
+                          </label>
+                          <Text>{item.feedback}</Text>
+                        </div>
+                        <Divider />
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <>값이 없습니다.</>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
     </>
   );
 };
@@ -369,4 +409,22 @@ function isToday(date: string) {
   const propsDateFormatted = new Date(date).toISOString().slice(0, 10);
   const todayFormatted = new Date().toISOString().slice(0, 10);
   return propsDateFormatted === todayFormatted;
+}
+
+function dateKoFormat(dateString: string) {
+  const date = new Date(dateString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'UTC',
+  };
+
+  const dateFormatter = new Intl.DateTimeFormat('ko-KR', options);
+  return dateFormatter.format(date);
 }

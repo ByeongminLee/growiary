@@ -43,8 +43,6 @@ export const UserTable = () => {
     dataLength: filteredData.length,
   });
 
-  // test
-
   useEffect(() => {
     if (data) setFilteredData(data);
   }, [data]);

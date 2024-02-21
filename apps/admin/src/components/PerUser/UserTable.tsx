@@ -38,35 +38,9 @@ import { usePagination } from './usePagination';
 import { Pagination } from './Pagenation';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { FaArrowRight } from 'react-icons/fa';
-import fetcher from '@/utils/fetcher';
-import { useProfileStore } from '@/state';
-
-type FeedbackItemType = {
-  values: ValuesType[];
-  colors: string[];
-};
-
-type ValuesType = {
-  name: string;
-  value: number;
-};
-
-type UserDataType = {
-  userId: string;
-  createdAt: string;
-  userName: string;
-  feedback: {
-    GOOD: number;
-    BAD: number;
-    NONE: number;
-  };
-  postCount: number;
-  avgPostsCharacter: number;
-  avgPostTimeOfDay: number;
-  role: RoleType;
-};
-
-type RoleType = 'ADMIN' | 'USER' | 'TESTER';
+import { LuFileText } from 'react-icons/lu';
+import { useInfoModal } from './useInfoModal';
+import { FeedbackItemType, UserDataType } from '@/types';
 
 export const UserTable = () => {
   const [searchText, setSearchText] = useState('');
@@ -75,7 +49,6 @@ export const UserTable = () => {
   const { allPage, startIndex, endIndex, paginationHandler } = usePagination({
     dataLength: filteredData.length,
   });
-  const { update } = useProfileStore();
 
   useEffect(() => {
     if (data) setFilteredData(data);
@@ -120,43 +93,14 @@ export const UserTable = () => {
   };
 
   const {
-    isOpen: settingIsOpen,
-    onOpen: settingOnOpen,
-    onClose: settingOnClose,
-  } = useModal();
-  const [settingData, setSettingData] = useState<UserDataType>();
-  const onOpenSettingHandler = (item: UserDataType) => {
-    setSettingData(item);
-    settingOnOpen();
-  };
-  const settingOnCloseHandler = () => {
-    setUpdateUserValue(undefined);
-    setSettingData(undefined);
-    settingOnClose();
-  };
-  const [updateUserValue, setUpdateUserValue] = useState<{ role: RoleType } | undefined>(
-    undefined,
-  );
-  const updateUserSelectOnChange = (value: any) => {
-    if (value === 'ADMIN' || value === 'USER' || value === 'TESTER') {
-      setUpdateUserValue({ role: value });
-    }
-  };
-  const updateUserData = () => {
-    if (settingData?.role !== updateUserValue) {
-      fetcher({
-        url: 'update-profile',
-        body: {
-          origin: settingData,
-          update: updateUserValue,
-        },
-      });
-    }
-
-    if (settingData?.userId) update(settingData?.userId, updateUserValue);
-
-    settingOnCloseHandler();
-  };
+    updateUserValue,
+    onOpenSettingHandler,
+    settingIsOpen,
+    settingData,
+    updateUserSelectOnChange,
+    updateUserData,
+    settingOnCloseHandler,
+  } = useInfoModal();
 
   return (
     <>
@@ -276,6 +220,10 @@ export const UserTable = () => {
                 ) : (
                   '-'
                 )}
+              </TableCell>
+              <TableCell className="text-center h-[80px]">
+                {/* 작성글 */}
+                <LuFileText className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2" />
               </TableCell>
               <TableCell className="text-center h-[80px]">
                 {isToday(item.createdAt) && (

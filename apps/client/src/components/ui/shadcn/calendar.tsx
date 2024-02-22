@@ -46,7 +46,7 @@ function Calendar({
           'h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100 flex ',
         ),
         nav_button_previous: 'absolute left-1 h-4 w-4',
-        nav_button_next: `absolute right-1 h-4 w-4 ${isOverMonth ? 'cursor-none pointer-events-none text-grayscale-400' : ''}`,
+        nav_button_next: `absolute right-1 h-4 w-4 ${!showOverDate && isOverMonth ? 'cursor-none pointer-events-none text-grayscale-400' : ''}`,
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:

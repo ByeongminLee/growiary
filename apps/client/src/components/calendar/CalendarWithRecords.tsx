@@ -1,4 +1,4 @@
-import { CollectedRecordType, RecordType } from '@/types';
+import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import {
   getFirstAndLastDateFromSpecificDate,
   getTwoDigitNum,
@@ -31,14 +31,17 @@ const CalendarWithRecords = ({
   const [records, setRecords] = useState<CollectedRecordType>({});
   const [selectedDate, setSelectedDate] = useState<Date>(initSelectDate || new Date());
 
-  const onSuccessGetRecords = () => {
-    const data = queryClient.getQueryData<CollectedRecordType>(['records']) || {};
-
-    setRecords(data);
-    setResponse && setResponse(data[getYMDFromDate(selectedDate)]);
+  const onSuccessGetRecords = (
+    result: ApiSuccess<RecordType[]>,
+    storedObj?: CollectedRecordType,
+  ) => {
+    if (storedObj) {
+      setRecords(storedObj);
+      setResponse && setResponse(storedObj[getYMDFromDate(selectedDate)]);
+    }
   };
 
-  const { mutation, queryClient } = useGetRecords({
+  const { mutation } = useGetRecords({
     onSuccessCb: onSuccessGetRecords,
   });
 

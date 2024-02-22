@@ -228,13 +228,9 @@ const MainView = () => {
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
-        allowTouchMove={!writeState.content}
         slidesPerView={'auto'}
         spaceBetween={0}
         modules={[Pagination]}
-        style={{
-          pointerEvents: writeState.content ? 'none' : 'initial',
-        }}
         grabCursor
         loop
       >

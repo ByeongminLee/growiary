@@ -8,13 +8,11 @@ import { tracking } from '@/utils/mixPannel';
 import { useRouter } from 'next/navigation';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
+import { CreatePostDTO } from '@growiary/types';
 
 type UseCreateRecordBodyType = {
   to?: 'AI';
-  body: {
-    content: string;
-    template: string;
-  };
+  body: CreatePostDTO;
 };
 export const useCreateRecord = () => {
   const { data: session } = useSession();

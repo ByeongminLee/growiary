@@ -30,7 +30,7 @@ import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
 import { useCreateRecord } from '@/lib/useCreateRecord';
 import { useGetRecords } from '@/lib/useGetRecords';
-import { ApiSuccess, RecordType } from '@/types';
+import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
@@ -59,10 +59,15 @@ const MainView = () => {
   const selectedTime = setTimeZero(selectedDate).getTime();
   const todayTime = setTimeZero(today).getTime();
 
-  const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
-    setRepliedCount(
-      result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
-    );
+  const onSuccessGetRecordsMutation = (
+    result: ApiSuccess<RecordType[]>,
+    storedObj?: CollectedRecordType,
+  ) => {
+    const repliedCount =
+      storedObj?.[`${year}-${month}-${date}`]?.findIndex(
+        record => record.answer && record.answer.length > 0,
+      ) ?? -1;
+    setRepliedCount(repliedCount + 1);
   };
 
   const { mutation: getRecordsMutation } = useGetRecords({
@@ -132,6 +137,7 @@ const MainView = () => {
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
+        date: selectedDate,
       },
     });
   };

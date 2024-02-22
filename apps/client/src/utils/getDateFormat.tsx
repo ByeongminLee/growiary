@@ -7,6 +7,10 @@ export const Weekdays = [
   '금요일',
   '토요일',
 ];
+
+export const setTimeZero = (date: Date) => {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+};
 export const isValidDate = (givenDate: string, sep: string = '-') => {
   const [year, month, date] = givenDate.split(sep).map(v => +v);
   const isValidMonth = month >= 1 && month <= 12;

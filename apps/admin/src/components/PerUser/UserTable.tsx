@@ -138,7 +138,7 @@ export const UserTable = () => {
               <TableCell className="text-center  h-[80px]">{item.userName}</TableCell>
               <TableCell className="text-center h-[80px]">{item.postCount}</TableCell>
               <TableCell className="text-center h-[80px]">
-                {item.avgPostsCharacter}
+                {Math.ceil(item.avgPostsCharacter)}
               </TableCell>
               <TableCell className="text-center h-[80px]">
                 {item.avgPostTimeOfDay}
@@ -339,7 +339,7 @@ export const UserTable = () => {
                 className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
               />
             </div>
-            <div className="overflow-y-auto max-h-[500px] flex flex-col gap-4">
+            <div className="overflow-y-auto max-h-[700px] flex flex-col gap-4">
               {writingsData.length > 0 ? (
                 <>
                   {writingsData.map(item => {
@@ -364,22 +364,34 @@ export const UserTable = () => {
                           <p dangerouslySetInnerHTML={{ __html: item.answer }} />
                         </div>
 
-                        <div className="flex gap-2">
-                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                            작성일
-                          </label>
-                          <Text>{dateKoFormat(item.createAt)}</Text>
-                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                            수정일
-                          </label>
-                          <Text>{dateKoFormat(item.updateAt)}</Text>
+                        <div className="flex justify-between">
+                          <div className="w-1/2">
+                            <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                              작성일
+                            </label>
+                            <Text>{dateKoFormat(item.createAt)}</Text>
+                          </div>
+                          <div className="w-1/2">
+                            <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                              수정일
+                            </label>
+                            <Text>{dateKoFormat(item.updateAt)}</Text>
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                            만족도
-                          </label>
-                          <Text>{item.feedback}</Text>
+                        <div className="flex justify-between">
+                          <div className="w-1/2">
+                            <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                              만족도
+                            </label>
+                            <Text>{item.feedback}</Text>
+                          </div>
+                          <div className="w-1/2">
+                            <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                              템플릿
+                            </label>
+                            <Text>{item.template}</Text>
+                          </div>
                         </div>
                         <Divider />
                       </div>

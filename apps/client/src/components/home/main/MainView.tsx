@@ -10,43 +10,64 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/shadcn/button';
 import Toast from '@/components/ui/Toast';
 import { useSession } from 'next-auth/react';
-import { useRecoilState } from 'recoil';
-import { initExperienceState, recordWriteState } from '@/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { initExperienceState, recordState, recordWriteState } from '@/store';
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import OneTimeToast from '@/components/ui/OneTimeToast';
-import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
+import {
+  getFirstAndLastDateFromSpecificDate,
+  getFullStrDate,
+  getYMDFromDate,
+  setTimeZero,
+} from '@/utils/getDateFormat';
 import LottieAnimation from '@/components/ui/LottieAnimation';
 import airplane from '@/../public/assets/airplane.json';
 import { useCreateRecord } from '@/lib/useCreateRecord';
 import { useGetRecords } from '@/lib/useGetRecords';
-import { ApiSuccess, RecordType } from '@/types';
+import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
+import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import * as React from 'react';
 
 const bottomArea = 80;
 
 const MainView = () => {
   const { data: session } = useSession();
-  const [year, month, date, day] = getFullStrDate();
   const templateRef = useRef('0');
   const toastRef = useRef<HTMLDivElement>(null);
   const replyPopupRef = useRef<HTMLButtonElement | null>(null);
+  const calendarRef = useRef<HTMLButtonElement | null>(null);
+  const calendarCloseBtnRef = useRef<HTMLButtonElement | null>(null);
+  const records = useRecoilValue(recordState);
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const [initExperience, setInitExperience] = useRecoilState(initExperienceState);
   const [toastContent, setToastContent] = useState('');
   const [scrollHeight, setScrollHeight] = useState('100%');
   const [repliedCount, setRepliedCount] = useState(-1);
   const [checkInitUser, setCheckInitUser] = useState(false);
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [year, month, date] = getFullStrDate(selectedDate);
   const refsArray = useRef<{ [id: string]: HTMLTextAreaElement }>({});
   const { mutation: createRecordMutation } = useCreateRecord();
+  const selectedTime = setTimeZero(selectedDate).getTime();
+  const todayTime = setTimeZero(today).getTime();
 
-  const onSuccessGetRecordsMutation = (result: ApiSuccess<RecordType[]>) => {
-    setRepliedCount(
-      result.data.findIndex(record => record.answer && record.answer.length > 0) + 1,
-    );
+  const onSuccessGetRecordsMutation = (
+    result: ApiSuccess<RecordType[]>,
+    storedObj?: CollectedRecordType,
+  ) => {
+    const repliedCount =
+      storedObj?.[`${year}-${month}-${date}`]?.findIndex(
+        record => record.answer && record.answer.length > 0,
+      ) ?? -1;
+    setRepliedCount(repliedCount + 1);
   };
 
   const { mutation: getRecordsMutation } = useGetRecords({
@@ -116,8 +137,32 @@ const MainView = () => {
       body: {
         content: writeState.content,
         template: templateRef.current.toString(),
+        date: selectedDate,
       },
     });
+  };
+
+  const onChangeSelectDate = (selectedDay: Date) => {
+    const repliedCount =
+      records[getYMDFromDate(selectedDay)]?.findIndex(
+        record => record.answer && record.answer.length > 0,
+      ) ?? -1;
+
+    setSelectedDate(selectedDay);
+    setRepliedCount(repliedCount + 1);
+    calendarCloseBtnRef.current?.click();
+  };
+
+  const onClickPrevDate = () => {
+    onChangeSelectDate(new Date(+year, +month - 1, +date - 1, 0, 0, 0));
+  };
+
+  const onClickNextDate = () => {
+    const nextDate = new Date(+year, +month - 1, +date + 1, 0, 0, 0);
+    nextDate <= today && onChangeSelectDate(nextDate);
+  };
+  const onClickToday = () => {
+    onChangeSelectDate(today);
   };
 
   useEffect(
@@ -161,18 +206,21 @@ const MainView = () => {
   }, []);
 
   useEffect(
-    function getInitRecords() {
+    function getRecords() {
       if (!session?.id) return;
+      const { firstDate: startDate, lastDate: endDate } =
+        getFirstAndLastDateFromSpecificDate(selectedDate);
+
       (async () => {
         await getRecordsMutation.mutateAsync({
           body: {
-            startDate: `${year}-${month}-${date}`,
-            endDate: `${getYMDFromDate(new Date(new Date().getTime() + 60 * 60 * 24 * 1000))}`,
+            startDate,
+            endDate,
           },
         });
       })();
     },
-    [session?.id],
+    [session?.id, month],
   );
 
   return (
@@ -180,13 +228,9 @@ const MainView = () => {
       <Swiper
         className="mainCarousel"
         focusableElements="textarea"
-        allowTouchMove={!writeState.content}
         slidesPerView={'auto'}
         spaceBetween={0}
         modules={[Pagination]}
-        style={{
-          pointerEvents: writeState.content ? 'none' : 'initial',
-        }}
         grabCursor
         loop
       >
@@ -198,9 +242,36 @@ const MainView = () => {
               backgroundColor: template.bgColor,
             }}
           >
-            <p className="font-p-R16 mb-1" style={{ color: template.dateColor }}>
-              {year}년 {month}월 {date}일 {day}
-            </p>
+            <div className="flex justify-between items-center font-p-R18-2 text-primary-900 mb-4">
+              <ChevronLeft className="h-4 w-4" onClick={onClickPrevDate} />
+              <div className="flex items-center gap-x-1.5">
+                <Image
+                  src="/assets/icons/calendar_no_number.png"
+                  width={16}
+                  height={16}
+                  alt="calendar"
+                  priority
+                  onClick={() => calendarRef.current?.click()}
+                />
+                {+month}월 {+date}일
+                {selectedTime < todayTime && (
+                  <Image
+                    src="/assets/icons/reload.png"
+                    width={16}
+                    height={16}
+                    alt="today"
+                    priority
+                    className="ml-[14px]"
+                    onClick={onClickToday}
+                  />
+                )}
+              </div>
+              {selectedTime < todayTime ? (
+                <ChevronRight className="h-4 w-4" onClick={onClickNextDate} />
+              ) : (
+                <div></div>
+              )}
+            </div>
             <div className="flex flex-col gap-3 h-full">
               <div className="flex justify-between">
                 <p
@@ -259,6 +330,23 @@ const MainView = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      <AlertDialog>
+        <AlertDialogTrigger className="hidden" ref={calendarRef}>
+          달력 팝업
+        </AlertDialogTrigger>
+        <AlertDialogOverlay>
+          <AlertDialogContent className="top-0 top-0 left-0 transform-none rounded-b-2xl bg-grayscale-100">
+            <CalendarWithRecords
+              initSelectDate={selectedDate}
+              showOverDate={false}
+              onChangeSelectDate={onChangeSelectDate}
+            />
+            <AlertDialogCancel ref={calendarCloseBtnRef} className="hidden">
+              취소
+            </AlertDialogCancel>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
       {repliedCount > 0 && (
         <Button
           className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"

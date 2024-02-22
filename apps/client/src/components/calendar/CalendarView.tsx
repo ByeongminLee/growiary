@@ -1,22 +1,16 @@
 'use client';
-import { Calendar } from '@/components/ui/shadcn/calendar';
-import React, { useEffect, useRef, useState } from 'react';
-import { SelectSingleEventHandler } from 'react-day-picker';
+
+import { useEffect, useRef, useState } from 'react';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
-import { CollectedRecordType, RecordType } from '@/types';
+import { RecordType } from '@/types';
 import { useSession } from 'next-auth/react';
-import {
-  getFirstAndLastDateFromSpecificDate,
-  getFullStrDate,
-  getTwoDigitNum,
-  getYMDFromDate,
-} from '@/utils/getDateFormat';
+import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import Image from 'next/image';
-import { useGetRecords } from '@/lib/useGetRecords';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
+import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 
 const CalendarView = () => {
   const { data: session } = useSession();
@@ -25,22 +19,11 @@ const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [records, setRecords] = useState<CollectedRecordType>({});
   const [moveState, setMoveState] = useState<'UP' | 'DOWN' | 'NONE'>('NONE');
   const initPosYRef = useRef<number>(0);
   const articleElRef = useRef<HTMLElement | null>(null);
   const initArticleYPosRef = useRef<number>(0);
   const [year, month, date, day] = getFullStrDate(selectedDate);
-
-  const onSuccessGetRecords = () => {
-    const data = queryClient.getQueryData<CollectedRecordType>(['records']) || {};
-    setRecords(data);
-    setResponse(data[getYMDFromDate(selectedDate)]);
-  };
-
-  const { mutation, queryClient } = useGetRecords({
-    onSuccessCb: onSuccessGetRecords,
-  });
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
@@ -142,32 +125,23 @@ const CalendarView = () => {
     setIsMouseDown(false);
   };
 
-  const handleSelectDate: SelectSingleEventHandler = (day, selectedDay) => {
-    setSelectedDate(selectedDay);
-    const selectedDate = getYMDFromDate(selectedDay);
-    const searchParams = new URLSearchParams();
-    searchParams.set('date', selectedDate);
-    setResponse(records[selectedDate]);
-    if (selectedDate === params.get('date')) return;
-    history.replaceState(null, '', '/calendar?' + searchParams.toString());
-  };
-  const handleMonthChange = async (month: Date) => {
-    const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(month);
-
-    setSelectedDate(
-      new Date(month.getFullYear(), month.getMonth(), selectedDate.getDate(), 0, 0, 0),
-    );
-    await mutation.mutateAsync({
-      body: { startDate: firstDate, endDate: lastDate },
-    });
-  };
-
   const handleClickRecord = (e: React.MouseEvent, res: RecordType) => {
     e.stopPropagation();
 
     if (moveState === 'UP') {
       router.push(`/calendar/${year}-${month}-${date}/${res.postId}`);
     }
+  };
+
+  const onChangeSelectDate = (selectedDay: Date) => {
+    const searchParams = new URLSearchParams();
+    const selectedDate = getYMDFromDate(selectedDay);
+
+    searchParams.set('date', selectedDate);
+
+    if (selectedDate === params.get('date')) return;
+
+    history.replaceState(null, '', '/calendar?' + searchParams.toString());
   };
 
   useEffect(
@@ -188,43 +162,14 @@ const CalendarView = () => {
     [session?.id, params],
   );
 
-  useEffect(
-    function getInitRecords() {
-      if (!session?.id) return;
-      let paramDate;
-      if (params.has(date)) {
-        const [year, month, date] = params.get('date')!.split('-');
-        paramDate = new Date(+year, +month - 1, +date, 0, 0, 0);
-        setSelectedDate(paramDate);
-      }
-      const { firstDate, lastDate } = getFirstAndLastDateFromSpecificDate(
-        paramDate || selectedDate,
-      );
-      (async () => {
-        await mutation.mutateAsync({
-          body: { startDate: firstDate, endDate: lastDate },
-        });
-      })();
-    },
-    [session?.id],
-  );
-
   return (
     <div>
       <section className="mx-2">
-        {session?.id && (
-          <Calendar
-            mode="single"
-            repliedDays={Object.keys(records).filter(
-              date =>
-                date.slice(5, 7) ===
-                getTwoDigitNum(new Date(selectedDate).getMonth() + 1),
-            )}
-            selected={selectedDate}
-            onSelect={handleSelectDate}
-            onMonthChange={handleMonthChange}
-          />
-        )}
+        <CalendarWithRecords
+          setResponse={setResponse}
+          addedCaptionLabel="의 답장"
+          onChangeSelectDate={onChangeSelectDate}
+        />
       </section>
       <article ref={articleElRef}>
         {response && response.length > 1 && (

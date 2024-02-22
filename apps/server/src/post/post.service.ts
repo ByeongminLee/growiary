@@ -19,13 +19,51 @@ export class PostService {
   ) {}
 
   /**
+   * date에 offset을 더하거나 뺀다.
+   * @param date 날짜
+   * @param offset offset
+   * @returns offset이 적용된 날짜
+   */
+  private async dateOffset({
+    date,
+    offset,
+  }: {
+    date?: string | Date;
+    offset?: string | number;
+  }): Promise<Date | null> {
+    if (!date) {
+      return new Date();
+    }
+
+    let dateObj: Date;
+    if (typeof date === 'string') {
+      dateObj = new Date(date);
+    } else {
+      dateObj = date;
+    }
+
+    if (offset) {
+      const offsetMinutes = typeof offset === 'string' ? parseInt(offset) : offset;
+      dateObj.setMinutes(dateObj.getMinutes() + offsetMinutes);
+    }
+
+    return dateObj;
+  }
+
+  /**
    * 유저 post를 검색 및 firebase reference를 반환
    * @returns 검색된 post 및 firebase reference
    */
   private async getUserPostRef() {
     const { userId } = this.request.user;
     const userPostRef = firestore().collection('posts').doc(userId);
-    return { userId, userPostRef };
+    const userPostDoc = await userPostRef.get();
+
+    if (userPostDoc.exists) {
+      return { isPosts: true, userId, userPostRef };
+    }
+
+    return { isPosts: false, userId, userPostRef };
   }
 
   /**
@@ -71,14 +109,16 @@ export class PostService {
    */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
     const { startDate, endDate } = filterFindPostDTO;
-    const { userPostRef } = await this.getUserPostRef();
+    const { isPosts, userPostRef } = await this.getUserPostRef();
+
+    if (!isPosts) {
+      return { status: 200, data: [] };
+    }
 
     const userPostsDoc = await userPostRef.get();
     const userPostsData = userPostsDoc.data();
 
-    const filteredPosts = [];
-
-    Object.keys(userPostsData)
+    const filteredPosts = Object.keys(userPostsData)
       .filter(postId => userPostsData[postId].status !== 'DELETED')
       .map(postId => {
         const post = userPostsData[postId];
@@ -92,7 +132,7 @@ export class PostService {
         endDateUTC.setHours(endDateUTC.getHours() - 9);
 
         if (createAtDate >= startDateUTC && createAtDate < endDateUTC) {
-          filteredPosts.push({
+          return {
             postId: postId,
             feedback: 'NONE',
             status: userPostsData[postId].hasOwnProperty('status')
@@ -101,9 +141,15 @@ export class PostService {
             ...post,
             createAt: createAtDate,
             updateAt: updateAtDate,
-          });
+          };
         }
-      });
+        return null;
+      })
+      .filter(post => post !== null);
+
+    if (filteredPosts.length === 0) {
+      return { status: 200, data: [] };
+    }
 
     return { status: 200, data: filteredPosts };
   }
@@ -118,12 +164,17 @@ export class PostService {
 
     const postId = uuidv4();
 
+    const date = this.dateOffset({
+      date: createPostDTO.date,
+      offset: createPostDTO.offset,
+    });
+
     const data = {
       [postId]: {
         ...createPostDTO,
         feedback: 'NONE',
-        createAt: new Date(),
-        updateAt: new Date(),
+        createAt: date,
+        updateAt: date,
       },
     };
 
@@ -154,6 +205,11 @@ export class PostService {
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 
+    const date = await this.dateOffset({
+      date: createPostDTO.date,
+      offset: createPostDTO.offset,
+    });
+
     const data = {
       [postId]: {
         ...createPostDTO,
@@ -164,8 +220,8 @@ export class PostService {
           usage,
         },
         feedback: 'NONE',
-        createAt: new Date(),
-        updateAt: new Date(),
+        createAt: date,
+        updateAt: date,
       },
     };
 

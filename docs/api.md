@@ -165,8 +165,14 @@
     title?: string;
     content: string;
     template?: string;
+    date?: string | Date;
+    offset?: string | number;
   }
   ```
+
+  > date값이 없을 경우 현재 서버 시간입력
+  > date값이 있고 offset값이 없을 경우 date값 입력
+  > date값과 offset값이 둘다 있을 경우 date + offset(분) 시간으로 계산
 
 - response
 

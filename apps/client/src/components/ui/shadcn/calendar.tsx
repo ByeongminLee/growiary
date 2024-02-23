@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker, MonthChangeEventHandler } from 'react-day-picker';
-
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/shadcn/button';
 import { getDate, getMonth } from 'date-fns';
@@ -13,20 +12,28 @@ import Image from 'next/image';
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   repliedDays?: string[];
   onMonthChange: MonthChangeEventHandler;
+  addedCaptionLabel?: string;
+  showOverDate: boolean;
 };
 
 function Calendar({
   className,
   classNames,
   repliedDays = [],
-  showOutsideDays = false,
   onMonthChange,
+  addedCaptionLabel,
+  showOverDate = true,
   ...props
 }: CalendarProps) {
+  const today = new Date();
+  const selectedDate = props.selected as Date;
+  const isOverMonth =
+    selectedDate.getFullYear() >= today.getFullYear() &&
+    selectedDate.getMonth() + 1 > today.getMonth();
+
   return (
     <DayPicker
       onMonthChange={onMonthChange}
-      showOutsideDays={showOutsideDays}
       className={cn('p-3 pt-0', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
@@ -39,7 +46,7 @@ function Calendar({
           'h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100 flex ',
         ),
         nav_button_previous: 'absolute left-1 h-4 w-4',
-        nav_button_next: 'absolute right-1 h-4 w-4',
+        nav_button_next: `absolute right-1 h-4 w-4 ${!showOverDate && isOverMonth ? 'cursor-none pointer-events-none text-grayscale-400' : ''}`,
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:
@@ -62,27 +69,29 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: () => <ChevronLeft className="h-full w-full" />,
+        IconRight: () => <ChevronRight className="h-full w-full" />,
         CaptionLabel: ({ ...props }) => {
           const month = getTwoDigitNum(props.displayMonth.getMonth() + 1);
 
           return (
-            <div className="font-p-R18 text-grayscale-800">
-              {getMonth(props.displayMonth) + 1}월의 답장
-              <div className="relative flex justify-center">
-                <Image
-                  className="relative"
-                  src="/assets/images/green_no_face.png"
-                  alt="횟수"
-                  width={74}
-                  height={76}
-                  priority
-                />
-                <span className="absolute top-[27px] left-0 right-0 transform- text-center font-p-M20 text-primary-900">
-                  {repliedDays.filter(date => date.slice(5, 7) === month).length}회
-                </span>
-              </div>
+            <div className="flex flex-col justify-center items-center font-p-R18 text-grayscale-800">
+              {getMonth(props.displayMonth) + 1}월{addedCaptionLabel}
+              {addedCaptionLabel && (
+                <div className="relative flex justify-center">
+                  <Image
+                    className="relative"
+                    src="/assets/images/green_no_face.png"
+                    alt="횟수"
+                    width={74}
+                    height={76}
+                    priority
+                  />
+                  <span className="absolute top-[27px] left-0 right-0 transform- text-center font-p-M20 text-primary-900">
+                    {repliedDays.filter(date => date.slice(5, 7) === month).length}회
+                  </span>
+                </div>
+              )}
             </div>
           );
         },

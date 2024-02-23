@@ -3,30 +3,34 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRecords } from '@/utils/requestRecord';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { recordState } from '@/store';
+import { FilterFindPostDTO } from '@growiary/types';
 
 type UseGetRecordProps = {
-  onSuccessCb?: (value: ApiSuccess<RecordType[]>) => void;
+  onSuccessCb?: (
+    value: ApiSuccess<RecordType[]>,
+    storedObj?: CollectedRecordType,
+  ) => void;
 };
 
 type UseGetRecordBodyType = {
-  body: { startDate: string; endDate: string };
+  body: FilterFindPostDTO;
 };
 
 export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [records, setRecords] = useRecoilState(recordState);
+  const setRecords = useSetRecoilState(recordState);
 
   const mutation = useMutation({
     mutationKey: ['records'],
     mutationFn: ({ body }: UseGetRecordBodyType) =>
       getRecords({
         id: session?.id || '',
-        body,
+        body: { ...body, offset: -new Date().getTimezoneOffset() },
       }),
-    onSuccess: (result, { body: { startDate, endDate } }) => {
+    onSuccess: result => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
         const collectedData = [...(result.data || [])].reduce(
           (f: CollectedRecordType, v: RecordType) => {
@@ -39,15 +43,15 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
           {},
         );
         setRecords(collectedData);
+        onSuccessCb && onSuccessCb(result, collectedData);
 
         return {
           ...old,
           ...collectedData,
         };
       });
-      onSuccessCb && onSuccessCb(result);
     },
   });
 
-  return { mutation, queryClient };
+  return { mutation };
 };

@@ -1,11 +1,9 @@
 import { ApiSuccess, RecordType } from '@/types';
+import { FilterFindPostDTO } from '@growiary/types';
 
 type FetchRecordProps = {
   id: string;
-  body: {
-    startDate: string;
-    endDate: string;
-  };
+  body: FilterFindPostDTO & { offset?: number };
 };
 export const getRecords = async ({
   id = '',

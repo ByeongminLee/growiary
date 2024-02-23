@@ -34,6 +34,7 @@ import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
+import { PROMPT_TEMPLATE } from '@growiary/prompt';
 
 const bottomArea = 80;
 
@@ -303,11 +304,7 @@ const MainView = () => {
                     height: scrollHeight,
                     caretColor: template.caretColor,
                   }}
-                  placeholder={
-                    template.id === '0' && repliedCount === 0
-                      ? '일기 작성 횟수는 자유롭지만, 그루미는 하루에 한 번만 답장을 드릴 수 있어요.'
-                      : template.placeholder
-                  }
+                  placeholder={template.placeholder}
                   onChange={handleChangeContent}
                   onFocus={() => handleFocusInput(template.id)}
                   onBlur={handleBlurInput}
@@ -335,7 +332,12 @@ const MainView = () => {
           달력 팝업
         </AlertDialogTrigger>
         <AlertDialogOverlay>
-          <AlertDialogContent className="top-0 top-0 left-0 transform-none rounded-b-2xl bg-grayscale-100">
+          <AlertDialogContent
+            className="top-0 top-0 left-0 max-w-full transform-none sm:rounded-t-none rounded-b-2xl bg-grayscale-100"
+            style={{
+              paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
+            }}
+          >
             <CalendarWithRecords
               initSelectDate={selectedDate}
               showOverDate={false}

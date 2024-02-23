@@ -16,7 +16,7 @@ const WholeLandingView = () => {
     router.replace(targetURL);
   }, [router]);
 
-  return <div>Welcome to Growiary</div>;
+  return <></>;
 };
 
 export default WholeLandingView;

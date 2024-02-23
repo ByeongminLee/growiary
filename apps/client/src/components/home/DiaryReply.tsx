@@ -3,45 +3,72 @@
 import Image from 'next/image';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUserName } from '@/lib/useUserName';
-import { Button } from '@/components/ui/shadcn/button';
 import { tracking } from '@/utils/mixPannel';
 import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types';
 import { useFetch } from '@/lib/useFetch';
-import { useRecoilState } from 'recoil';
-import { recordWriteState } from '@/store';
+import { useSetRecoilState } from 'recoil';
+import { recordState } from '@/store';
 import { useSession } from 'next-auth/react';
 import { diaryTemplates } from '@/utils/getDiaryTemplates';
+import Star from '@/components/ui/icon/Star';
+import config from '../../../tailwind.config';
+import { FeedbackType } from '@growiary/types';
+import { getDateFromServer } from '@/utils/getDateFormat';
 
 type DiaryReplyProps = {
   response: RecordType;
 };
+
+const colors = config?.theme?.extend?.colors as {
+  [key: string]: {
+    [key: string]: string;
+  };
+};
+
+const FeedbackArr: FeedbackType[] = ['NONE', 'BAD', 'NOTBAD', 'AVERAGE', 'FINE', 'GOOD'];
 
 const DiaryReply = ({ response }: DiaryReplyProps) => {
   const { data: session } = useSession();
   const userName = useUserName();
   const requestApi = useFetch();
   const [nickname, setNickname] = useState('');
-  const [recordWrite, setRecordWrite] = useRecoilState(recordWriteState);
+  const [starPoint, setStarPoint] = useState(-1);
+  const [initSubmittedFeedback, setInitSubmittedFeedback] = useState(true);
+  const setRecords = useSetRecoilState(recordState);
   const template: DiaryTemplate = response && diaryTemplates[response.template];
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent, point: number) => {
+    e.stopPropagation();
+    setStarPoint(point);
     tracking('답장 피드백 제출');
+
     const apiResponse = (await requestApi('/post/feedback', {
       method: 'POST',
       id: session?.id,
       body: {
         postId: response.postId,
-        feedback: e.currentTarget.getAttribute('data-feedback'),
+        feedback: FeedbackArr[point],
       },
     })) as ApiResponse<{ status: ResponseStatus; message: string }>;
     const { status } = await apiResponse;
+
     if (status === 200) {
-      setRecordWrite(prev => ({
-        ...prev,
-        isSubmittedFeedback: true,
-      }));
+      setRecords(prev => {
+        const date = getDateFromServer(response.createAt);
+        return {
+          ...prev,
+          [date]: prev[date].map(v =>
+            v.postId === response.postId ? { ...v, feedback: FeedbackArr[point] } : v,
+          ),
+        };
+      });
     }
   };
+
+  useEffect(() => {
+    setStarPoint(FeedbackArr.findIndex(v => v === response.feedback));
+    setInitSubmittedFeedback(response.feedback !== 'NONE');
+  }, []);
 
   useEffect(() => {
     setNickname(userName);
@@ -76,49 +103,53 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
           ))}
         </div>
       </section>
-      {response.feedback === 'NONE' &&
-        (!recordWrite.isSubmittedFeedback ? (
-          <section>
-            <div className="flex flex-col align-center justify-center">
-              <div className="flex justify-center items-center">
-                <Image
-                  src="/assets/growmi/lightpink.svg"
-                  width={48}
-                  height={48}
-                  alt="growmi"
-                />
-                <p className="ml-2 font-p-M20" style={{ color: template.answerColor }}>
-                  이 답장이 마음에 들었나요?
-                </p>
-              </div>
+      {!initSubmittedFeedback && (
+        <section className="mb-12">
+          {starPoint === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-y-2">
+              <Image
+                src="/assets/growmi/lightpink.svg"
+                width={48}
+                height={48}
+                alt="growmi"
+              />
+              <p className="font-p-M20" style={{ color: template.questionColor }}>
+                이 답장이 마음에 들었나요?
+              </p>
               <div className="flex gap-2 justify-center h-12">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  data-feedback="GOOD"
-                  type="button"
-                  onClick={handleSubmit}
-                >
-                  O
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  data-feedback="BAD"
-                  type="button"
-                  onClick={handleSubmit}
-                >
-                  X
-                </Button>
+                {[...new Array(5)].map((v, i) => (
+                  <div
+                    key={i}
+                    className="cursor-pointer"
+                    onClick={e => handleSubmit(e, i + 1)}
+                  >
+                    <Star
+                      width={48}
+                      height={48}
+                      fill={
+                        i + 1 > starPoint
+                          ? colors?.grayscale?.[400]
+                          : +response.template !== 6
+                            ? colors?.sub?.yellow
+                            : colors?.branding?.[800]
+                      }
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-          </section>
-        ) : (
-          <p className="text-sub-indigo font-p-R18 text-center mb-14">
-            감사합니다! <br />
-            내일은 저에게 어떤 이야기를 들려줄지 궁금해요
-          </p>
-        ))}
+          ) : (
+            <p
+              className="font-p-R18 text-center mb-1"
+              style={{ color: template.questionColor }}
+            >
+              답장을 드릴 수 있어서 기뻐요
+              <br />
+              앞으로도 더 많은 이야기 들려주세요!
+            </p>
+          )}
+        </section>
+      )}
     </>
   );
 };

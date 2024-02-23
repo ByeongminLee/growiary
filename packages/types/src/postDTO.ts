@@ -1,3 +1,5 @@
+import { FeedbackType } from './feedbackDTO';
+
 export type CreatePostDTO = {
   title?: string;
   content: string;
@@ -18,6 +20,7 @@ export type Post = {
   createAt: string | Date;
   updateAt: string | Date;
   feedback?: FeedbackType;
+  feedbackDetail?: FeedbackDetailType;
   answer?: string;
   ai?: {
     id: string;
@@ -30,14 +33,26 @@ export type Post = {
 export type FilterFindPostDTO = {
   startDate: string;
   endDate: string;
+  offset?: string | number;
 };
 
-export type FeedbackType = 'GOOD' | 'BAD' | 'NONE';
+export type FeedbackDetailType = {
+  content?: string;
+  select?: {
+    speed: boolean; // 답변 속도
+    quality: boolean; // 답변 퀄리티
+    amount: boolean; // 답변 양
+    count: boolean; // 답변 횟수
+    topic: boolean; // 템플릿 주제
+  };
+};
+
 export type PostStatus = 'ACTIVE' | 'DELETED';
 
 export type PostFeedbackDTO = {
   postId: string;
   feedback: FeedbackType;
+  feedbackDetail?: FeedbackDetailType;
 };
 export type PostEditDTO = {
   postId: string;

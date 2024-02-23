@@ -108,7 +108,7 @@ export class PostService {
    * @returns 필터링된 user posts
    */
   async filterFindPost(filterFindPostDTO: FilterFindPostDTO) {
-    const { startDate, endDate } = filterFindPostDTO;
+    const { startDate, endDate, offset } = filterFindPostDTO;
     const { isPosts, userPostRef } = await this.getUserPostRef();
 
     if (!isPosts) {
@@ -118,34 +118,35 @@ export class PostService {
     const userPostsDoc = await userPostRef.get();
     const userPostsData = userPostsDoc.data();
 
-    const filteredPosts = Object.keys(userPostsData)
-      .filter(postId => userPostsData[postId].status !== 'DELETED')
-      .map(postId => {
-        const post = userPostsData[postId];
+    const filteredPosts = [];
 
-        const createAtDate = dateConverter(post.createAt);
-        const updateAtDate = dateConverter(post.updateAt);
+    for (const postId of Object.keys(userPostsData)) {
+      const post = userPostsData[postId];
+      if (post.status !== 'DELETED') {
+        const date = await this.dateOffset({
+          date: dateConverter(post.createAt),
+          offset,
+        });
 
         const startDateUTC = new Date(startDate);
         startDateUTC.setHours(startDateUTC.getHours() - 9);
         const endDateUTC = new Date(endDate);
         endDateUTC.setHours(endDateUTC.getHours() - 9);
 
-        if (createAtDate >= startDateUTC && createAtDate < endDateUTC) {
-          return {
+        if (date >= startDateUTC && date < endDateUTC) {
+          filteredPosts.push({
             postId: postId,
             feedback: 'NONE',
             status: userPostsData[postId].hasOwnProperty('status')
               ? userPostsData[postId].status
               : 'ACTIVE',
             ...post,
-            createAt: createAtDate,
-            updateAt: updateAtDate,
-          };
+            createAt: dateConverter(post.createAt),
+            updateAt: dateConverter(post.updateAt),
+          });
         }
-        return null;
-      })
-      .filter(post => post !== null);
+      }
+    }
 
     if (filteredPosts.length === 0) {
       return { status: 200, data: [] };
@@ -164,7 +165,7 @@ export class PostService {
 
     const postId = uuidv4();
 
-    const date = this.dateOffset({
+    const date = await this.dateOffset({
       date: createPostDTO.date,
       offset: createPostDTO.offset,
     });
@@ -235,8 +236,13 @@ export class PostService {
     return { status: 200, data: returnData };
   }
 
+  /**
+   * post에 피드백 추가
+   * @param postFeedbackDto 추가할 피드백 정보
+   * @returns 피드백 추가 결과
+   */
   async postFeedback(postFeedbackDto: PostFeedbackDTO) {
-    const { postId, feedback } = postFeedbackDto;
+    const { postId, feedback, feedbackDetail } = postFeedbackDto;
     const { userPostRef } = await this.getUserPostRef();
 
     try {
@@ -249,6 +255,10 @@ export class PostService {
         }
 
         userPostsData[postId].feedback = feedback;
+
+        if (feedbackDetail) {
+          userPostsData[postId].feedbackDetail = feedbackDetail;
+        }
 
         await userPostRef.set(userPostsData, { merge: true });
 

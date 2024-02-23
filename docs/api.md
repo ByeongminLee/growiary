@@ -215,18 +215,29 @@
   ```typescript
   {
     postId: string;
-    feedback: 'GOOD' | 'BAD';
+    feedback: 'GOOD' | 'FINE' | 'AVERAGE' | 'NOTBAD' | 'BAD' | 'NONE';
+    feedbackDetail: {
+      content?: string;
+        select?: {
+            speed: boolean; // 답변 속도
+            quality: boolean; // 답변 퀄리티
+            amount: boolean; // 답변 양
+            count: boolean; // 답변 횟수
+            topic: boolean; // 템플릿 주제
+        };
+    }
   }
   ```
 
 - response
 
-```json
-{
-  "status": 200,
-  "message": "Feedback added successfully"
-}
-```
+  ```json
+  {
+    "status": 200,
+    "message": "Feedback added successfully"
+    "data" : ...
+  }
+  ```
 
 <br/>
 
@@ -248,21 +259,86 @@
 
 - response
 
-```
-{
+  ```json
+  {
+      "status": 200,
+      "message": "content updated successfully",
+      "STATUS": "DELETED",
+      "data": {
+          "template": "7",
+          "answer": "AI 답장",
+          "ai": {
+              ...
+          },
+          "updateAt": "2024-02-16T04:47:10.440Z",
+          "content": "포스트 수정",
+          "createAt": "2024-02-16T04:47:10.440Z",
+          "feedback": "GOOD"
+      }
+  }
+  ```
+
+<br/>
+
+<br/>
+
+# feedback
+
+<img src="https://img.shields.io/badge/%7F%20%20GET%20%20%20%7F-/feedback-e1e1e1?labelColor=46C487&style=flat-square" height="25"/>
+
+> 유저 피드백을 전부 가져옵니다.
+
+- request
+
+  none
+
+- response
+
+  ```json
+  {
     "status": 200,
-    "message": "content updated successfully",
-    "STATUS": "DELETED",
-    "data": {
-        "template": "7",
-        "answer": "AI 답장",
-        "ai": {
-            ...
+    "data": [
+        {
+            "feedback": "BAD",
+            "updateAt": "2024-02-23T04:44:22.835Z",
+            "content": "테스트 피드백",
+            "createAt": "2024-02-23T04:44:22.835Z",
+            "feedbackId": "691d1efa-f3ec-44c8-881c-ea4039f4562a"
         },
-        "updateAt": "2024-02-16T04:47:10.440Z",
-        "content": "포스트 수정",
-        "createAt": "2024-02-16T04:47:10.440Z",
-        "feedback": "GOOD"
+        ....
+    ]
+  }
+  ```
+
+<br/>
+
+<img src="https://img.shields.io/badge/%7F%20%20POST%20%7F-/feedback-e1e1e1?labelColor=219BFD&style=flat-square" height="25"/>
+
+> user feedback
+
+- request
+
+  `@body`
+
+  ```typescript
+  {
+    feedback: 'GOOD' | 'FINE' | 'AVERAGE' | 'NOTBAD' | 'BAD' | 'NONE';
+    content?: string;
+  }
+  ```
+
+- response
+
+  ```json
+  {
+    "status": 200,
+    "data": {
+      [feedbackID]: {
+        "createAt": "2024-02-23T04:57:53.762Z",
+        "updateAt": "2024-02-23T04:57:53.762Z",
+        "feedback": "GOOD",
+        "content": "피드백 내용"
+      }
     }
-}
-```
+  }
+  ```

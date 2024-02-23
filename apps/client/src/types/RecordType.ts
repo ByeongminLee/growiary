@@ -1,3 +1,5 @@
+import { FeedbackType } from '@growiary/types';
+
 export type DiaryTemplate = {
   id: string;
   dateColor: string;
@@ -28,7 +30,7 @@ export type RecordType = {
   updateAt: string;
   createAt: string;
   answer?: string;
-  feedback?: 'GOOD' | 'BAD' | 'NONE';
+  feedback?: FeedbackType;
   ai?: UsageAiType;
 };
 

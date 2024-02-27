@@ -3,7 +3,7 @@ import DiaryRecordListView from '@/components/calendar/DiaryRecordListView';
 
 type RecordListPageProps = {
   params: {
-    date: RecordType['createAt'];
+    date: RecordType['selectedAt'] & RecordType['createAt'];
   };
 };
 export default async function RecordListPage({ params: { date } }: RecordListPageProps) {

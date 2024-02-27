@@ -14,12 +14,12 @@ import Link from 'next/link';
 
 type EditRecordViewProps = {
   postId: RecordType['postId'];
-  date: RecordType['createAt'];
+  date: RecordType['selectedAt'] & RecordType['createAt'];
 };
 
 const bottomArea = 80;
 
-const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
+const EditRecordView = ({ postId, date: selectedAt }: EditRecordViewProps) => {
   const storedRecord = useRecoilValue(recordState);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const toastRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +28,7 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
   const [record, setRecord] = useState<RecordType | null>(null);
   const [writeState, setWriteState] = useRecoilState(recordWriteState);
   const [scrollHeight, setScrollHeight] = useState('100%');
-  const [year, month, date, day] = getFullStrDate(createAt);
+  const [year, month, date, day] = getFullStrDate(selectedAt);
   const template: DiaryTemplate = diaryTemplates[record?.template || '0'];
 
   const onSuccessEditRecord = () => {
@@ -37,13 +37,13 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
 
   const { mutation } = useEditRecord({
     postId,
-    date: createAt,
+    date: selectedAt,
     onSuccessCb: onSuccessEditRecord,
   });
 
   useEffect(() => {
     // textareaRef.current?.focus();
-    const targetRecord = storedRecord[createAt]?.find(v => v.postId === postId);
+    const targetRecord = storedRecord[selectedAt]?.find(v => v.postId === postId);
     if (targetRecord) {
       setRecord(targetRecord);
       setWriteState(prev => ({
@@ -116,7 +116,7 @@ const EditRecordView = ({ postId, date: createAt }: EditRecordViewProps) => {
       className="flex flex-col h-full"
       style={{ backgroundColor: `${template.bgColor}` }}
     >
-      <Link href={`/calendar/${createAt}/${postId}`}>
+      <Link href={`/calendar/${selectedAt}/${postId}`}>
         <X className="mt-[-4px] mx-4 p-4 h-12 w-12 cursor-pointer" />
       </Link>
       <p className="mx-9 font-p-R16 text-primary-500 mb-1">

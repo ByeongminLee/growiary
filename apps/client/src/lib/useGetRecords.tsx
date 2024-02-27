@@ -34,7 +34,7 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
         const collectedData = [...(result.data || [])].reduce(
           (f: CollectedRecordType, v: RecordType) => {
-            const key = getDateFromServer(v.createAt);
+            const key = getDateFromServer(v.selectedAt || v.createAt);
             return {
               ...f,
               [key]: [...(f[key] || []), v],

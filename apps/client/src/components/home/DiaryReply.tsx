@@ -54,7 +54,7 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
 
     if (status === 200) {
       setRecords(prev => {
-        const date = getDateFromServer(response.createAt);
+        const date = getDateFromServer(response.selectedAt || response.createAt);
         return {
           ...prev,
           [date]: prev[date].map(v =>

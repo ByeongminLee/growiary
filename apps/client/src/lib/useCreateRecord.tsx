@@ -41,7 +41,7 @@ export const useCreateRecord = () => {
       return response.json();
     },
     onSuccess: ({ data }, { to }) => {
-      const date = getDateFromServer(data.createAt);
+      const date = getDateFromServer(data.selectedAt || data.createAt);
 
       to ? tracking('그루미에게 답장받기 클릭') : tracking('일기 작성하기 클릭');
       setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));

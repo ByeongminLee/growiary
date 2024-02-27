@@ -10,7 +10,7 @@ import { recordState, recordWriteState } from '@/store';
 type UseEditRecordProps = {
   onSuccessCb: () => void;
   postId: RecordType['postId'];
-  date: RecordType['createAt'];
+  date: RecordType['selectedAt'] & RecordType['createAt'];
 };
 
 export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps) => {

@@ -10,30 +10,30 @@ import { recordState } from '@/store';
 import { ChevronLeft } from 'lucide-react';
 
 interface MainReplyRecordViewProps {
-  date: RecordType['createAt'];
+  date: RecordType['selectedAt'] & RecordType['createAt'];
 }
-const DiaryRecordListView = ({ date: createAt }: MainReplyRecordViewProps) => {
+const DiaryRecordListView = ({ date: selectedAt }: MainReplyRecordViewProps) => {
   const router = useRouter();
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const articleElRef = useRef<HTMLElement | null>(null);
-  const [, , date, day] = getFullStrDate(createAt);
+  const [, , date, day] = getFullStrDate(selectedAt);
   const storedRecords = useRecoilValue(recordState);
 
   const handleClickPrevPage = () => {
     const searchParams = new URLSearchParams();
 
     (articleElRef.current as HTMLElement).style.transform = 'translateY(70%)';
-    searchParams.set('date', createAt);
+    searchParams.set('date', selectedAt);
     router.push(`/calendar?${searchParams.toString()}`);
   };
   const handleClickRecord = (e: React.MouseEvent, res: RecordType) => {
     e.stopPropagation();
-    router.push(`/calendar/${createAt}/${res.postId}`);
+    router.push(`/calendar/${selectedAt}/${res.postId}`);
   };
 
   useEffect(() => {
-    setResponse(storedRecords[createAt] || []);
-  }, [storedRecords, createAt]);
+    setResponse(storedRecords[selectedAt] || []);
+  }, [storedRecords, selectedAt]);
 
   return (
     <section

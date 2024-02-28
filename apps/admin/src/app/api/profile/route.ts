@@ -26,6 +26,10 @@ export async function POST(request: Request) {
 
       data.push(userData);
     });
+
+    data.sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   } catch (error) {
     console.error('Error fetching profiles:', error);
     return NextResponse.json({ error: 'Error fetching profiles' }, { status: 500 });

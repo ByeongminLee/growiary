@@ -8,6 +8,8 @@ export type PostType = {
   updateAt: string;
   content: string;
   createAt: string;
+  selectedAt: string;
+  answerUpdate?: boolean;
 };
 
 export type ProfileType = {
@@ -29,7 +31,6 @@ export type ProfileStoreType = {
   setProfile: (profiles: ProfileType[]) => void;
   update: (userId: string, update: any) => void;
 };
-
 
 export type FeedbackItemType = {
   values: ValuesType[];

@@ -203,7 +203,7 @@ export const UserTable = () => {
                     오늘
                   </Badge>
                 )}
-                <Text>{item.createdAt}</Text>
+                <Text>{formatUTCDateKR(item.createdAt)}</Text>
               </TableCell>
               <TableCell className="text-center h-[80px]">
                 <RoleBadge role={item.role} />
@@ -369,13 +369,13 @@ export const UserTable = () => {
                             <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                               작성일
                             </label>
-                            <Text>{dateKoFormat(item.createAt)}</Text>
+                            <Text>{formatUTCDateKR(item.createAt)}</Text>
                           </div>
                           <div className="w-1/2">
                             <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                               수정일
                             </label>
-                            <Text>{dateKoFormat(item.updateAt)}</Text>
+                            <Text>{formatUTCDateKR(item.updateAt)}</Text>
                           </div>
                         </div>
 
@@ -439,4 +439,33 @@ function dateKoFormat(dateString: string) {
 
   const dateFormatter = new Intl.DateTimeFormat('ko-KR', options);
   return dateFormatter.format(date);
+}
+
+function formatUTCDateKR(utcDate: string | Date) {
+  const months = [
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
+  ];
+
+  const dateObj = new Date(utcDate);
+
+  const krYear = dateObj.getFullYear();
+  const krMonth = months[dateObj.getMonth()];
+  const krDate = dateObj.getDate();
+  // const krHours = dateObj.getHours();
+  // const krMinutes = dateObj.getMinutes();
+
+  const formattedDate = `${krYear}년 ${krMonth} ${krDate}일`;
+
+  return formattedDate;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
+import { Providers } from '@/components/common';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="relative">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
       <footer className="h-[30px] flex justify-center">
         <a href="https://growiary.com/" target="_black" rel="noopener noreferrer">
           <p className="text-xs text-gray-600 hover:text-blue-700">ⓒ Growiary</p>

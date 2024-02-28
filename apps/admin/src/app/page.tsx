@@ -4,18 +4,6 @@ import fetcher from '@/utils/fetcher';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
-async function getProfiles() {
-  const profiles = await fetcher({ url: 'profile' });
-
-  return profiles.data;
-}
-
-async function getPosts() {
-  const posts = await fetcher({ url: 'post' });
-
-  return posts.data;
-}
-
 async function adminGuard(userId: string) {
   const result = await fetcher({
     url: 'admin-guard',
@@ -37,12 +25,5 @@ export default async function Home() {
     return <AdminGuardView />;
   }
 
-  const profiles = await getProfiles();
-  const posts = await getPosts();
-
-  return posts && profiles ? (
-    <DashboardView profiles={profiles} posts={posts} />
-  ) : (
-    <>Hello</>
-  );
+  return <DashboardView />;
 }

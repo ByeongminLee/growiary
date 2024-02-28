@@ -1,9 +1,8 @@
 'use client';
 
 import { usePostStore, useProfileStore } from '@/state';
-import { PostType, ProfileType } from '@/types';
-import { useEffect } from 'react';
 
+import { useEffect } from 'react';
 import { TemplateCount } from '../TemplateCount';
 import { Col, Grid, Metric } from '@tremor/react';
 import {
@@ -16,32 +15,38 @@ import {
   UserTable,
 } from '..';
 import { Navbar } from '../common';
+import { useQuery } from '@tanstack/react-query';
+import fetcher from '@/utils/fetcher';
 
-export const DashboardView = ({
-  profiles,
-  posts,
-}: {
-  profiles: ProfileType[];
-  posts: PostType[];
-}) => {
+export const DashboardView = () => {
   const { setProfile } = useProfileStore();
   const { setPost } = usePostStore();
 
-  useEffect(() => {
-    setPost(posts);
-  }, [posts]);
+  const { data: profiles, isLoading: isLoadingProfiles } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => fetcher({ url: 'profile' }).then(res => res.data),
+  });
+
+  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+    queryKey: ['post'],
+    queryFn: () => fetcher({ url: 'post' }).then(res => res.data),
+  });
 
   useEffect(() => {
-    profiles.sort((a, b) => {
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-    setProfile(profiles);
-  }, [profiles]);
+    if (posts && !isLoadingPosts) {
+      setPost(posts);
+    }
+  }, [isLoadingPosts, posts, setPost]);
+
+  useEffect(() => {
+    if (!isLoadingProfiles && profiles) {
+      setProfile(profiles);
+    }
+  }, [isLoadingProfiles, profiles, setProfile]);
 
   return (
     <>
       <Navbar />
-
       <div className="max-w-[640px] lg:max-w-[1024px] mx-auto py-24">
         <div className="sm:text-left text-center">
           <Metric>전체 유저 데이터</Metric>

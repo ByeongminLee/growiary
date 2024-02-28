@@ -24,6 +24,9 @@ export async function POST(request: Request) {
         ...postsData[postId],
         createAt: dateConverter(postsData[postId].createAt),
         updateAt: dateConverter(postsData[postId].updateAt),
+        selectedAt: postsData[postId].selectedAt
+          ? dateConverter(postsData[postId].selectedAt)
+          : null,
       }));
 
       data.push(...postsArray);

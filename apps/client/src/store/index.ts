@@ -1,6 +1,6 @@
 import { atom, AtomEffect } from 'recoil';
 import { UserProfileDTO } from '@growiary/types';
-import { CollectedRecordType } from '@/types';
+import { CollectedRecordType, RecordType } from '@/types';
 
 export type UserProfileStateType = {
   key: 'userProfileState';
@@ -26,6 +26,13 @@ export type InitExperienceType = {
   default: {
     initUser: boolean;
     initSubmit: boolean;
+  };
+};
+
+export type WaitingRecordsType = {
+  key: 'waitingRecords';
+  default: {
+    waitingList: RecordType[];
   };
 };
 
@@ -97,4 +104,12 @@ export const initExperienceState = atom(<InitExperienceType>{
     initSubmit: true,
   },
   effects: [localStorageEffect('initExperience')],
+});
+
+export const waitingRecordsState = atom(<WaitingRecordsType>{
+  key: 'waitingRecords',
+  default: {
+    waitingList: [],
+  },
+  effects: [localStorageEffect('waitingList')],
 });

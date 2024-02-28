@@ -26,15 +26,12 @@ import {
   getYMDFromDate,
   setTimeZero,
 } from '@/utils/getDateFormat';
-import LottieAnimation from '@/components/ui/LottieAnimation';
-import airplane from '@/../public/assets/airplane.json';
 import { useCreateRecord } from '@/lib/useCreateRecord';
 import { useGetRecords } from '@/lib/useGetRecords';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
-import { PROMPT_TEMPLATE } from '@growiary/prompt';
 
 const bottomArea = 80;
 
@@ -150,7 +147,10 @@ const MainView = () => {
       ) ?? -1;
 
     setSelectedDate(selectedDay);
-    setRepliedCount(repliedCount + 1);
+    // 이전 날짜 시 구르미 답장 받기 기능 제거
+    setRepliedCount(
+      setTimeZero(selectedDay).getTime() !== todayTime ? 1 : repliedCount + 1,
+    );
     calendarCloseBtnRef.current?.click();
   };
 
@@ -379,12 +379,12 @@ const MainView = () => {
           그루미 답장중 팝업
         </AlertDialogTrigger>
         <AlertDialogOverlay>
-          <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md bg-tranparent border-0">
-            <div className="px-3 py-2 bg-grayscale-300 flex flex-col items-center jusitfy-center rounded">
-              <p className="pb-2 font-p-M14 text-grayscale-700">
-                그루미가 답장을 쓰고 있어요
+          <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md w-auto bg-tranparent border-0">
+            <div className="px-7 py-9 bg-sub-babyPink flex flex-col items-center jusitfy-center rounded">
+              <p className="pb-5 font-p-M16 text-grayscale-700 whitespace-nowrap	">
+                매일 아침 8시에 답장이 도착할거예요!
               </p>
-              <LottieAnimation src={airplane} width="100px" height="100px" />
+              <Image src="/assets/icons/post.png" alt="message" width={101} height={86} />
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

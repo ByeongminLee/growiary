@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
-import { recordWriteState } from '@/store';
+import { recordWriteState, waitingRecordsState } from '@/store';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,13 +15,18 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { Button } from '@/components/ui/shadcn/button';
+import { getDateFromServer } from '@/utils/getDateFormat';
+import Link from 'next/link';
 
 const history: string[] = [];
 export function NavigationEvents() {
   const pathname = usePathname();
   const router = useRouter();
   const [writingState, setWritingState] = useRecoilState(recordWriteState);
+  const [waitingRecords, setWaitingRecords] = useRecoilState(waitingRecordsState);
   const stopRecordRef = useRef<HTMLButtonElement | null>(null);
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
+
   const handleStopWriting = () => {
     setWritingState(prev => ({ ...prev, content: '', state: 'NONE' }));
   };
@@ -45,6 +50,33 @@ export function NavigationEvents() {
         : !pathname.includes('edit')
     ) {
       stopRecordRef.current?.click();
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const [firstRecord, ...otherItems] = waitingRecords.waitingList;
+    if (!firstRecord || pathname !== '/calendar') return;
+
+    router.prefetch(
+      `/calendar/${getDateFromServer(firstRecord.selectedAt || firstRecord.createAt)}/${firstRecord.postId}`,
+    );
+    const createDate = new Date(firstRecord.createAt).getDate();
+    const today = new Date();
+    const replyTime = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      createDate + 1,
+      8,
+      0,
+      0,
+    );
+    const isOverReplyTime = today.getTime() > replyTime.getTime();
+
+    if (isOverReplyTime && waitingRecords.waitingList.length > 0) {
+      setWaitingRecords({ waitingList: otherItems });
+      router.replace(
+        `/calendar/${getDateFromServer(firstRecord.selectedAt || firstRecord.createAt)}/${firstRecord.postId}`,
+      );
     }
   }, [pathname]);
 

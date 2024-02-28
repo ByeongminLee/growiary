@@ -34,6 +34,7 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
   const [nickname, setNickname] = useState('');
   const [starPoint, setStarPoint] = useState(-1);
   const [initSubmittedFeedback, setInitSubmittedFeedback] = useState(true);
+  const [isOverReplyTime, setIsOverReplyTime] = useState(false);
   const setRecords = useSetRecoilState(recordState);
   const template: DiaryTemplate = response && diaryTemplates[response.template];
 
@@ -74,6 +75,20 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
     setNickname(userName);
   }, [userName]);
 
+  useEffect(() => {
+    const createDate = new Date(response.createAt).getDate();
+    const today = new Date();
+    const replyTime = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      createDate + 1,
+      8,
+      0,
+      0,
+    );
+    setIsOverReplyTime(today.getTime() > replyTime.getTime());
+  }, []);
+
   return (
     <>
       <section
@@ -84,7 +99,13 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
       >
         <div className="flex justify-between items-end mb-5">
           <h2 className="text-sub-indigo pl-4 font-p-M20">
-            To. <span suppressHydrationWarning>{nickname}</span>님
+            {isOverReplyTime ? (
+              <p>
+                To. <span>{nickname}</span>님
+              </p>
+            ) : (
+              '답장을 쓰는 중...'
+            )}
           </h2>
           <Image
             className="mr-4"
@@ -95,15 +116,23 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
           />
         </div>
         <div className="text-grayscale-800 font-p-R18-2 bg-opacity-70 p-6 rounded-2xl relative after:content-[''] after:absolute after:top-[-16px] after:right-14 after:w-[18px] after:h-[12px] after:bg-transparent after:border-8 after:border-transparent after:border-r-opacity-70 after:border-r-[11px] after:rounded-tr-[25px] after:border-b-opacity-70">
-          {response.answer?.split('\n').map((el: string, idx: number) => (
-            <p key={idx}>
-              {el}
+          {isOverReplyTime ? (
+            response.answer?.split('\n').map((el: string, idx: number) => (
+              <p key={idx}>
+                {el}
+                <br />
+              </p>
+            ))
+          ) : (
+            <p>
+              그루미가 답장을 쓰고 있어요.
               <br />
+              매일 아침 8시에 답장을 확인해주세요!
             </p>
-          ))}
+          )}
         </div>
       </section>
-      {!initSubmittedFeedback && (
+      {!initSubmittedFeedback && isOverReplyTime && (
         <section className="mb-12">
           {starPoint === 0 ? (
             <div className="flex flex-col items-center justify-center gap-y-2">

@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSetRecoilState } from 'recoil';
-import { recordState, recordWriteState } from '@/store';
+import { recordState, recordWriteState, waitingRecordsState } from '@/store';
 import { tracking } from '@/utils/mixPannel';
 import { useRouter } from 'next/navigation';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
@@ -18,6 +18,7 @@ export const useCreateRecord = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const setWriteState = useSetRecoilState(recordWriteState);
+  const setWaitingRecords = useSetRecoilState(waitingRecordsState);
   const queryClient = useQueryClient();
   const setRecords = useSetRecoilState(recordState);
 
@@ -45,10 +46,13 @@ export const useCreateRecord = () => {
 
       to ? tracking('그루미에게 답장받기 클릭') : tracking('일기 작성하기 클릭');
       setWriteState(prev => ({ ...prev, content: '', state: 'SAVE' }));
+      setWaitingRecords(prev => ({
+        waitingList: [data, ...prev.waitingList],
+      }));
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
         const newData = {
           ...old,
-          [date]: [...(old[date] || []), data],
+          [date]: [...(old?.[date] || []), data],
         };
 
         setRecords(newData);

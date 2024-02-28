@@ -10,7 +10,7 @@ export const PROMPT_TEMPLATE: PromptType = {
   0: {
     id: '0',
     question: '오늘 무슨 일이 있었는지 \n말해줄래요?',
-    placeholder: '그루미와 함께 대화하다보면 어느샌가 성장해 있을 거에요',
+    placeholder: '오늘 나는 ...',
     prompt: `User가 "오늘 경험한 일" 혹은 "오늘 일상에서 느끼고 생각한 것"에 대한 글을 작성했습니다.
     당신은 User의 글을 읽고나서 User에게 긍정적인 조언과 응원을 해주는 '그루미'입니다.
     

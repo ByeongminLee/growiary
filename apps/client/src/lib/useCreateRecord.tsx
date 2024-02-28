@@ -49,20 +49,32 @@ export const useCreateRecord = () => {
       setWaitingRecords(prev => ({
         waitingList: [data, ...prev.waitingList],
       }));
-      queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
-        const newData = {
-          ...old,
-          [date]: [...(old?.[date] || []), data],
-        };
+      try {
+        queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
+          const newData = {
+            ...old,
+            [date]: [...(old?.[date] || []), data],
+          };
 
-        setRecords(newData);
+          setRecords(newData);
 
-        return newData;
-      });
-      router.push(`/calendar/${date}/${data.postId}`);
+          return newData;
+        });
+        router.push(`/calendar/${date}/${data.postId}`);
+      } catch {
+        const error = new Error(data.postId);
+        error.name = 'Saving error';
+        throw error;
+      }
     },
-    onError: () => {
-      alert('문제 발생');
+    onError: (error, variables, context) => {
+      if (error.name === 'Saving error') {
+        router.push(
+          `/calendar/${getDateFromServer(variables.body.date as string)}/${error.message}`,
+        );
+      } else {
+        alert('일기 작성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     },
   });
 

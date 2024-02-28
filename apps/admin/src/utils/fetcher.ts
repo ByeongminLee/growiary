@@ -6,7 +6,7 @@ const fetcher = async ({
   method,
   body,
 }: {
-  url: 'profile' | 'post' | 'admin-guard' | 'update-profile';
+  url: 'profile' | 'post' | 'admin-guard' | 'update-profile' | 'update-post';
   method?: 'GET' | 'POST';
   body?: any;
 }) => {

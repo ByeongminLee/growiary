@@ -30,6 +30,7 @@ export type RecordType = {
   updateAt: string;
   createAt: string;
   answer?: string;
+  selectedAt?: string;
   feedback?: FeedbackType;
   ai?: UsageAiType;
 };

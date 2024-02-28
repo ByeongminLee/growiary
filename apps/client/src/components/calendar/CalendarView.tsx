@@ -8,13 +8,14 @@ import { RecordType } from '@/types';
 import { useSession } from 'next-auth/react';
 import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 
 const CalendarView = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const params = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
@@ -146,6 +147,9 @@ const CalendarView = () => {
 
   useEffect(
     function setInitRecordsPosY() {
+      if (pathname !== '/calendar') {
+        router.refresh();
+      }
       if (articleElRef.current) {
         initArticleYPosRef.current =
           articleElRef.current.previousElementSibling?.getBoundingClientRect().bottom ||

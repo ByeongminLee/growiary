@@ -6,13 +6,15 @@ import { usePathname } from 'next/navigation';
 import { tracking } from '@/utils/mixPannel';
 
 type TabType = 'home' | 'calendar' | 'profile';
+
+const tabs = [
+  { name: 'home', href: '/', ext: 'svg', page: '메인 페이지' },
+  { name: 'calendar', href: '/calendar', ext: 'png', page: '캘린더 페이지' },
+  { name: 'profile', href: '/profile', ext: 'png', page: '프로필 페이지' },
+] as { name: TabType; href: string; ext: 'png' | 'svg'; page: string }[];
+
 const Tab = () => {
   const pathname = usePathname();
-  const tabs = [
-    { name: 'home', href: '/', ext: 'svg', page: '메인 페이지' },
-    { name: 'calendar', href: '/calendar', ext: 'png', page: '캘린더 페이지' },
-    { name: 'profile', href: '/profile', ext: 'png', page: '프로필 페이지' },
-  ] as { name: TabType; href: string; ext: 'png' | 'svg'; page: string }[];
 
   return (
     <nav

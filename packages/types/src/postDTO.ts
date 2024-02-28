@@ -19,6 +19,7 @@ export type Post = {
   template: string;
   createAt: string | Date;
   updateAt: string | Date;
+  selectedAt?: string | Date;
   feedback?: FeedbackType;
   feedbackDetail?: FeedbackDetailType;
   answer?: string;

@@ -6,6 +6,7 @@ import {
   Button,
   DateRangePicker,
   DateRangePickerValue,
+  Switch,
   Table,
   TableCell,
   TableHead,
@@ -40,11 +41,28 @@ export const PostsView = () => {
       }),
   });
 
+  const { data: profilesIdArr, isLoading: isLoadingProfiles } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () =>
+      fetcher({ url: 'profile' }).then(res =>
+        res.data
+          .filter(
+            (v: { role: 'ADMIN' | 'USER' | 'TESTER' }) =>
+              v.role === 'ADMIN' || v.role === 'TESTER',
+          )
+          .map((v: { userId: string }) => v.userId),
+      ),
+  });
+
   const [filterPosts, setFilterPosts] = useState(posts);
 
   useEffect(() => {
     if (posts) setFilterPosts(posts);
   }, [posts]);
+
+  useEffect(() => {
+    if (profilesIdArr) console.log(profilesIdArr);
+  }, [profilesIdArr]);
 
   const { isOpen, onOpen, onClose } = useModal();
   const [setting, setSetting] = useState<PostType | null>();
@@ -105,25 +123,44 @@ export const PostsView = () => {
     }
   };
 
-  if (isLoadingPosts && filterPosts) return <div>Loading...</div>;
+  const [isSwitch, setIsSwitch] = useState(true);
+  const handleSwitchChange = () => {
+    setIsSwitch(!isSwitch);
+  };
+
+  if (isLoadingPosts && isLoadingProfiles && filterPosts) return <div>Loading...</div>;
 
   return (
     <>
       <Navbar />
       <div className="max-w-[640px] lg:max-w-[1024px] mx-auto py-24">
-        <div className="flex justify-end gap-x-2">
-          <DateRangePicker
-            className="max-w-sm"
-            enableSelect={false}
-            enableClear={false}
-            onValueChange={dateRangeHandler}
-            value={datePick}
-          />
-          <Button onClick={searchHandler}>검색</Button>
-          <Button variant="secondary" onClick={datePickerReset}>
-            초기화
-          </Button>
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex justify-end gap-x-2 items-center">
+            <label className="text-tremor-default text-tremor-content ">
+              선택시 테스트와 관리자 계정 제외
+            </label>
+            <Switch
+              id="switch"
+              name="switch"
+              checked={isSwitch}
+              onChange={handleSwitchChange}
+            />
+          </div>
+          <div className="flex justify-end gap-x-2 items-center">
+            <DateRangePicker
+              className="max-w-sm"
+              enableSelect={false}
+              enableClear={false}
+              onValueChange={dateRangeHandler}
+              value={datePick}
+            />
+            <Button onClick={searchHandler}>검색</Button>
+            <Button variant="secondary" onClick={datePickerReset}>
+              초기화
+            </Button>
+          </div>
         </div>
+
         <Table>
           <TableHead className="border-b-2">
             <TableHeaderCell className="text-center">옵션</TableHeaderCell>
@@ -135,37 +172,42 @@ export const PostsView = () => {
             <TableHeaderCell className="text-center">세팅</TableHeaderCell>
           </TableHead>
           {filterPosts &&
-            filterPosts.map((post: any) => (
-              <TableRow
-                key={post.postId}
-                className="even:bg-tremor-background-muted even:dark:bg-dark-tremor-background-muted"
-              >
-                <TableCell className="flex items-center justify-center h-[80px] max-w-[50px]">
-                  {post.answerUpdate ? <LuBadgeCheck className="w-6 h-6" /> : ''}
-                </TableCell>
-                <TableCell className="text-center text-xs h-[80px]">
-                  {post.userId}
-                </TableCell>
-                <TableCell className="text-center text-xs h-[80px] max-w-[150px] truncate">
-                  {post.postId}
-                </TableCell>
-                <TableCell className="text-center text-xs max-w-[150px] truncate">
-                  {post.content}
-                </TableCell>
-                <TableCell className="text-center text-xs max-w-[150px] truncate">
-                  {post.answer}
-                </TableCell>
-                <TableCell className="text-center">
-                  {formatUTCDateKR(post.createAt)}
-                </TableCell>
-                <TableCell className="flex items-center justify-center h-[80px]">
-                  <RxHamburgerMenu
-                    className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
-                    onClick={() => handleOpenModal(post)}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            filterPosts
+              .filter((post: any) => {
+                if (isSwitch) return !profilesIdArr.includes(post.userId);
+                else return post;
+              })
+              .map((post: any) => (
+                <TableRow
+                  key={post.postId}
+                  className="even:bg-tremor-background-muted even:dark:bg-dark-tremor-background-muted"
+                >
+                  <TableCell className="flex items-center justify-center h-[80px] max-w-[50px]">
+                    {post.answerUpdate ? <LuBadgeCheck className="w-6 h-6" /> : ''}
+                  </TableCell>
+                  <TableCell className="text-center text-xs h-[80px]">
+                    {post.userId}
+                  </TableCell>
+                  <TableCell className="text-center text-xs h-[80px] max-w-[150px] truncate">
+                    {post.postId}
+                  </TableCell>
+                  <TableCell className="text-center text-xs max-w-[150px] truncate">
+                    {post.content}
+                  </TableCell>
+                  <TableCell className="text-center text-xs max-w-[150px] truncate">
+                    {post.answer}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {formatUTCDateKR(post.createAt)}
+                  </TableCell>
+                  <TableCell className="flex items-center justify-center h-[80px]">
+                    <RxHamburgerMenu
+                      className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
+                      onClick={() => handleOpenModal(post)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
         </Table>
 
         {setting && isOpen && (

@@ -90,6 +90,7 @@ export class PostService {
               : 'ACTIVE',
             createAt: dateConverter(userPostsData[postId].createAt),
             updateAt: dateConverter(userPostsData[postId].updateAt),
+            selectedAt: dateConverter(userPostsData[postId].selectedAt),
           }));
 
         return { status: 200, data: postsArray };
@@ -123,8 +124,10 @@ export class PostService {
     for (const postId of Object.keys(userPostsData)) {
       const post = userPostsData[postId];
       if (post.status !== 'DELETED') {
+        const writingDate = post.selectedAt ? post.selectedAt : post.createAt;
+
         const date = await this.dateOffset({
-          date: dateConverter(post.createAt),
+          date: writingDate?._seconds ? dateConverter(writingDate) : writingDate,
           offset,
         });
 
@@ -143,6 +146,7 @@ export class PostService {
             ...post,
             createAt: dateConverter(post.createAt),
             updateAt: dateConverter(post.updateAt),
+            selectedAt: date,
           });
         }
       }
@@ -174,8 +178,9 @@ export class PostService {
       [postId]: {
         ...createPostDTO,
         feedback: 'NONE',
-        createAt: date,
-        updateAt: date,
+        createAt: new Date(),
+        updateAt: new Date(),
+        selectedAt: new Date(date),
       },
     };
 
@@ -221,8 +226,9 @@ export class PostService {
           usage,
         },
         feedback: 'NONE',
-        createAt: date,
-        updateAt: date,
+        createAt: new Date(),
+        updateAt: new Date(),
+        selectedAt: new Date(date),
       },
     };
 

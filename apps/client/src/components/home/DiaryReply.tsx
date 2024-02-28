@@ -87,7 +87,7 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
       0,
     );
     setIsOverReplyTime(today.getTime() > replyTime.getTime());
-  }, []);
+  }, [response.createAt]);
 
   return (
     <>

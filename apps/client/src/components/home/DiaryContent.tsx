@@ -7,7 +7,9 @@ type DiaryContentProps = {
   response: RecordType;
 };
 const DiaryContent = ({ response }: DiaryContentProps) => {
-  const [year, month, date, day] = getFullStrDate(getDateFromServer(response.createAt));
+  const [year, month, date, day] = getFullStrDate(
+    getDateFromServer(response.selectedAt || response.createAt),
+  );
   const template: DiaryTemplate = response && diaryTemplates[response.template];
 
   return (

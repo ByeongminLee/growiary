@@ -28,7 +28,7 @@ import LottieAnimation from '@/components/ui/LottieAnimation';
 import Link from 'next/link';
 
 interface MainReplyViewProps {
-  date: RecordType['createAt'];
+  date: RecordType['selectedAt'] & RecordType['createAt'];
   postId: RecordType['postId'];
 }
 

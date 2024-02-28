@@ -3,7 +3,7 @@ import { RecordType } from '@/types';
 
 type RecordDetailPageProps = {
   params: {
-    date: RecordType['createAt'];
+    date: RecordType['selectedAt'] & RecordType['createAt'];
     id: RecordType['postId'];
   };
 };

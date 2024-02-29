@@ -361,7 +361,11 @@ export const UserTable = () => {
                           <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                             답변 글
                           </label>
-                          <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                          {item.answer ? (
+                            <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                          ) : (
+                            '작성된 답변이 없습니다.'
+                          )}
                         </div>
 
                         <div className="flex justify-between">

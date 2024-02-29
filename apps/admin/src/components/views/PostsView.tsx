@@ -31,6 +31,7 @@ export const PostsView = () => {
     queryFn: () =>
       fetcher({ url: 'post' }).then(res => {
         return res.data
+          .filter((post: { status: string }) => post.status !== 'DELETED')
           .filter((v: { selectedAt: any }) => {
             if (v.selectedAt) return v;
           })

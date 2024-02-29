@@ -28,7 +28,7 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
     mutationFn: ({ body }: UseGetRecordBodyType) =>
       getRecords({
         id: session?.id || '',
-        body: { ...body, offset: -new Date().getTimezoneOffset() },
+        body: { ...body, offset: new Date().getTimezoneOffset() },
       }),
     onSuccess: result => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {

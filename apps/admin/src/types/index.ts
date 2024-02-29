@@ -3,8 +3,8 @@ export type PostType = {
   postId: string;
   feedback: 'GOOD' | 'NONE' | 'BAD';
   template: string;
-  answer: string;
-  ai: any;
+  answer?: string;
+  ai?: any;
   updateAt: string;
   content: string;
   createAt: string;

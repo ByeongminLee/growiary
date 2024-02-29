@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import fetcher from '@/utils/fetcher';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -81,7 +81,10 @@ export const PostsView = () => {
     setEditAiAnswer(e.target.value);
   };
 
-  const [datePick, setDatePick] = useState<DateRangePickerValue | undefined>(undefined);
+  const [datePick, setDatePick] = useState<DateRangePickerValue | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 1)),
+    to: new Date(),
+  });
   const dateRangeHandler = (date: any) => {
     setDatePick(date);
   };
@@ -89,6 +92,11 @@ export const PostsView = () => {
     setDatePick({});
     setFilterPosts(posts);
   };
+
+  useEffect(() => {
+    if (!datePick) return;
+    if (posts) searchHandler();
+  }, [posts]);
 
   const searchHandler = () => {
     if (!datePick) {
@@ -129,6 +137,11 @@ export const PostsView = () => {
     setIsSwitch(!isSwitch);
   };
 
+  const [isAnswerSwitch, setIsAnswerSwitch] = useState(true);
+  const handleAnswerSwitchChange = () => {
+    setIsAnswerSwitch(!isAnswerSwitch);
+  };
+
   if (isLoadingPosts && isLoadingProfiles && filterPosts) return <div>Loading...</div>;
 
   return (
@@ -136,6 +149,17 @@ export const PostsView = () => {
       <Navbar />
       <div className="max-w-[640px] lg:max-w-[1024px] mx-auto py-24">
         <div className="flex flex-col gap-4 mb-6">
+          <div className="flex justify-end gap-x-2 items-center">
+            <label className="text-tremor-default text-tremor-content ">
+              답장이 있는 글만 보기
+            </label>
+            <Switch
+              id="switch"
+              name="switch"
+              checked={isAnswerSwitch}
+              onChange={handleAnswerSwitchChange}
+            />
+          </div>
           <div className="flex justify-end gap-x-2 items-center">
             <label className="text-tremor-default text-tremor-content ">
               선택시 테스트와 관리자 계정 제외
@@ -153,6 +177,9 @@ export const PostsView = () => {
               enableSelect={false}
               enableClear={false}
               onValueChange={dateRangeHandler}
+              defaultValue={{
+                from: new Date(),
+              }}
               value={datePick}
             />
             <Button onClick={searchHandler}>검색</Button>
@@ -165,11 +192,11 @@ export const PostsView = () => {
         <Table>
           <TableHead className="border-b-2">
             <TableHeaderCell className="text-center">옵션</TableHeaderCell>
-            <TableHeaderCell className="text-center">유저 아이디</TableHeaderCell>
-            <TableHeaderCell className="text-center">postId</TableHeaderCell>
+            <TableHeaderCell className="text-center">아이디</TableHeaderCell>
             <TableHeaderCell className="text-center">작성글</TableHeaderCell>
             <TableHeaderCell className="text-center">답장글</TableHeaderCell>
             <TableHeaderCell className="text-center">생성일</TableHeaderCell>
+            <TableHeaderCell className="text-center">작성선택일</TableHeaderCell>
             <TableHeaderCell className="text-center">세팅</TableHeaderCell>
           </TableHead>
           {filterPosts &&
@@ -177,6 +204,11 @@ export const PostsView = () => {
               .filter((post: any) => {
                 if (isSwitch) return !profilesIdArr.includes(post.userId);
                 else return post;
+              })
+              .filter((post: any) => {
+                if (isAnswerSwitch) {
+                  if (post.answer) return post;
+                } else return post;
               })
               .map((post: any) => (
                 <TableRow
@@ -186,22 +218,24 @@ export const PostsView = () => {
                   <TableCell className="flex items-center justify-center h-[80px] max-w-[50px]">
                     {post.answerUpdate ? <LuBadgeCheck className="w-6 h-6" /> : ''}
                   </TableCell>
-                  <TableCell className="text-center text-xs h-[80px]">
+                  <TableCell className="text-center text-[10px] h-[80px]">
                     {post.userId}
-                  </TableCell>
-                  <TableCell className="text-center text-xs h-[80px] max-w-[150px] truncate">
+                    <br />
                     {post.postId}
                   </TableCell>
-                  <TableCell className="text-center text-xs max-w-[150px] truncate">
+                  <TableCell className="text-center text-xs max-w-[120px] truncate">
                     {post.content}
                   </TableCell>
-                  <TableCell className="text-center text-xs max-w-[150px] truncate">
-                    {post.answer}
+                  <TableCell className="text-center text-xs max-w-[120px] truncate">
+                    {post.answer ? post.answer : 'X'}
                   </TableCell>
                   <TableCell className="text-center">
                     {formatUTCDateKR(post.createAt)}
                   </TableCell>
-                  <TableCell className="flex items-center justify-center h-[80px]">
+                  <TableCell className="text-center">
+                    {formatUTCDateKR(post.selectedAt)}
+                  </TableCell>
+                  <TableCell className="flex items-center justify-center h-[105px]">
                     <RxHamburgerMenu
                       className="w-8 h-8 cursor-pointer hover:bg-gray-200 rounded-full p-2"
                       onClick={() => handleOpenModal(post)}
@@ -245,6 +279,12 @@ export const PostsView = () => {
                     <Text>{formatUTCDateKR(setting.updateAt)}</Text>
                   </div>
                 </div>
+                <div className="">
+                  <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                    작성 선택일
+                  </label>
+                  <Text>{formatUTCDateKR(setting.selectedAt)}</Text>
+                </div>
                 <div>
                   <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                     작성 글
@@ -255,7 +295,11 @@ export const PostsView = () => {
                   <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                     답변 글
                   </label>
-                  <p dangerouslySetInnerHTML={{ __html: setting.answer }} />
+                  {setting.answer ? (
+                    <p dangerouslySetInnerHTML={{ __html: setting.answer }} />
+                  ) : (
+                    '답변된 글이 없습니다.'
+                  )}
                 </div>
                 <div className="mt-4">
                   <label className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">

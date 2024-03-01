@@ -12,6 +12,7 @@ import {
   AvgPostsCharacter,
   ByDate,
   FeedbackSatisfaction,
+  Retention,
   UserTable,
 } from '..';
 import { Navbar } from '../common';
@@ -81,6 +82,13 @@ export const DashboardView = () => {
             <Metric>유저 정보</Metric>
           </div>
           <UserTable />
+        </div>
+
+        <div className="mt-8 sm:max-w-[640px] lg:max-w-[1024px] mx-auto max-w-xs">
+          <div className="sm:text-left text-center">
+            <Metric>유저 리텐션</Metric>
+          </div>
+          <Retention />
         </div>
       </div>
     </>

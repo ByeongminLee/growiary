@@ -7,3 +7,4 @@ export * from './FeedbackSatisfaction';
 export * from './ByDate';
 export * from './TemplateCount';
 export * from './PerUser';
+export * from './Retention';

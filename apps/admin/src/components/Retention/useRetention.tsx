@@ -21,23 +21,17 @@ export const useRetention = () => {
 
     const metric = generateMetrics(hitmapBase, dataBase);
     const result = addSequenceValue(metric);
-    console.log(result);
     setDate(result);
   };
 
   const filterByDateRange = (date: Date, from: any, to: any) => {
     const utcOffset = 9 * 60 * 60 * 1000;
-    const fromUTC = new Date(from.getTime() + utcOffset);
-    const toUTC = new Date(to.getTime() + utcOffset);
+    const fromDate = new Date(from.getTime() + utcOffset);
+    const toDate = new Date(to.getTime() + utcOffset);
 
-    return (
-      date.getFullYear() >= fromUTC.getFullYear() &&
-      date.getMonth() >= fromUTC.getMonth() &&
-      date.getDate() >= fromUTC.getDate() &&
-      date.getFullYear() <= toUTC.getFullYear() &&
-      date.getMonth() <= toUTC.getMonth() &&
-      date.getDate() <= toUTC.getDate()
-    );
+    const dateUTC = new Date(date.getTime() + utcOffset);
+
+    return dateUTC >= fromDate && dateUTC <= toDate;
   };
 
   const getFilteredData = () => {
@@ -47,12 +41,12 @@ export const useRetention = () => {
         filterByDateRange(new Date(user.createdAt), datePick?.from, datePick?.to),
     );
     const selectedUserIds = selectedUsers.map(user => user.userId);
+
     const selectedUserPosts = posts.filter(
       post =>
         selectedUserIds.includes(post.userId) &&
         filterByDateRange(new Date(post.createAt), datePick?.from, datePick?.to),
     );
-
     return selectedUsers.map(user => ({
       userId: user.userId,
       createAt: user.createdAt,
@@ -63,7 +57,6 @@ export const useRetention = () => {
 
   const generateHitmap = (datePicker: DateRangePickerValue) => {
     if (!datePicker?.from || !datePicker?.to) return [];
-
     const fromDate = new Date(datePicker.from);
     const toDate = new Date(datePicker.to);
     const dateList = [];
@@ -72,7 +65,6 @@ export const useRetention = () => {
       const formattedDate = formatDate(date);
       dateList.push({ color: 'gray', tooltip: formattedDate });
     }
-
     return dateList;
   };
 

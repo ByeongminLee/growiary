@@ -32,10 +32,9 @@ export const getTwoDigitNum = (num: number) => {
 export const getFirstAndLastDateFromSpecificDate = (selected: Date) => {
   const year = selected.getFullYear();
   const month = selected.getMonth() + 1;
-  const lastDate = new Date(year, month, 0, 0, 0, 0).getDate();
   return {
     firstDate: `${year}-${getTwoDigitNum(month)}-01`,
-    lastDate: `${year}-${getTwoDigitNum(month)}-${lastDate}`,
+    lastDate: `${year}-${getTwoDigitNum(month + 1)}-01`,
   };
 };
 

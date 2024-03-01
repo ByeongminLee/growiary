@@ -65,7 +65,8 @@ const MainView = () => {
       storedObj?.[`${year}-${month}-${date}`]?.findIndex(
         record => record.answer && record.answer.length > 0,
       ) ?? -1;
-    setRepliedCount(repliedCount + 1);
+    // 이전 날짜 시 구르미 답장 받기 기능 제거
+    setRepliedCount(selectedTime !== todayTime ? 1 : repliedCount + 1);
   };
 
   const { mutation: getRecordsMutation } = useGetRecords({

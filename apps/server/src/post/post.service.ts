@@ -121,20 +121,34 @@ export class PostService {
 
     const filteredPosts = [];
 
+    const _offset = offset ? Number(offset) : -540;
+    const startDateUTC = new Date(startDate);
+    startDateUTC.setMinutes(startDateUTC.getMinutes() + _offset);
+    const endDateUTC = new Date(endDate);
+    endDateUTC.setMinutes(endDateUTC.getMinutes() + _offset);
+
+    console.log(
+      'start:',
+      startDate,
+      startDateUTC,
+      '\n',
+      'end:',
+      endDate,
+      endDateUTC,
+      '\noffset:',
+      offset,
+    );
+
     for (const postId of Object.keys(userPostsData)) {
       const post = userPostsData[postId];
       if (post.status !== 'DELETED') {
         const writingDate = post.selectedAt ? post.selectedAt : post.createAt;
+        const date = writingDate?._seconds ? dateConverter(writingDate) : writingDate;
 
-        const date = await this.dateOffset({
-          date: writingDate?._seconds ? dateConverter(writingDate) : writingDate,
-          offset,
-        });
-
-        const startDateUTC = new Date(startDate);
-        startDateUTC.setHours(startDateUTC.getHours() - 9);
-        const endDateUTC = new Date(endDate);
-        endDateUTC.setHours(endDateUTC.getHours() - 9);
+        // const date = await this.dateOffset({
+        //   date: writingDate?._seconds ? dateConverter(writingDate) : writingDate,
+        //   offset,
+        // });
 
         if (date >= startDateUTC && date < endDateUTC) {
           filteredPosts.push({
@@ -146,7 +160,7 @@ export class PostService {
             ...post,
             createAt: dateConverter(post.createAt),
             updateAt: dateConverter(post.updateAt),
-            selectedAt: date,
+            selectedAt: writingDate?._seconds ? dateConverter(writingDate) : writingDate,
           });
         }
       }
@@ -169,10 +183,10 @@ export class PostService {
 
     const postId = uuidv4();
 
-    const date = await this.dateOffset({
-      date: createPostDTO.date,
-      offset: createPostDTO.offset,
-    });
+    // const date = await this.dateOffset({
+    //   date: createPostDTO.date,
+    //   offset: createPostDTO.offset,
+    // });
 
     const data = {
       [postId]: {
@@ -180,7 +194,7 @@ export class PostService {
         feedback: 'NONE',
         createAt: new Date(),
         updateAt: new Date(),
-        selectedAt: new Date(date),
+        selectedAt: new Date(createPostDTO.date),
       },
     };
 
@@ -211,10 +225,10 @@ export class PostService {
 
     const { id, created, usage, content } = dataFromOpenAIResult(aiAnswer.message);
 
-    const date = await this.dateOffset({
-      date: createPostDTO.date,
-      offset: createPostDTO.offset,
-    });
+    // const date = await this.dateOffset({
+    //   date: createPostDTO.date,
+    //   offset: createPostDTO.offset,
+    // });
 
     const data = {
       [postId]: {
@@ -228,7 +242,7 @@ export class PostService {
         feedback: 'NONE',
         createAt: new Date(),
         updateAt: new Date(),
-        selectedAt: new Date(date),
+        selectedAt: new Date(createPostDTO.date),
       },
     };
 

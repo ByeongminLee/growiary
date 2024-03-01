@@ -76,18 +76,18 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
   }, [userName]);
 
   useEffect(() => {
-    const createDate = new Date(response.createAt).getDate();
+    const selectedDate = new Date(response.selectedAt || response.createAt);
     const today = new Date();
     const replyTime = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      createDate + 1,
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate() + 1,
       8,
       0,
       0,
     );
     setIsOverReplyTime(today.getTime() > replyTime.getTime());
-  }, [response.createAt]);
+  }, [response.postId]);
 
   return (
     <>

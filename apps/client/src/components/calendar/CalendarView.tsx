@@ -5,7 +5,6 @@ import { diaryTemplates } from '@/utils/getDiaryTemplates';
 import DiaryContent from '@/components/home/DiaryContent';
 import DiaryReply from '@/components/home/DiaryReply';
 import { RecordType } from '@/types';
-import { useSession } from 'next-auth/react';
 import { getFullStrDate, getYMDFromDate } from '@/utils/getDateFormat';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -13,7 +12,6 @@ import { ChevronLeft } from 'lucide-react';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 
 const CalendarView = () => {
-  const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -170,7 +168,7 @@ const CalendarView = () => {
         }
       }
     },
-    [session?.id, params, pathname, router],
+    [params, pathname, router],
   );
 
   return (

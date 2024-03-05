@@ -14,7 +14,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { initExperienceState, recordState, recordWriteState } from '@/store';
 import {
   AlertDialog,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
@@ -218,15 +217,12 @@ const MainView = () => {
       if (!session?.id) return;
       const { firstDate: startDate, lastDate: endDate } =
         getFirstAndLastDateFromSpecificDate(selectedDate);
-
-      (async () => {
-        await getRecordsMutation.mutateAsync({
-          body: {
-            startDate,
-            endDate,
-          },
-        });
-      })();
+      getRecordsMutation.mutateAsync({
+        body: {
+          startDate,
+          endDate,
+        },
+      });
     },
     [session?.id, month],
   );

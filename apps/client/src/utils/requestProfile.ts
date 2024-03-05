@@ -1,4 +1,5 @@
 import { ProfileResType } from '@/types';
+import { serverError } from '@/utils/errorTypes';
 
 type FetchProfileProps = {
   id?: string;
@@ -14,7 +15,7 @@ export const getProfile = async ({
     },
   });
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw serverError();
   }
   return response.json();
 };

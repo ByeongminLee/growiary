@@ -6,6 +6,7 @@ import { getDateFromServer } from '@/utils/getDateFormat';
 import { useRouter } from 'next/navigation';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { recordState, recordWriteState } from '@/store';
+import { fetchApi } from '@/utils/fetchApi';
 
 type UseEditRecordProps = {
   onSuccessCb: () => void;
@@ -26,19 +27,11 @@ export const useEditRecord = ({ onSuccessCb, postId, date }: UseEditRecordProps)
       const bodyObj = {
         postId,
       };
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/edit`, {
+      return fetchApi('/post/edit', {
         method: 'POST',
-        headers: {
-          Authorization: session?.id || '',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify(status ? { ...bodyObj, status } : { ...bodyObj, content }),
+        id: session?.id,
+        body: status ? { ...bodyObj, status } : { ...bodyObj, content },
       });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
     },
     onSuccess: (result, { content, status }) => {
       const key = getDateFromServer(date);

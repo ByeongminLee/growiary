@@ -5,7 +5,6 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useUserName } from '@/lib/useUserName';
 import { tracking } from '@/utils/mixPannel';
 import { ApiResponse, DiaryTemplate, RecordType, ResponseStatus } from '@/types';
-import { useFetch } from '@/lib/useFetch';
 import { useSetRecoilState } from 'recoil';
 import { recordState } from '@/store';
 import { useSession } from 'next-auth/react';
@@ -14,6 +13,7 @@ import Star from '@/components/ui/icon/Star';
 import config from '../../../tailwind.config';
 import { FeedbackType } from '@growiary/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
+import { fetchApi } from '@/utils/fetchApi';
 
 type DiaryReplyProps = {
   response: RecordType;
@@ -30,7 +30,6 @@ const FeedbackArr: FeedbackType[] = ['NONE', 'BAD', 'NOTBAD', 'AVERAGE', 'FINE',
 const DiaryReply = ({ response }: DiaryReplyProps) => {
   const { data: session } = useSession();
   const userName = useUserName();
-  const requestApi = useFetch();
   const [nickname, setNickname] = useState('');
   const [starPoint, setStarPoint] = useState(-1);
   const [initSubmittedFeedback, setInitSubmittedFeedback] = useState(true);
@@ -43,7 +42,7 @@ const DiaryReply = ({ response }: DiaryReplyProps) => {
     setStarPoint(point);
     tracking('답장 피드백 제출');
 
-    const apiResponse = (await requestApi('/post/feedback', {
+    const apiResponse = (await fetchApi('/post/feedback', {
       method: 'POST',
       id: session?.id,
       body: {

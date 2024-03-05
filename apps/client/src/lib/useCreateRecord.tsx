@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
 import { CreatePostDTO } from '@growiary/types';
+import { fetchApi } from '@/utils/fetchApi';
 
 type UseCreateRecordBodyType = {
   to?: 'AI';
@@ -28,18 +29,11 @@ export const useCreateRecord = () => {
       body,
       to,
     }: UseCreateRecordBodyType): Promise<ApiSuccess<RecordType>> => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}` + `${to ? '/post/ai' : '/post'}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: session?.id || '',
-            'Content-Type': 'application/json; charset=utf-8',
-          },
-          body: JSON.stringify(body),
-        },
-      );
-      return response.json();
+      return fetchApi(to ? '/post/ai' : '/post', {
+        method: 'POST',
+        id: session?.id,
+        body,
+      });
     },
     onSuccess: ({ data }, { to }) => {
       const date = getDateFromServer(data.selectedAt || data.createAt);
@@ -67,7 +61,7 @@ export const useCreateRecord = () => {
         throw error;
       }
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables) => {
       if (error.name === 'Saving error') {
         router.push(
           `/calendar/${getDateFromServer(variables.body.date as string)}/${error.message}`,

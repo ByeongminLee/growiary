@@ -17,7 +17,14 @@ const CalendarView = () => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(function initSelectedState() {
+    if (params.has('date')) {
+      const newSelectedDate = params.get('date')!;
+      const [year, month, date] = newSelectedDate.split('-');
+      return new Date(+year, +month - 1, +date, 0, 0, 0);
+    }
+    return new Date();
+  });
   const [response, setResponse] = useState<RecordType[] | undefined>([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [moveState, setMoveState] = useState<'UP' | 'DOWN' | 'NONE'>('NONE');
@@ -163,13 +170,14 @@ const CalendarView = () => {
         }
       }
     },
-    [session?.id, params],
+    [session?.id, params, pathname, router],
   );
 
   return (
     <div>
       <section className="mx-2">
         <CalendarWithRecords
+          initSelectDate={selectedDate}
           setResponse={setResponse}
           addedCaptionLabel="의 답장"
           onChangeSelectDate={onChangeSelectDate}

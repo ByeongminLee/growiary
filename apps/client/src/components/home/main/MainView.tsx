@@ -288,6 +288,7 @@ const MainView = () => {
                   width={64}
                   height={64}
                   className="mr-4"
+                  priority
                 />
               </div>
               <div
@@ -371,7 +372,13 @@ const MainView = () => {
         <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>
-            <Image src="/assets/icons/swipe.png" alt="swipe" width={96} height={88} />
+            <Image
+              src="/assets/icons/swipe.png"
+              alt="swipe"
+              width={96}
+              height={88}
+              priority
+            />
           </div>
         </OneTimeToast>
       )}
@@ -385,7 +392,13 @@ const MainView = () => {
               <p className="pb-5 font-p-M16 text-grayscale-700 whitespace-nowrap	">
                 매일 아침 8시에 답장이 도착할거예요!
               </p>
-              <Image src="/assets/icons/post.png" alt="message" width={101} height={86} />
+              <Image
+                src="/assets/icons/post.png"
+                alt="message"
+                width={101}
+                height={86}
+                priority
+              />
             </div>
           </AlertDialogContent>
         </AlertDialogOverlay>

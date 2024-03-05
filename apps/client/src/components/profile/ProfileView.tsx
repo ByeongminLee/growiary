@@ -12,7 +12,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { privacyContent, serviceContent } from '@/utils/agreementContents';
@@ -81,21 +80,17 @@ const ProfileView = () => {
                   <Union />
                 </div>
               </AlertDialogTrigger>
-              <AlertDialogOverlay>
-                <AlertDialogContent className="w-[90%] rounded-md	">
-                  <div className="flex flex-col gap-3 h-[70vh]">
-                    <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
-                    <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
-                      {serviceContent}
-                    </AlertDialogDescription>
-                    <Button variant="secondary" asChild>
-                      <AlertDialogAction className="btn-full">
-                        확인했어요
-                      </AlertDialogAction>
-                    </Button>
-                  </div>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
+              <AlertDialogContent className="w-[90%] rounded-md	">
+                <div className="flex flex-col gap-3 h-[70vh]">
+                  <h2 className="font-p-M24 text-center">서비스 이용약관</h2>
+                  <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
+                    {serviceContent}
+                  </AlertDialogDescription>
+                  <Button variant="secondary" asChild>
+                    <AlertDialogAction className="btn-full">확인했어요</AlertDialogAction>
+                  </Button>
+                </div>
+              </AlertDialogContent>
             </AlertDialog>
           </div>
         </div>
@@ -113,21 +108,17 @@ const ProfileView = () => {
                   <Union />
                 </div>
               </AlertDialogTrigger>
-              <AlertDialogOverlay>
-                <AlertDialogContent className="w-[90%] rounded-md">
-                  <div className="flex flex-col gap-3 h-[70vh]">
-                    <h2 className="font-p-M24 text-center">개인정보 처리방침</h2>
-                    <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
-                      {privacyContent}
-                    </AlertDialogDescription>
-                    <Button variant="secondary" asChild>
-                      <AlertDialogAction className="btn-full">
-                        확인했어요
-                      </AlertDialogAction>
-                    </Button>
-                  </div>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
+              <AlertDialogContent className="w-[90%] rounded-md">
+                <div className="flex flex-col gap-3 h-[70vh]">
+                  <h2 className="font-p-M24 text-center">개인정보 처리방침</h2>
+                  <AlertDialogDescription className="flex-[1_0_100px] overflow-y-auto rounded">
+                    {privacyContent}
+                  </AlertDialogDescription>
+                  <Button variant="secondary" asChild>
+                    <AlertDialogAction className="btn-full">확인했어요</AlertDialogAction>
+                  </Button>
+                </div>
+              </AlertDialogContent>
             </AlertDialog>
           </div>
         </div>
@@ -150,30 +141,27 @@ const ProfileView = () => {
           >
             <AlertDialogTrigger>로그아웃</AlertDialogTrigger>
           </Button>
-
-          <AlertDialogOverlay>
-            <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
-              <div className="flex flex-col items-center gap-3">
-                <AlertDialogHeader className="font-p-R18 overflow-y-auto rounded">
-                  로그아웃 하시겠어요?
-                </AlertDialogHeader>
-                <AlertDialogFooter className="grow flex flex-row gap-2 w-full">
-                  <AlertDialogCancel className="border-0">아니오</AlertDialogCancel>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    compoundVariants="danger"
-                    className="grow"
-                    asChild
-                  >
-                    <AlertDialogAction onClick={handleClickLogOut}>
-                      로그아웃
-                    </AlertDialogAction>
-                  </Button>
-                </AlertDialogFooter>
-              </div>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
+          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
+            <div className="flex flex-col items-center gap-3">
+              <AlertDialogHeader className="font-p-R18 overflow-y-auto rounded">
+                로그아웃 하시겠어요?
+              </AlertDialogHeader>
+              <AlertDialogFooter className="grow flex flex-row gap-2 w-full">
+                <AlertDialogCancel className="border-0">아니오</AlertDialogCancel>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  compoundVariants="danger"
+                  className="grow"
+                  asChild
+                >
+                  <AlertDialogAction onClick={handleClickLogOut}>
+                    로그아웃
+                  </AlertDialogAction>
+                </Button>
+              </AlertDialogFooter>
+            </div>
+          </AlertDialogContent>
         </AlertDialog>
       </div>
     </div>

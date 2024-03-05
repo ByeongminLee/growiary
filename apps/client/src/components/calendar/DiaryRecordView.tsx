@@ -13,7 +13,6 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { useEffect, useRef, useState } from 'react';
@@ -179,64 +178,60 @@ const DiaryRecordView = ({ date, postId }: MainReplyViewProps) => {
         <AlertDialogTrigger ref={removeModalRef} className="hidden">
           일기 삭제 팝업
         </AlertDialogTrigger>
-        <AlertDialogOverlay>
-          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
-            <div className="flex flex-col items-center gap-3">
-              <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
-                일기를 삭제할까요? <br />
-                삭제된 글은 복원할 수 없어요
-              </AlertDialogHeader>
-              <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
-                <AlertDialogCancel className="flex-1 border-0">아니오</AlertDialogCancel>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  compoundVariants="danger"
-                  style={{ flex: 2 }}
-                  asChild
-                >
-                  <AlertDialogAction onClick={handleClickRemove}>
-                    네, 삭제할래요
-                  </AlertDialogAction>
-                </Button>
-              </AlertDialogFooter>
-            </div>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+        <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
+          <div className="flex flex-col items-center gap-3">
+            <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
+              일기를 삭제할까요? <br />
+              삭제된 글은 복원할 수 없어요
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
+              <AlertDialogCancel className="flex-1 border-0">아니오</AlertDialogCancel>
+              <Button
+                type="button"
+                variant="secondary"
+                compoundVariants="danger"
+                style={{ flex: 2 }}
+                asChild
+              >
+                <AlertDialogAction onClick={handleClickRemove}>
+                  네, 삭제할래요
+                </AlertDialogAction>
+              </Button>
+            </AlertDialogFooter>
+          </div>
+        </AlertDialogContent>
       </AlertDialog>
       <AlertDialog>
         <AlertDialogTrigger ref={modifyModalRef} className="hidden">
           일기 수정 팝업
         </AlertDialogTrigger>
-        <AlertDialogOverlay>
-          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
-            <div className="flex flex-col items-center gap-3">
-              <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
-                {todayReply?.answer ? (
-                  <p>
-                    일기를 수정할까요? <br />
-                    그루미의 답장 내용은 일기를 수정해도 바뀌지 않아요.
-                  </p>
-                ) : (
-                  '일기를 수정할까요?'
-                )}
-              </AlertDialogHeader>
-              <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
-                <AlertDialogCancel className="flex-1 border-0">아니오</AlertDialogCancel>
-                <Button
-                  type="button"
-                  className="font-p-R18 font-normal"
-                  style={{ flex: 2 }}
-                  asChild
-                >
-                  <AlertDialogAction onClick={handleMoveToEditPage}>
-                    네, 수정할게요
-                  </AlertDialogAction>
-                </Button>
-              </AlertDialogFooter>
-            </div>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+        <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
+          <div className="flex flex-col items-center gap-3">
+            <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
+              {todayReply?.answer ? (
+                <p>
+                  일기를 수정할까요? <br />
+                  그루미의 답장 내용은 일기를 수정해도 바뀌지 않아요.
+                </p>
+              ) : (
+                '일기를 수정할까요?'
+              )}
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
+              <AlertDialogCancel className="flex-1 border-0">아니오</AlertDialogCancel>
+              <Button
+                type="button"
+                className="font-p-R18 font-normal"
+                style={{ flex: 2 }}
+                asChild
+              >
+                <AlertDialogAction onClick={handleMoveToEditPage}>
+                  네, 수정할게요
+                </AlertDialogAction>
+              </Button>
+            </AlertDialogFooter>
+          </div>
+        </AlertDialogContent>
       </AlertDialog>
       {toastContent && (initAiAnswer ? isLoadedLottie : true) && (
         <OneTimeToast timeout={1500} afterFn={() => setToastContent('')}>

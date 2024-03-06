@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import { recordWriteState, waitingRecordsState } from '@/store';
@@ -11,12 +11,10 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import { Button } from '@/components/ui/shadcn/button';
 import { getDateFromServer } from '@/utils/getDateFormat';
-import Link from 'next/link';
 
 const history: string[] = [];
 export function NavigationEvents() {
@@ -89,34 +87,32 @@ export function NavigationEvents() {
           <AlertDialogTrigger ref={stopRecordRef} className="hidden">
             일기 작성 중단 팝업
           </AlertDialogTrigger>
-          <AlertDialogOverlay>
-            <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
-              <div className="flex flex-col items-center gap-3">
-                <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
-                  일기를 그만쓸까요? <br /> 지금까지 입력한 내용이 사라져요
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
-                  <AlertDialogCancel
-                    className="flex-1 border-0"
-                    onClick={handleStayWriting}
-                  >
-                    아니오
-                  </AlertDialogCancel>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    compoundVariants="danger"
-                    style={{ flex: 2 }}
-                    asChild
-                  >
-                    <AlertDialogAction onClick={handleStopWriting}>
-                      네, 그만 쓸래요
-                    </AlertDialogAction>
-                  </Button>
-                </AlertDialogFooter>
-              </div>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
+          <AlertDialogContent className="max-h-[70%] w-[90%] rounded-md bg-[#F6F6F6]	">
+            <div className="flex flex-col items-center gap-3">
+              <AlertDialogHeader className="font-p-R18 m-2 overflow-y-auto rounded">
+                일기를 그만쓸까요? <br /> 지금까지 입력한 내용이 사라져요
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex grow flex-row gap-4 w-full">
+                <AlertDialogCancel
+                  className="flex-1 border-0"
+                  onClick={handleStayWriting}
+                >
+                  아니오
+                </AlertDialogCancel>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  compoundVariants="danger"
+                  style={{ flex: 2 }}
+                  asChild
+                >
+                  <AlertDialogAction onClick={handleStopWriting}>
+                    네, 그만 쓸래요
+                  </AlertDialogAction>
+                </Button>
+              </AlertDialogFooter>
+            </div>
+          </AlertDialogContent>
         </AlertDialog>
       )}
     </>

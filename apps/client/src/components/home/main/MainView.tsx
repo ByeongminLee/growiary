@@ -14,9 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { initExperienceState, recordState, recordWriteState } from '@/store';
 import {
   AlertDialog,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogOverlay,
   AlertDialogTrigger,
 } from '@/components/ui/shadcn/alert-dialog';
 import OneTimeToast from '@/components/ui/OneTimeToast';
@@ -32,6 +30,12 @@ import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import CalendarWithRecords from '@/components/calendar/CalendarWithRecords';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from '@/components/ui/shadcn/dialog';
 
 const bottomArea = 80;
 
@@ -49,6 +53,7 @@ const MainView = () => {
   const [scrollHeight, setScrollHeight] = useState('100%');
   const [repliedCount, setRepliedCount] = useState(-1);
   const [checkInitUser, setCheckInitUser] = useState(false);
+  const [openCalendar, setOpenCalendar] = React.useState(false);
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [year, month, date] = getFullStrDate(selectedDate);
@@ -212,15 +217,12 @@ const MainView = () => {
       if (!session?.id) return;
       const { firstDate: startDate, lastDate: endDate } =
         getFirstAndLastDateFromSpecificDate(selectedDate);
-
-      (async () => {
-        await getRecordsMutation.mutateAsync({
-          body: {
-            startDate,
-            endDate,
-          },
-        });
-      })();
+      getRecordsMutation.mutateAsync({
+        body: {
+          startDate,
+          endDate,
+        },
+      });
     },
     [session?.id, month],
   );
@@ -288,6 +290,7 @@ const MainView = () => {
                   width={64}
                   height={64}
                   className="mr-4"
+                  priority
                 />
               </div>
               <div
@@ -328,28 +331,27 @@ const MainView = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <AlertDialog>
-        <AlertDialogTrigger className="hidden" ref={calendarRef}>
+      <Dialog open={openCalendar} onOpenChange={setOpenCalendar}>
+        <DialogTrigger className="hidden" ref={calendarRef}>
           달력 팝업
-        </AlertDialogTrigger>
-        <AlertDialogOverlay>
-          <AlertDialogContent
-            className="top-0 top-0 left-0 max-w-full transform-none sm:rounded-t-none rounded-b-2xl bg-grayscale-100"
-            style={{
-              paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
-            }}
-          >
-            <CalendarWithRecords
-              initSelectDate={selectedDate}
-              showOverDate={false}
-              onChangeSelectDate={onChangeSelectDate}
-            />
-            <AlertDialogCancel ref={calendarCloseBtnRef} className="hidden">
-              취소
-            </AlertDialogCancel>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        </DialogTrigger>
+        <DialogContent
+          closeBtn={false}
+          className="top-0 top-0 left-0 max-w-full transform-none sm:rounded-t-none rounded-b-2xl bg-grayscale-100"
+          style={{
+            paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
+          }}
+        >
+          <CalendarWithRecords
+            initSelectDate={selectedDate}
+            showOverDate={false}
+            onChangeSelectDate={onChangeSelectDate}
+          />
+          <DialogClose ref={calendarCloseBtnRef} className="hidden">
+            취소
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
       {repliedCount > 0 && (
         <Button
           className="absolute w-[calc(100%-48px)] bottom-0 left-6 z-50 mb-6"
@@ -371,7 +373,13 @@ const MainView = () => {
         <OneTimeToast>
           <div className="flex flex-col items-center justify-center">
             <p>오른쪽, 왼쪽으로 넘겨보세요</p>
-            <Image src="/assets/icons/swipe.png" alt="swipe" width={96} height={88} />
+            <Image
+              src="/assets/icons/swipe.png"
+              alt="swipe"
+              width={96}
+              height={88}
+              priority
+            />
           </div>
         </OneTimeToast>
       )}
@@ -379,16 +387,20 @@ const MainView = () => {
         <AlertDialogTrigger className="hidden" ref={replyPopupRef}>
           그루미 답장중 팝업
         </AlertDialogTrigger>
-        <AlertDialogOverlay>
-          <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md w-auto bg-tranparent border-0">
-            <div className="px-7 py-9 bg-sub-babyPink flex flex-col items-center jusitfy-center rounded">
-              <p className="pb-5 font-p-M16 text-grayscale-700 whitespace-nowrap	">
-                매일 아침 8시에 답장이 도착할거예요!
-              </p>
-              <Image src="/assets/icons/post.png" alt="message" width={101} height={86} />
-            </div>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+        <AlertDialogContent className="flex justify-center p-0 m-0 rounded-md w-auto bg-tranparent border-0">
+          <div className="px-7 py-9 bg-sub-babyPink flex flex-col items-center jusitfy-center rounded">
+            <p className="pb-5 font-p-M16 text-grayscale-700 whitespace-nowrap	">
+              매일 아침 8시에 답장이 도착할거예요!
+            </p>
+            <Image
+              src="/assets/icons/post.png"
+              alt="message"
+              width={101}
+              height={86}
+              priority
+            />
+          </div>
+        </AlertDialogContent>
       </AlertDialog>
     </>
   );

@@ -1,11 +1,11 @@
 import { useSession } from 'next-auth/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRecords } from '@/utils/requestRecord';
 import { ApiSuccess, CollectedRecordType, RecordType } from '@/types';
 import { getDateFromServer } from '@/utils/getDateFormat';
 import { useSetRecoilState } from 'recoil';
 import { recordState } from '@/store';
 import { FilterFindPostDTO } from '@growiary/types';
+import { fetchApi } from '@/utils/fetchApi';
 
 type UseGetRecordProps = {
   onSuccessCb?: (
@@ -25,11 +25,13 @@ export const useGetRecords = ({ onSuccessCb }: UseGetRecordProps) => {
 
   const mutation = useMutation({
     mutationKey: ['records'],
-    mutationFn: ({ body }: UseGetRecordBodyType) =>
-      getRecords({
-        id: session?.id || '',
+    mutationFn: ({ body }: UseGetRecordBodyType): Promise<ApiSuccess<RecordType[]>> => {
+      return fetchApi('/post/filter', {
+        method: 'POST',
+        id: session?.id,
         body: { ...body, offset: new Date().getTimezoneOffset() },
-      }),
+      });
+    },
     onSuccess: result => {
       queryClient.setQueryData(['records'], (old: CollectedRecordType) => {
         const collectedData = [...(result.data || [])].reduce(

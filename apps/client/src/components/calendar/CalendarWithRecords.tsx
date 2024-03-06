@@ -8,8 +8,8 @@ import { useGetRecords } from '@/lib/useGetRecords';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import React, { useEffect, useState } from 'react';
 import { Calendar } from '@/components/ui/shadcn/calendar';
-import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 type CalendarWithRecordsProps = {
   initSelectDate?: Date;
@@ -79,12 +79,9 @@ const CalendarWithRecords = ({
         paramDate = new Date(+year, +month - 1, +date, 0, 0, 0);
         setSelectedDate(paramDate);
       }
-
-      (async () => {
-        await mutation.mutateAsync({
-          body: { startDate, endDate },
-        });
-      })();
+      mutation.mutateAsync({
+        body: { startDate, endDate },
+      });
     },
     [session?.id],
   );
